@@ -6,6 +6,8 @@
   * @brief   Default main function.
   ******************************************************************************
 */
+#include "types.h"
+#include "GPIO.h"
 
 #if !defined(__SOFT_FP__) && defined(__ARM_FP)
   #warning "FPU is not initialized, but the project is compiling for an FPU. Please initialize the FPU before use."
@@ -13,5 +15,12 @@
 
 int main(void)
 {
+	uint32 *AHB2ENR = (uint32*)0x4002104C;
+	*AHB2ENR = 1;
+
+	GPIO_Set(PORT_A, 5, GPIO_OUTPUT|GPIO_OTYPE_PP|GPIO_OSPEED_MS);
+	GPIO_Write(PORT_A, 5, 1);
+	GPIO_Write(PORT_A, 5, 0);
+
 	for(;;);
 }
