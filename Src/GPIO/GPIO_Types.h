@@ -22,7 +22,6 @@ typedef struct
 	uint32 AFRH;
 	uint32 BRR;
 	uint32 ASCR;
-	uint8 Reserved[0x3D4];
 } GPIOx;
 
 typedef struct

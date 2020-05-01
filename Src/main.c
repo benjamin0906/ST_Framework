@@ -16,11 +16,24 @@
 int main(void)
 {
 	uint32 *AHB2ENR = (uint32*)0x4002104C;
-	*AHB2ENR = 1;
+	*AHB2ENR |= 1;
+	*AHB2ENR |= 4;
 
 	GPIO_Set(PORT_A, 5, GPIO_OUTPUT|GPIO_OTYPE_PP|GPIO_OSPEED_MS);
+	GPIO_Set(PORT_C, 13, GPIO_INPUT);
 	GPIO_Write(PORT_A, 5, 1);
 	GPIO_Write(PORT_A, 5, 0);
 
-	for(;;);
+	for(;;)
+	{
+		if(GPIO_Read(PORT_C, 13))
+		{
+			GPIO_Write(PORT_A, 5, 1);
+		}
+		else
+		{
+			GPIO_Write(PORT_A, 5, 0);
+		}
+
+	}
 }

@@ -12,6 +12,7 @@
 
 #define PORT_A			0
 #define PORT_B			1
+#define PORT_C			2
 #define GPIO_ANALOG		0
 #define GPIO_INPUT		1
 #define GPIO_OUTPUT		2
@@ -58,5 +59,7 @@
 #define GPIO_ASC_15		16<<12
 
 extern void GPIO_Set(uint8 port, uint8 pin, uint32 settings);
+extern void GPIO_Write(uint8 port, uint8 pin, uint8 value);
+extern uint8 GPIO_Read(uint8 port, uint8 pin);
 
 #endif /* GPIO_GPIO_H_ */
