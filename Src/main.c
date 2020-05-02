@@ -8,6 +8,7 @@
 */
 #include "types.h"
 #include "GPIO.h"
+#include "RCC.h"
 
 #if !defined(__SOFT_FP__) && defined(__ARM_FP)
   #warning "FPU is not initialized, but the project is compiling for an FPU. Please initialize the FPU before use."
@@ -15,9 +16,12 @@
 
 int main(void)
 {
-	uint32 *AHB2ENR = (uint32*)0x4002104C;
+	/*uint32 *AHB2ENR = (uint32*)0x4002104C;
 	*AHB2ENR |= 1;
-	*AHB2ENR |= 4;
+	*AHB2ENR |= 4;*/
+
+	RCC_ClockEnable(RCC_GPIOA);
+	RCC_ClockEnable(RCC_GPIOC);
 
 	GPIO_Set(PORT_A, 5, GPIO_OUTPUT|GPIO_OTYPE_PP|GPIO_OSPEED_MS);
 	GPIO_Set(PORT_C, 13, GPIO_INPUT);
