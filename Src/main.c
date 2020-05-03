@@ -9,24 +9,32 @@
 #include "types.h"
 #include "GPIO.h"
 #include "RCC.h"
+#include "BasicTIM.h"
 
 #if !defined(__SOFT_FP__) && defined(__ARM_FP)
   #warning "FPU is not initialized, but the project is compiling for an FPU. Please initialize the FPU before use."
 #endif
 
+void Blink(void)
+{
+	GPIO_Toggle(PORT_B, 13);
+}
+
 int main(void)
 {
-	/*uint32 *AHB2ENR = (uint32*)0x4002104C;
-	*AHB2ENR |= 1;
-	*AHB2ENR |= 4;*/
-
 	RCC_ClockEnable(RCC_GPIOA);
+	RCC_ClockEnable(RCC_GPIOB);
 	RCC_ClockEnable(RCC_GPIOC);
+	RCC_ClockEnable(RCC_TIM6);
+
+	BasicTIM_Set(TIM6, &Blink);
 
 	GPIO_Set(PORT_A, 5, GPIO_OUTPUT|GPIO_OTYPE_PP|GPIO_OSPEED_MS);
+	GPIO_Set(PORT_B, 13, GPIO_OUTPUT|GPIO_OTYPE_PP|GPIO_OSPEED_MS);
 	GPIO_Set(PORT_C, 13, GPIO_INPUT);
 	GPIO_Write(PORT_A, 5, 1);
 	GPIO_Write(PORT_A, 5, 0);
+	GPIO_Write(PORT_B, 13, 0);
 
 	for(;;)
 	{

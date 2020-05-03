@@ -61,5 +61,6 @@
 extern void GPIO_Set(uint8 port, uint8 pin, uint32 settings);
 extern void GPIO_Write(uint8 port, uint8 pin, uint8 value);
 extern uint8 GPIO_Read(uint8 port, uint8 pin);
+extern void GPIO_Toggle(uint8 port, uint8 pin);
 
 #endif /* GPIO_GPIO_H_ */

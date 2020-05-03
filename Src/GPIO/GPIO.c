@@ -21,6 +21,7 @@ static GPIOx *const Ports[8] = {(GPIOx*)(0x48000000),//GPIO_A
 void GPIO_Set(uint8 port, uint8 pin, uint32 options);
 void GPIO_Write(uint8 port, uint8 pin, uint8 value);
 uint8 GPIO_Read(uint8 port, uint8 pin);
+void GPIO_Toggle(uint8 port, uint8 pin);
 
 void GPIO_Set(uint8 port, uint8 pin, uint32 options)
 {
@@ -118,4 +119,10 @@ void GPIO_Write(uint8 port, uint8 pin, uint8 value)
 uint8 GPIO_Read(uint8 port, uint8 pin)
 {
 	return (Ports[port]->IDR & 1<<pin) != 0;
+}
+
+void GPIO_Toggle(uint8 port, uint8 pin)
+{
+	if((Ports[port]->ODR & (1<<pin)) != 0) Ports[port]->BRR = (1<<pin);
+	else Ports[port]->BSRR = (1<<pin);
 }
