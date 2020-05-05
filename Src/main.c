@@ -10,6 +10,7 @@
 #include "GPIO.h"
 #include "RCC.h"
 #include "BasicTIM.h"
+#include "Pwr.h"
 
 #if !defined(__SOFT_FP__) && defined(__ARM_FP)
   #warning "FPU is not initialized, but the project is compiling for an FPU. Please initialize the FPU before use."
@@ -26,6 +27,13 @@ int main(void)
 	RCC_ClockEnable(RCC_GPIOB);
 	RCC_ClockEnable(RCC_GPIOC);
 	RCC_ClockEnable(RCC_TIM6);
+	RCC_ClockEnable(RCC_PWR);
+	RCC_ClockEnable(RCC_FLASH);
+
+	Pwr_SetVoltageRange(Range_2);
+	Pwr_SetVoltageRange(Range_1);
+
+	RCC_ClockSet(80000000);
 
 	BasicTIM_Set(TIM6, &Blink);
 

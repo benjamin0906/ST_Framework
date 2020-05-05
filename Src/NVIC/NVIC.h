@@ -108,4 +108,7 @@ typedef enum
   FPU_IRQn                    = 81      /*!< FPU global interrupt                                              */
 } IRQn_Type;
 
+extern void NVIC_SetPriority(IRQn_Type Irq, uint32 Priority);
+extern void NVIC_EnableIRQ(IRQn_Type Irq);
+
 #endif /* NVIC_NVIC_H_ */

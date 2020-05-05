@@ -79,6 +79,9 @@
 #define RCC_SAI2	(6<<16|22)
 #define RCC_DFSDM1	(6<<16|24)
 
+extern uint32 ClockFreq;
+
 extern void RCC_ClockEnable(uint32 Peripheral);
+extern void RCC_ClockSet(uint32 Clock);
 
 #endif /* RCC_RCC_H_ */
