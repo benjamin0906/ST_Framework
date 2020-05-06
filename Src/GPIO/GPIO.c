@@ -52,15 +52,19 @@ void GPIO_Set(uint8 port, uint8 pin, uint32 options)
 		if(pin <= 7)
 		{
 			uint32 AltTemp = Ports[port]->AFRL;
-			AltTemp &= ~((uint32)(0xF<<(pin<<4)));
-			AltTemp |= temp - GPIO_ALT0;
+
+			/*Zeroing the specified bitfield defined by the pin*/
+			AltTemp &= ~((uint32)(0xF<<(pin<<2)));
+
+			/* Give value to the specified bitfield defined by the pin */
+			AltTemp |= (temp - GPIO_ALT0)<<(pin<<2);
 			Ports[port]->AFRL = AltTemp;
 		}
 		else
 		{
 			uint32 AltTemp = Ports[port]->AFRH;
-			AltTemp &= ~((uint32)(0xF<<((pin-8)<<4)));
-			AltTemp |= temp - GPIO_ALT0;
+			AltTemp &= ~((uint32)(0xF<<((pin-8)<<2)));
+			AltTemp |= (temp - GPIO_ALT0)<<((pin-8)<<2);
 			Ports[port]->AFRH = AltTemp;
 		}
 		RegisterTemporary |= ((uint32)(2<<(pin<<1)));
