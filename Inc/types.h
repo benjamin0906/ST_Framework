@@ -16,4 +16,6 @@ typedef signed long 	int32;
 typedef signed short	int16;
 typedef signed char		int8;
 
+typedef float			float32;
+
 #endif /* TYPES_H_ */

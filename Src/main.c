@@ -12,6 +12,7 @@
 #include "BasicTIM.h"
 #include "Pwr.h"
 #include "TIM15.h"
+#include "SignalGen.h"
 
 #if !defined(__SOFT_FP__) && defined(__ARM_FP)
   #warning "FPU is not initialized, but the project is compiling for an FPU. Please initialize the FPU before use."
@@ -23,29 +24,32 @@ void Blink(void)
 }
 
 int main(void)
-{
-	RCC_ClockEnable(RCC_GPIOA);
+{	RCC_ClockEnable(RCC_GPIOA);
 	RCC_ClockEnable(RCC_GPIOB);
 	RCC_ClockEnable(RCC_GPIOC);
 	RCC_ClockEnable(RCC_TIM6);
 	RCC_ClockEnable(RCC_PWR);
 	RCC_ClockEnable(RCC_FLASH);
-	RCC_ClockEnable(RCC_TIM15);
+	RCC_ClockEnable(RCC_TIM2);
 
 	Pwr_SetVoltageRange(Range_2);
 	Pwr_SetVoltageRange(Range_1);
 
 	RCC_ClockSet(80000000);
 
-	TIM15_Init();
+	//TIM2_Init(&Blink);
 
 	//BasicTIM_Set(TIM6, &Blink);
 
 	GPIO_Set(PORT_A, 5, GPIO_OUTPUT|GPIO_OTYPE_PP|GPIO_OSPEED_MS);
 	GPIO_Set(PORT_B, 13, GPIO_OUTPUT|GPIO_OTYPE_PP|GPIO_OSPEED_MS);
 	GPIO_Set(PORT_C, 13, GPIO_INPUT);
-	GPIO_Set(PORT_A, 2, GPIO_ALT14|GPIO_OTYPE_PP|GPIO_OSPEED_VHS);//TIM15_CH1
-	GPIO_Set(PORT_A, 3, GPIO_ALT14|GPIO_OTYPE_PP|GPIO_OSPEED_VHS);//TIM15_CH2
+
+	GPIO_Set(PORT_A, 0, GPIO_ALT1|GPIO_OTYPE_PP|GPIO_OSPEED_VHS);//TIM15_CH1
+	GPIO_Set(PORT_A, 1, GPIO_ALT1|GPIO_OTYPE_PP|GPIO_OSPEED_VHS);//TIM15_CH2
+
+	SignalGen_Init();
+
 	GPIO_Write(PORT_A, 5, 1);
 	GPIO_Write(PORT_A, 5, 0);
 	GPIO_Write(PORT_B, 13, 0);
