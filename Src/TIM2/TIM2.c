@@ -39,28 +39,16 @@ void TIM2_Init(void (*PeriodFunction)(void))
 	dtCCMR1 temp = {.Word = 0};
 
 	temp.OC_mode_Field.CC2S = 0;
-		temp.OC_mode_Field.CC1S = 0;
+	temp.OC_mode_Field.CC1S = 0;
 
-		temp.OC_mode_Field.OC1M_1 = 6;
-		temp.OC_mode_Field.OC1M_2 = 0;
+	temp.OC_mode_Field.OC1M_1 = 6;
+	temp.OC_mode_Field.OC1M_2 = 0;
 
-		temp.OC_mode_Field.OC2M_1 = 6;
-		temp.OC_mode_Field.OC2M_2 = 0;
+	temp.OC_mode_Field.OC2M_1 = 6;
+	temp.OC_mode_Field.OC2M_2 = 0;
 
-		temp.OC_mode_Field.OC1PE = 1;
-		temp.OC_mode_Field.OC2PE = 1;
-
-	TIM2->CCMR1.OC_mode_Field.CC2S = 0;
-	TIM2->CCMR1.OC_mode_Field.CC1S = 0;
-
-	TIM2->CCMR1.OC_mode_Field.OC1M_1 = 6;
-	TIM2->CCMR1.OC_mode_Field.OC1M_2 = 0;
-
-	TIM2->CCMR1.OC_mode_Field.OC2M_1 = 6;
-	TIM2->CCMR1.OC_mode_Field.OC2M_2 = 0;
-
-	TIM2->CCMR1.OC_mode_Field.OC1PE = 1;
-	TIM2->CCMR1.OC_mode_Field.OC2PE = 1;
+	temp.OC_mode_Field.OC1PE = 1;
+	temp.OC_mode_Field.OC2PE = 1;
 
 	TIM2->CCMR1 = temp;
 
@@ -70,14 +58,7 @@ void TIM2_Init(void (*PeriodFunction)(void))
 	TIM2->CCR1.Field.CCRx = 1000;
 	TIM2->CCR2.Field.CCRx = 5000;
 
-	//TIM2->
-
-
-	TIM2->CR1.Field.CEN = 1;
-
-	//if(PeriodFunction != 0) InterruptFunction = PeriodFunction;
-
-	TIM2->EGR.Field.UG = 1;
+	if(PeriodFunction != 0) InterruptFunction = PeriodFunction;
 }
 
 uint32 TIM2_SetPeriod(uint32 Freq)
@@ -92,7 +73,7 @@ uint32 TIM2_SetPeriod(uint32 Freq)
 	return TIM2->ARR.Field.ARR;
 }
 
-void TIM2_GetSampeNum(void)
+uint32 TIM2_GetSampeNum(void)
 {
 	return TIM2->ARR.Field.ARR;
 }
@@ -101,17 +82,18 @@ void TIM2_SetDuty(uint32 duty, uint8 Ch)
 {
 	if(Ch != 0)
 	{
-		TIM2->CCR1.Field.CCRx = duty;
+		TIM2->CCR2.Field.CCRx = duty;
+		TIM2->CCR1.Field.CCRx = 0;
 	}
 	else
 	{
-		TIM2->CCR2.Field.CCRx = duty;
+		TIM2->CCR1.Field.CCRx = duty;
+		TIM2->CCR2.Field.CCRx = 0;
 	}
 }
 
 void TIM2_IRQHandler(void)
 {
 	TIM2->SR.Field.UIF = 0;
-	Blink();
-	//InterruptFunction();
+	if(InterruptFunction != 0) InterruptFunction();
 }
