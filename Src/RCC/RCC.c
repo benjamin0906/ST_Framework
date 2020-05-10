@@ -9,7 +9,7 @@
 #include "RCC.h"
 #include "Pwr.h"
 
-static dtRCC *const RCC = (dtRCC*) 0x40021000;
+volatile static dtRCC *const RCC = (dtRCC*) 0x40021000;
 
 uint32 ClockFreq = 2000000;
 uint32 CrystalFreq = 0;
