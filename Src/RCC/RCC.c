@@ -8,6 +8,7 @@
 #include "RCC_Types.h"
 #include "RCC.h"
 #include "Pwr.h"
+#include "Flash.h"
 
 volatile static dtRCC *const RCC = (dtRCC*) 0x40021000;
 

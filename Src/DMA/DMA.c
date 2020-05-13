@@ -182,7 +182,7 @@ void DMA_Start(dtDMAInstance Instance, dtChannel Ch, uint16 Amount)
 	DMA[Instance]->CH[Ch].CCR = Tccr;
 }
 
-void DMA_Stop(dtInstance Instance, dtChannel Ch)
+void DMA_Stop(dtDMAInstance Instance, dtChannel Ch)
 {
 	dtDMA_CCRx Tccr = DMA[Instance]->CH[Ch].CCR;
 	Tccr.Field.EN = 0;
