@@ -14,6 +14,7 @@ static void (*DMA_IntFunc[2][7])(void);
 
 void DMA_Set(dtDMAInstance Instance, dtChannel Ch, uint32* MemAddr, uint32* PeripheralAddr, uint32 options, void(IntFunc)(void));
 void DMA_Start(dtDMAInstance Instance, dtChannel Ch, uint16 Amount);
+void DMA_Stop(dtDMAInstance Instance, dtChannel Ch);
 uint8 DMA_GetStatus(dtChannel Ch);
 
 void DMA_Set(dtDMAInstance Instance, dtChannel Ch, uint32* MemAddr, uint32* PeripheralAddr, uint32 options, void(IntFunc)(void))
