@@ -6,12 +6,23 @@
  */
 
 #include "types.h"
+#include "main.h"
 
 float32 Power(uint8 Power, float32 Number)
 {
 	uint8 looper;
 	float32 ret = 1;
 	for(looper = 0; looper<Power; looper++) ret *= Number;
+	return ret;
+}
+
+uint32 IsPassed(uint32 TimeStamp, uint32 Limit)
+{
+	uint32 ret=0;
+	uint32 CurrentTicks = GetTicks();
+	uint32 PassedTime = CurrentTicks - TimeStamp;
+	if(TimeStamp > CurrentTicks) PassedTime = ~PassedTime;
+	if(PassedTime > Limit) ret=CurrentTicks;
 	return ret;
 }
 

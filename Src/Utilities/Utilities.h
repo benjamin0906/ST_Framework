@@ -12,5 +12,6 @@
 
 extern float32 Power(uint8 Power, float32 Number);
 extern float32 sqrt(float32 Number);
+extern uint32 IsPassed(uint32 TimeStamp, uint32 Limit);
 
 #endif /* UTILITIES_UTILITIES_H_ */

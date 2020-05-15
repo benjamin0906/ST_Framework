@@ -24,8 +24,8 @@ void BasicTIM_Set(dtBTimId Id, void (*IrqPtr)(void))
 	BTIMs[Id]->CR1.Field.UDIS = 0;
 
 	BTIMs[Id]->DIER.Field.UIE = 1;
-	BTIMs[Id]->PSC.Field.PSC = 999;
-	BTIMs[Id]->ARR.Field.ARR = 999;
+	BTIMs[Id]->PSC.Field.PSC = 7999;
+	BTIMs[Id]->ARR.Field.ARR = 10;
 
 	if(IrqPtr != 0) IrqPtrs[Id] = IrqPtr;
 
@@ -40,6 +40,4 @@ void TIM6_DACUNDER_IRQHandler(void)
 {
 	BTIMs[0]->SR.Field.UIF = 0;
 	if(IrqPtrs[0] != 0) IrqPtrs[0]();
-	uint32 a = 2;
-	a++;
 }
