@@ -1,20 +1,16 @@
 /*
  * Pwr.h
  *
- *  Created on: 4 May 2020
- *      Author: Bodnár Benjamin
+ *  Created on: 2020. jún. 25.
+ *      Author: BodnarB
  */
 
 #ifndef PWR_PWR_H_
 #define PWR_PWR_H_
 
-typedef enum
-{
-	Range_1,
-	Range_2,
-} dtVoltScale;
+#include "types.h"
 
-extern void Pwr_SetVoltageRange(dtVoltScale Range);
-extern dtVoltScale Pwr_GetVoltageRange(void);
+extern void Pwr_SetVos(uint8 mode);
+extern uint8 Prw_GetVos(uint8 mode);
 
 #endif /* PWR_PWR_H_ */
