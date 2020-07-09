@@ -11,7 +11,7 @@
 #include "Flash.h"
 
 #ifdef MCU_L476
-volatile static dtRCC *const RCC = (dtRCC*) 0x40021000;
+static dtRCC *const RCC = (dtRCC*) (0x40021000);
 #else
 #ifdef MCU_F446
 static dtRCC *const RCC = (dtRCC*) (0x40023800);
