@@ -8,14 +8,32 @@
 #include "GPIO_Types.h"
 #include "GPIO.h"
 
+/* ----------Register definition section---------- */
+#ifdef MCU_F446
 static dtGPIO *GPIOA = (dtGPIO*) 0x40020000;
+#endif
+#ifdef MCU_F446
 static dtGPIO *GPIOB = (dtGPIO*) 0x40020400;
+#endif
+#ifdef MCU_F446
 static dtGPIO *GPIOC = (dtGPIO*) 0x40020800;
+#endif
+#ifdef MCU_F446
 static dtGPIO *GPIOD = (dtGPIO*) 0x40020C00;
+#endif
+#ifdef MCU_F446
 static dtGPIO *GPIOE = (dtGPIO*) 0x40021000;
+#endif
+#ifdef MCU_F446
 static dtGPIO *GPIOF = (dtGPIO*) 0x40021400;
+#endif
+#ifdef MCU_F446
 static dtGPIO *GPIOG = (dtGPIO*) 0x40021800;
+#endif
+#ifdef MCU_F446
 static dtGPIO *GPIOH = (dtGPIO*) 0x40021C00;
+#endif
+/* ----------End of register definition section---------- */
 
 void GPIO_PinInit(dtGPIOs Gpio, dtGPIOConfig Config);
 void GPIO_Set(dtGPIOs Gpio, dtPortValue Value);
