@@ -10,13 +10,12 @@
 #include "Pwr.h"
 #include "Flash.h"
 
-#ifdef MCU_L476
+#if defined(MCU_L476)
 static dtRCC *const RCC = (dtRCC*) (0x40021000);
-#else
-#ifdef MCU_F446
+#elif defined(MCU_F446) || defined(MCU_F410)
 static dtRCC *const RCC = (dtRCC*) (0x40023800);
 #endif
-#endif
+
 uint32 ClockFreq = 2000000;
 uint32 CrystalFreq = 0;
 

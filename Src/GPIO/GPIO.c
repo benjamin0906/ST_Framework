@@ -9,28 +9,28 @@
 #include "GPIO.h"
 
 /* ----------Register definition section---------- */
-#ifdef MCU_F446
+#if defined(MCU_F446)
 static dtGPIO *GPIOA = (dtGPIO*) 0x40020000;
 #endif
-#ifdef MCU_F446
+#if defined(MCU_F446)
 static dtGPIO *GPIOB = (dtGPIO*) 0x40020400;
 #endif
-#ifdef MCU_F446
+#if defined(MCU_F446)
 static dtGPIO *GPIOC = (dtGPIO*) 0x40020800;
 #endif
-#ifdef MCU_F446
+#if defined(MCU_F446)
 static dtGPIO *GPIOD = (dtGPIO*) 0x40020C00;
 #endif
-#ifdef MCU_F446
+#if defined(MCU_F446)
 static dtGPIO *GPIOE = (dtGPIO*) 0x40021000;
 #endif
-#ifdef MCU_F446
+#if defined(MCU_F446)
 static dtGPIO *GPIOF = (dtGPIO*) 0x40021400;
 #endif
-#ifdef MCU_F446
+#if defined(MCU_F446)
 static dtGPIO *GPIOG = (dtGPIO*) 0x40021800;
 #endif
-#ifdef MCU_F446
+#if defined(MCU_F446)
 static dtGPIO *GPIOH = (dtGPIO*) 0x40021C00;
 #endif
 /* ----------End of register definition section---------- */
@@ -99,15 +99,29 @@ void GPIO_Set(dtGPIOs Gpio, dtPortValue Value)
 static inline dtGPIO* GetPort(dtGPIOs Gpio)
 {
 	dtGPIO *Temp = 0;
+#if defined(MCU_F446) || defined(MCU_F410)
 	if(Gpio >= PortH_0) Temp = GPIOH;
-#ifdef MCU_F446
+#endif
+#if defined(MCU_F446)
 	else if(Gpio >= PortG_0) Temp = GPIOG;
+#endif
+#if defined(MCU_F446)
 	else if(Gpio >= PortF_0) Temp = GPIOF;
+#endif
+#if defined(MCU_F446)
 	else if(Gpio >= PortE_0) Temp = GPIOE;
+#endif
+#if defined(MCU_F446)
 	else if(Gpio >= PortD_0) Temp = GPIOD;
 #endif
+#if defined(MCU_F446) || defined(MCU_F410)
 	else if(Gpio >= PortC_0) Temp = GPIOC;
+#endif
+#if defined(MCU_F446) || defined(MCU_F410)
 	else if(Gpio >= PortB_0) Temp = GPIOB;
+#endif
+#if defined(MCU_F446) || defined(MCU_F410)
 	else if(Gpio >= PortA_0) Temp = GPIOA;
+#endif
 	return Temp;
 }
