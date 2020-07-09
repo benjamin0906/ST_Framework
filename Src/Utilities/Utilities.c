@@ -6,7 +6,7 @@
  */
 
 #include "types.h"
-#include "main.h"
+//#include "main.h"
 
 float32 Power(uint8 Power, float32 Number)
 {

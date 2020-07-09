@@ -19,7 +19,7 @@ uint32 Flash_SetLatency(void)
 	uint32 ret = 0;
 	uint32 Latency = 0;
 
-	if(Pwr_GetVoltageRange() == Range_1)
+	/*if(Pwr_GetVoltageRange() == Range_1)
 	{
 		if(ClockFreq <= 16000000) Latency = 0;
 		else if(ClockFreq <= 32000000) Latency = 1;
@@ -36,5 +36,5 @@ uint32 Flash_SetLatency(void)
 	}
 	FLASH->ACR.Field.LATENCY = Latency;
 	if(FLASH->ACR.Field.LATENCY != Latency) ret = 1;
-	return ret;
+	return ret;*/
 }

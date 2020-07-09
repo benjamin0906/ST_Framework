@@ -1,132 +1,95 @@
 /*
  * GPIO.c
  *
- *  Created on: May 1, 2020
- *      Author: Bodnár Benjamin
+ *  Created on: Jun 24, 2020
+ *      Author: BodnarB
  */
 
-#include "GPIO.h"
 #include "GPIO_Types.h"
+#include "GPIO.h"
 
-static GPIOx *const Ports[8] = {(GPIOx*)(0x48000000),//GPIO_A
-								(GPIOx*)(0x48000400),//GPIO_B
-								(GPIOx*)(0x48000800),//GPIO_C
-								(GPIOx*)(0x48000C00),//GPIO_D
-								(GPIOx*)(0x48001000),//GPIO_E
-								(GPIOx*)(0x48001400),//GPIO_F
-								(GPIOx*)(0x48001800),//GPIO_G
-								(GPIOx*)(0x48001C00) //GPIO_H
-};
+static dtGPIO *GPIOA = (dtGPIO*) 0x40020000;
+static dtGPIO *GPIOB = (dtGPIO*) 0x40020400;
+static dtGPIO *GPIOC = (dtGPIO*) 0x40020800;
+static dtGPIO *GPIOD = (dtGPIO*) 0x40020C00;
+static dtGPIO *GPIOE = (dtGPIO*) 0x40021000;
+static dtGPIO *GPIOF = (dtGPIO*) 0x40021400;
+static dtGPIO *GPIOG = (dtGPIO*) 0x40021800;
+static dtGPIO *GPIOH = (dtGPIO*) 0x40021C00;
 
-void GPIO_Set(uint8 port, uint8 pin, uint32 options);
-void GPIO_Write(uint8 port, uint8 pin, uint8 value);
-uint8 GPIO_Read(uint8 port, uint8 pin);
-void GPIO_Toggle(uint8 port, uint8 pin);
+void GPIO_PinInit(dtGPIOs Gpio, dtGPIOConfig Config);
+void GPIO_Set(dtGPIOs Gpio, dtPortValue Value);
+static inline dtGPIO* GetPort(dtGPIOs Gpio);
 
-void GPIO_Set(uint8 port, uint8 pin, uint32 options)
+void GPIO_PinInit(dtGPIOs Gpio, dtGPIOConfig Config)
 {
-	uint32 temp = 0;
-	uint32 RegisterTemporary;
-
-	/* Save temporarily the value of the register */
-	RegisterTemporary = Ports[port]->MODER;
-
-	/* Clear the bitfield specified by the pin */
-	RegisterTemporary &= ~((uint32)(3<<(pin<<1)));
-
-	/* Get the proper bitfield from the compressed options parameter */
-	temp = options & 0x1F;
-	if(temp == GPIO_ANALOG)
+	uint32 FieldId = (Gpio & 0xF)<<1;
+	uint32 ClearMask = ~(3 << FieldId);
+	dtGPIO *Temp = GetPort(Gpio);
+	if(Temp != 0)
 	{
-		/* TODO: Not every case should tie the analog pin to the ADC eg.: OPAMP usage */
-		Ports[port]->ASCR = 1<<pin;
-
-		/* Set the pin mode bitfield to analog according to the pin. */
-		RegisterTemporary |= ((uint32)(3<<(pin<<1)));
-	}
-	/* Set the pin mode bitfield to output according to the pin. */
-	else if(temp == GPIO_OUTPUT) RegisterTemporary |= ((uint32)(1<<(pin<<1)));
-	else if(temp >= GPIO_ALT0)
-	{
-		/* In case of an alternate function, the function will be set with the pin mode setting. */
-		if(pin <= 7)
+		/* Setting the mode and the alternate function. */
+		Temp->MODER.Word &= ClearMask;
+		if(Config.Mode == Input)
 		{
-			uint32 AltTemp = Ports[port]->AFRL;
-
-			/*Zeroing the specified bitfield defined by the pin*/
-			AltTemp &= ~((uint32)(0xF<<(pin<<2)));
-
-			/* Give value to the specified bitfield defined by the pin */
-			AltTemp |= (temp - GPIO_ALT0)<<(pin<<2);
-			Ports[port]->AFRL = AltTemp;
+			/* Nothing to do */
 		}
+		else if(Config.Mode == Output) Temp->MODER.Word |= 1 << FieldId;
+		else if(Config.Mode == Analog) Temp->MODER.Word |= 3 << FieldId;
 		else
 		{
-			uint32 AltTemp = Ports[port]->AFRH;
-			AltTemp &= ~((uint32)(0xF<<((pin-8)<<2)));
-			AltTemp |= (temp - GPIO_ALT0)<<((pin-8)<<2);
-			Ports[port]->AFRH = AltTemp;
+			Temp->MODER.Word |= 2 << FieldId;
+			if(FieldId >= 16)
+			{
+				uint8 shifter = (FieldId-16)<<1;
+				uint32 AltFieldClearMask = ~(0xF << shifter);
+				Temp->AFR.AFRH.Word &= AltFieldClearMask;
+				Temp->AFR.AFRH.Word |= (Config.Mode-3) << shifter;
+			}
+			else
+			{
+				uint8 shifter = (FieldId)<<1;
+				uint32 AltFieldClearMask = ~(0xF << shifter);
+				Temp->AFR.AFRL.Word &= AltFieldClearMask;
+				Temp->AFR.AFRL.Word |= (Config.Mode-3) << shifter;
+			}
 		}
-		RegisterTemporary |= ((uint32)(2<<(pin<<1)));
-	}
-	Ports[port]->MODER = RegisterTemporary;
 
-	/* Set the pin type option */
-	temp = options & 0x60;
-	if(temp == GPIO_OTYPE_OD) Ports[port]->OTYPER |= 1<<pin;
-	else Ports[port]->OTYPER &= ~((uint32)(1<<pin));
+		/* Setting the type of the pin (push-pull or open-drain) */
+		Temp->OTYPER.Word &= ~(1 << FieldId);
+		if(Config.Type == OpenDrain) Temp->OTYPER.Word |= (1 << (FieldId>>1));
 
-	/* Set the speed options */
-	temp = options & 0x380;
-	RegisterTemporary = Ports[port]->OSPEEDR;
-	RegisterTemporary &= ~((uint32)(3<<(pin<<1)));
-	switch(temp)
-	{
-	case GPIO_OSPEED_VHS:
-		RegisterTemporary |= ((uint32)(3<<(pin<<1)));
-		break;
-	case GPIO_OSPEED_HS:
-		RegisterTemporary |= ((uint32)(2<<(pin<<1)));
-		break;
-	case GPIO_OSPEED_MS:
-		RegisterTemporary |= ((uint32)(1<<(pin<<1)));
-		break;
-	case GPIO_OSPEED_LS:
-		break;
-	}
-	Ports[port]->OSPEEDR = RegisterTemporary;
+		/* Setting the speed of the pin */
+		Temp->OSPEEDER.Word &= ClearMask;
+		Temp->OSPEEDER.Word |= Config.Speed << (FieldId);
 
-	/* Set the pulling options */
-	temp = options & 0xC00;
-	RegisterTemporary = Ports[port]->PUPDR;
-	RegisterTemporary &= ~((uint32)(3<<(pin<<1)));
-	switch(temp)
-	{
-	case GPIO_PULL_U:
-		RegisterTemporary |= ((uint32)(1<<(pin<<1)));
-		break;
-	case GPIO_PULL_D:
-		RegisterTemporary |= ((uint32)(2<<(pin<<1)));
-		break;
-	case GPIO_PULL_NO:
-		break;
+		Temp->PUPDR.Word &= ClearMask;
+		Temp->PUPDR.Word |= Config.PUPD << (FieldId);
 	}
-	Ports[port]->PUPDR = RegisterTemporary;
 }
 
-void GPIO_Write(uint8 port, uint8 pin, uint8 value)
+void GPIO_Set(dtGPIOs Gpio, dtPortValue Value)
 {
-	if(value != 0) Ports[port]->BSRR = 1<<pin;
-	else Ports[port]->BRR = 1<<pin;
+	uint32 Pin = 1 << (Gpio & 0xF);
+	dtGPIO *Temp = GetPort(Gpio);
+
+	if((Value == Clear) || ((Value == Toggle) && ((Temp->ODR.Word & Pin) != 0))) Pin <<= 16;
+
+	Temp->BSRR.Word |= Pin;
 }
 
-uint8 GPIO_Read(uint8 port, uint8 pin)
+static inline dtGPIO* GetPort(dtGPIOs Gpio)
 {
-	return (Ports[port]->IDR & 1<<pin) != 0;
-}
-
-void GPIO_Toggle(uint8 port, uint8 pin)
-{
-	if((Ports[port]->ODR & (1<<pin)) != 0) Ports[port]->BRR = (1<<pin);
-	else Ports[port]->BSRR = (1<<pin);
+	dtGPIO *Temp = 0;
+	if(Gpio >= PortH_0) Temp = GPIOH;
+#ifdef MCU_F446
+	else if(Gpio >= PortG_0) Temp = GPIOG;
+	else if(Gpio >= PortF_0) Temp = GPIOF;
+	else if(Gpio >= PortE_0) Temp = GPIOE;
+	else if(Gpio >= PortD_0) Temp = GPIOD;
+#endif
+	else if(Gpio >= PortC_0) Temp = GPIOC;
+	else if(Gpio >= PortB_0) Temp = GPIOB;
+	else if(Gpio >= PortA_0) Temp = GPIOA;
+	return Temp;
 }
