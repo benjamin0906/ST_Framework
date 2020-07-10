@@ -1,30 +1,31 @@
 /*
  * NVIC.c
  *
- *  Created on: May 3, 2020
- *      Author: Bodnár Benjamin
+ *  Created on: Jun 24, 2020
+ *      Author: BodnarB
  */
 
 #include "NVIC_Types.h"
 #include "NVIC.h"
 
-static dtNVIC *const NVIC = (dtNVIC*)(0xE000E100);
+static dtISER *const ISER = (dtISER*)0xE000E100;
+static dtICER *const ICER = (dtICER*)0xE000E180;
+static dtISPR *const ISPR = (dtISPR*)0xE000E200;
+static dtICPR *const ICPR = (dtICPR*)0xE000E280;
+static dtIABR *const IABR = (dtIABR*)0xE000E300;
+static dtIPR *const IPR = (dtIPR*)0xE000E400;
 
-void NVIC_SetPriority(IRQn_Type Irq, uint32 Priority);
-void NVIC_EnableIRQ(IRQn_Type Irq);
+void NVIC_EnableIRQ(dtIRQs IRQ);
+void NVIC_SetPriority(dtIRQs IRQ, uint8 IrqLevel);
 
-void NVIC_SetPriority(IRQn_Type Irq, uint32 Priority)
+void NVIC_EnableIRQ(dtIRQs IRQ)
 {
-	if((int32)Irq >= 0)
-	{
-		NVIC->IPR[Irq] = (uint8)(Priority<<4);
-	}
+	uint8 IserIndex = IRQ>>3;
+	uint32 IserBit = IRQ - (IserIndex << 3);
+	ISER->ISER[IserIndex] |= 1<<IserBit;
 }
 
-void NVIC_EnableIRQ(IRQn_Type Irq)
+void NVIC_SetPriority(dtIRQs IRQ, uint8 IrqLevel)
 {
-	if((int32) Irq >= 0)
-	{
-		NVIC->ISER[Irq>>5] = 1<<(Irq & 0x1F);
-	}
+	IPR->ISER[IRQ] = IrqLevel;
 }

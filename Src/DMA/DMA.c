@@ -40,31 +40,31 @@ void DMA_Set(dtDMAInstance Instance, dtChannel Ch, uint32* MemAddr, uint32* Peri
 		{
 			DMA_IntFunc[Instance][Ch] = IntFunc;
 			uint8 IntPriority = options >> DMA_INT_PRIO_FIELD;
-			IRQn_Type IRQ = 0;
+			dtIRQs IRQ = 0;
 			if(Instance == DMA_1)
 			{
 				switch(Ch)
 				{
 				case Ch1:
-					IRQ = DMA1_Channel1_IRQn;
+					IRQ = IRQ_DMA1_Stream0;
 					break;
 				case Ch2:
-					IRQ = DMA1_Channel2_IRQn;
+					IRQ = IRQ_DMA1_Stream1;
 					break;
 				case Ch3:
-					IRQ = DMA1_Channel3_IRQn;
+					IRQ = IRQ_DMA1_Stream2;
 					break;
 				case Ch4:
-					IRQ = DMA1_Channel4_IRQn;
+					IRQ = IRQ_DMA1_Stream3;
 					break;
 				case Ch5:
-					IRQ = DMA1_Channel5_IRQn;
+					IRQ = IRQ_DMA1_Stream4;
 					break;
 				case Ch6:
-					IRQ = DMA1_Channel6_IRQn;
+					IRQ = IRQ_DMA1_Stream5;
 					break;
 				case Ch7:
-					IRQ = DMA1_Channel1_IRQn;
+					IRQ = IRQ_DMA1_Stream6;
 					break;
 				}
 			}
@@ -73,25 +73,25 @@ void DMA_Set(dtDMAInstance Instance, dtChannel Ch, uint32* MemAddr, uint32* Peri
 				switch(Ch)
 				{
 				case Ch1:
-					IRQ = DMA2_Channel1_IRQn;
+					IRQ = IRQ_DMA2_Stream0;
 					break;
 				case Ch2:
-					IRQ = DMA2_Channel2_IRQn;
+					IRQ = IRQ_DMA2_Stream1;
 					break;
 				case Ch3:
-					IRQ = DMA2_Channel3_IRQn;
+					IRQ = IRQ_DMA2_Stream2;
 					break;
 				case Ch4:
-					IRQ = DMA2_Channel4_IRQn;
+					IRQ = IRQ_DMA2_Stream3;
 					break;
 				case Ch5:
-					IRQ = DMA2_Channel5_IRQn;
+					IRQ = IRQ_DMA2_Stream4;
 					break;
 				case Ch6:
-					IRQ = DMA2_Channel6_IRQn;
+					IRQ = IRQ_DMA2_Stream5;
 					break;
 				case Ch7:
-					IRQ = DMA2_Channel1_IRQn;
+					IRQ = IRQ_DMA2_Stream6;
 					break;
 				}
 			}

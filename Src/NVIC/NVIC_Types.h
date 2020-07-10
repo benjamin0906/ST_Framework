@@ -1,8 +1,8 @@
 /*
  * NVIC_Types.h
  *
- *  Created on: May 3, 2020
- *      Author: Bodnár Benjamin
+ *  Created on: Jun 24, 2020
+ *      Author: BodnarB
  */
 
 #ifndef NVIC_NVIC_TYPES_H_
@@ -12,24 +12,32 @@
 
 typedef struct
 {
-	uint32 ISER[8];	//0x100
-	uint32 Res1[24];//0x11C
+	uint8 ISER[32];
+} dtISER;
 
-	uint32 ICER[8];	//
-	uint32 Res2[24];
+typedef struct
+{
+	uint8 ICER[32];
+} dtICER;
 
-	uint32 ISPR[8];
-	uint32 Res3[24];
+typedef struct
+{
+	uint8 ISPR[32];
+} dtISPR;
 
-	uint32 ICPR[8];
-	uint32 Res4[24];
+typedef struct
+{
+	uint8 ICPR[32];
+} dtICPR;
 
-	uint32 IABR[8];
-	uint32 Res5[56];
+typedef struct
+{
+	uint8 IABR[32];
+} dtIABR;
 
-	uint8 IPR[240];
-	uint32 Res6[644];
-	uint32 STIR;
-} dtNVIC;
+typedef struct
+{
+	uint8 ISER[240];
+} dtIPR;
 
 #endif /* NVIC_NVIC_TYPES_H_ */

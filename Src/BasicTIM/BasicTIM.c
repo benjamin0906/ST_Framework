@@ -31,8 +31,8 @@ void BasicTIM_Set(dtBTimId Id, void (*IrqPtr)(void))
 
 	BTIMs[Id]->CR1.Field.CEN = 1;
 
-	NVIC_SetPriority(TIM6_DAC_IRQn,1);
-	NVIC_EnableIRQ(TIM6_DAC_IRQn);
+	NVIC_SetPriority(IRQ_TIM6_DAC,1);
+	NVIC_EnableIRQ(IRQ_TIM6_DAC);
 
 }
 

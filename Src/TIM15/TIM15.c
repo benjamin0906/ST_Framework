@@ -25,8 +25,8 @@ void TIM15_Init(void)
 
 	TIM15->ARR.Field.ARR = 64;
 
-	NVIC_SetPriority(TIM1_BRK_TIM15_IRQn,2);
-	NVIC_EnableIRQ(TIM1_BRK_TIM15_IRQn);
+	//NVIC_SetPriority(TIM1_BRK_TIM15_IRQn,2);
+	//NVIC_EnableIRQ(TIM1_BRK_TIM15_IRQn);
 
 	TIM15->CCMR1.OC_mode_Field.CC2S = 0;
 	TIM15->CCMR1.OC_mode_Field.OC1M_2 = 0;
