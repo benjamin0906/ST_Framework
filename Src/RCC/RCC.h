@@ -67,7 +67,7 @@ typedef enum
 } dtBus;
 
 extern void RCC_ClockEnable(dtRCCClock Clock, dtRCCClockSets Value);
-extern void RCC_ClockInit(void);
+extern void RCC_ClockSet(uint32 Clock);
 extern uint32 RCC_GetClock(dtBus Bus);
 
 #endif /* RCC_RCC_H_ */
