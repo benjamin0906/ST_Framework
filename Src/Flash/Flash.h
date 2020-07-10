@@ -10,6 +10,12 @@
 
 #include "types.h"
 
-extern uint32 Flash_SetLatency(void);
+typedef enum
+{
+	LatIsSet,
+	LatFailed,
+} dtSetLatRet;
+
+extern dtSetLatRet Flash_SetLatency(uint32 clock, uint8 VoltageRange);
 
 #endif /* FLASH_FLASH_H_ */
