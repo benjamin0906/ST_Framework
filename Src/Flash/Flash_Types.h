@@ -23,7 +23,7 @@ typedef union
 		uint32 ICRST	:1;
 		uint32 DCRST	:1;
 		uint32			:19;
-	} Field;
+	} Fields;
 	uint32 Word;
 } dtACR;
 
@@ -32,7 +32,7 @@ typedef union
 	struct
 	{
 		uint32 KEYR		:32;
-	} Field;
+	} Fields;
 	uint32 Word;
 } dtKEYR;
 
@@ -41,7 +41,7 @@ typedef union
 	struct
 	{
 		uint32 OPTKEYR	:32;
-	} Field;
+	} Fields;
 	uint32 Word;
 } dtOPTKEYR;
 
@@ -60,7 +60,7 @@ typedef union
 		uint32 			:7;
 		uint32 BSY		:1;
 		uint32 			:15;
-	} Field;
+	} Fields;
 	uint32 Word;
 } dtSR;
 
@@ -81,7 +81,7 @@ typedef union
 		uint32 ERRIE		:1;
 		uint32 				:5;
 		uint32 LOCK			:1;
-	} Field;
+	} Fields;
 	uint32 Word;
 } dtCR;
 
@@ -126,7 +126,7 @@ typedef union
 		uint32 ICRST	:1;
 		uint32 DCRST	:1;
 		uint32			:19;
-	} Field;
+	} Fields;
 	uint32 Word;
 } dtACR;
 
@@ -135,7 +135,7 @@ typedef union
 	struct
 	{
 		uint32 KEYR		:32;
-	} Field;
+	} Fields;
 	uint32 Word;
 } dtKEYR;
 
@@ -144,7 +144,7 @@ typedef union
 	struct
 	{
 		uint32 OPTKEYR	:32;
-	} Field;
+	} Fields;
 	uint32 Word;
 } dtOPTKEYR;
 
@@ -163,7 +163,7 @@ typedef union
 		uint32 			:7;
 		uint32 BSY		:1;
 		uint32 			:15;
-	} Field;
+	} Fields;
 	uint32 Word;
 } dtSR;
 
@@ -184,7 +184,7 @@ typedef union
 		uint32 ERRIE		:1;
 		uint32 				:5;
 		uint32 LOCK			:1;
-	} Field;
+	} Fields;
 	uint32 Word;
 } dtCR;
 
