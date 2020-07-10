@@ -17,7 +17,7 @@ uint32 Flash_SetLatency(void);
 uint32 Flash_SetLatency(void)
 {
 	uint32 ret = 0;
-	uint32 Latency = 0; 
+	uint32 Latency = 0;
 
 	/*if(Pwr_GetVoltageRange() == Range_1)
 	{
