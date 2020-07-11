@@ -66,7 +66,6 @@ void RCC_ClockEnable(dtRCCClock Clock, dtRCCClockSets Value)
 
 void RCC_ClockSet(dtRccInitConfig Config)
 {
-	uint32 PrevClock = ClockFreq;
 	ClockFreq = Config.Clock;
 
 	Flash_SetLatency(Config.Clock,33);
@@ -137,7 +136,7 @@ void RCC_ClockSet(dtRccInitConfig Config)
 
 uint32 RCC_GetClock(dtBus Bus)
 {
-	/*uint32 ret = 0;
+	uint32 ret = 0;
 	uint16 AHBPresc = 1;
 	uint8 APB1Presc = 1;
 	uint8 APB2Presc = 1;
@@ -153,7 +152,7 @@ uint32 RCC_GetClock(dtBus Bus)
 	if(RCC->CFGR.Fields.PPRE2 >= 0x4) APB2Presc = 1 << ((RCC->CFGR.Fields.PPRE2 & 0x3) + 1);
 	if(RCC->CFGR.Fields.PPRE1 >= 0x4) APB1Presc = 1 << ((RCC->CFGR.Fields.PPRE1 & 0x3) + 1);
 
-	AHBClock = SYS/AHBPresc;
+	AHBClock = ClockFreq/AHBPresc;
 	APB1Clock = AHBClock/APB1Presc;
 	APB2Clock = AHBClock/APB2Presc;
 
@@ -169,6 +168,7 @@ uint32 RCC_GetClock(dtBus Bus)
 	}
 	else if(Bus == APB1_Peripheral) ret = APB1Clock;
 	else if(Bus == APB2_Peripheral) ret = APB2Clock;
-	else if(Bus == Core) ret = SYS;
-	return ret;*/
+	else if(Bus == AHB) ret = AHBClock;
+	else if(Bus == Core) ret = ClockFreq;
+	return ret;
 }
