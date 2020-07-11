@@ -16,8 +16,15 @@ static dtRCC *const RCC = (dtRCC*) (0x40021000);
 static dtRCC *const RCC = (dtRCC*) (0x40023800);
 #endif
 
+#define DIVIDER_M_MIN	2
+#define DIVIDER_M_MAX	63
+#define DIVIDER_P_MIN	0
+#define DIVIDER_P_MAX	3
+#define MULT_N_MIN		50
+#define MULT_N_MAX		432
+
 uint32 ClockFreq = 2000000;
-uint32 CrystalFreq = 0;
+uint32 CrystalFreq = 16000000;
 
 void RCC_ClockEnable(dtRCCClock Clock, dtRCCClockSets Value);
 void RCC_ClockInit(void);
@@ -57,31 +64,75 @@ void RCC_ClockEnable(dtRCCClock Clock, dtRCCClockSets Value)
 	}
 }
 
-void RCC_ClockSet(uint32 Clock)
+void RCC_ClockSet(dtRccInitConfig Config)
 {
 	uint32 PrevClock = ClockFreq;
-	ClockFreq = Clock;
+	ClockFreq = Config.Clock;
 
-	Flash_SetLatency(Clock,33);
+	Flash_SetLatency(Config.Clock,33);
 
-	RCC->CR.Fields.HSEON = 1;
-	while(RCC->CR.Fields.HSERDY == 0);
+	uint8 Result = 0;
+	uint16 DividerM;
+	uint16 MultiplierN;
+	uint16 DividerP;
+	uint32 CalculatedClock;
 
-	/* Select HSE clock as PLL source */
-	RCC->PLLCFGR.Fields.PLLSRC = 1;
+	for(DividerM = DIVIDER_M_MIN; (DividerM <= DIVIDER_M_MAX) && (Result == 0); DividerM++)
+	{
+		uint32 PllInClock = CrystalFreq/DividerM;
+		if((PllInClock >= 1000000) && (PllInClock <= 2000000))
+		{
+			for(MultiplierN = MULT_N_MIN; (MultiplierN <= MULT_N_MAX) && (Result == 0); MultiplierN++)
+			{
+				uint32 PllClock = PllInClock*MultiplierN;
+				if((PllClock >= 100000000) && (PllClock <= 432000000))
+				{
+					for(DividerP = DIVIDER_P_MIN; (DividerP <= DIVIDER_P_MAX) && (Result == 0); DividerP++)
+					{
+						CalculatedClock = PllClock / ((DividerP+1)*2);
+						if(CalculatedClock == Config.Clock) Result = 1;
+					}
+				}
+			}
+		}
+	}
+
+	if(Config.CrystalOrInternal == Crystal)
+	{
+		RCC->CR.Fields.HSEON = 1;
+		while(RCC->CR.Fields.HSERDY == 0);
+		RCC->PLLCFGR.Fields.PLLSRC = 1;
+	}
+	else
+	{
+		RCC->CR.Fields.HSION = 1;
+		while(RCC->CR.Fields.HSIRDY == 0);
+		RCC->PLLCFGR.Fields.PLLSRC = 0;
+	}
+
 
 	/* We use the MSI clock, being by default 4MHz, for the PLL so it not need to divide. */
-	RCC->PLLCFGR.Fields.PLLM = 8;
+	RCC->PLLCFGR.Fields.PLLM = DividerM-1;
 
 	/* 4MHz * 40 = 160 MHz for VCO frequency */
-	RCC->PLLCFGR.Fields.PLLN = 50;
+	RCC->PLLCFGR.Fields.PLLN = MultiplierN-1;
 
+	RCC->PLLCFGR.Fields.PLLP = DividerP-1;
 
 	RCC->CR.Fields.PLLON = 1;
 	while(RCC->CR.Fields.PLLRDY == 0);
 
-	RCC->CFGR.Fields.SW = 3;
-	while(RCC->CFGR.Fields.SWS != 3);
+	if(Config.APB2_Presc == APB_Presc1) RCC->CFGR.Fields.PPRE2 = 0;
+	else RCC->CFGR.Fields.PPRE2 = 0x4 | (Config.APB2_Presc-1);
+
+	if(Config.APB1_Presc == APB_Presc1) RCC->CFGR.Fields.PPRE1 = 0;
+	else RCC->CFGR.Fields.PPRE1 = 0x4 | (Config.APB1_Presc-1);
+
+	if(Config.AHB_Presc == AHB_Presc1) RCC->CFGR.Fields.HRPE = 0;
+	else RCC->CFGR.Fields.HRPE = 0x8 | (Config.AHB_Presc-1);
+
+	RCC->CFGR.Fields.SW = 2;
+	while(RCC->CFGR.Fields.SWS != 2);
 }
 
 uint32 RCC_GetClock(dtBus Bus)

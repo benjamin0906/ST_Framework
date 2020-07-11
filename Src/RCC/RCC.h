@@ -66,8 +66,45 @@ typedef enum
 	Core,
 } dtBus;
 
+enum
+{
+	Crystal		= 0,
+	Internal	= 1,
+} eCrystalOrInternal;
+
+enum
+{
+	APB_Presc1 = 0,
+	APB_Presc2 = 1,
+	APB_Presc4 = 2,
+	APB_Presc8 = 3,
+	APB_Presc16 = 4,
+} eAPBPresc;
+
+enum
+{
+	AHB_Presc1		= 0,
+	AHB_Presc2		= 1,
+	AHB_Presc4		= 2,
+	AHB_Presc8		= 3,
+	AHB_Presc16		= 4,
+	AHB_Presc64		= 5,
+	AHB_Presc128	= 6,
+	AHB_Presc256	= 7,
+	AHB_Presc512	= 8,
+} eAHBPresc;
+
+typedef struct
+{
+	uint32 Clock;
+	uint32 CrystalOrInternal	:1;
+	uint32 APB2_Presc			:3;	//max 90MHz
+	uint32 APB1_Presc			:3;	//max 45MHz
+	uint32 AHB_Presc			:4;
+} dtRccInitConfig;
+
 extern void RCC_ClockEnable(dtRCCClock Clock, dtRCCClockSets Value);
-extern void RCC_ClockSet(uint32 Clock);
+extern void RCC_ClockSet(dtRccInitConfig Config);
 extern uint32 RCC_GetClock(dtBus Bus);
 
 #endif /* RCC_RCC_H_ */
