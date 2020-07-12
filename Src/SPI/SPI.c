@@ -140,8 +140,9 @@ void SPI1_IRQHandler(void)
 	else DataInstance->RxBuffPointer[BuffIndex] |= Instance->DR;
 	if(BuffIndex < DataInstance->TransferLength)
 	{
-		if((DataInstance->Indexer & 1) != 0) Instance->DR = (uint16)DataInstance->TxBuffPointer[DataInstance->Indexer++];
-		else Instance->DR = (uint16)DataInstance->TxBuffPointer[DataInstance->Indexer++]>>16;
+		if((DataInstance->Indexer & 1) != 0) Instance->DR = (uint16)DataInstance->TxBuffPointer[BuffIndex];
+		else Instance->DR = (uint16)DataInstance->TxBuffPointer[BuffIndex]>>16;
+		DataInstance->Indexer++;
 	}
 	else
 	{
@@ -161,26 +162,17 @@ void SPI2_IRQHandler(void)
 void SPI3_IRQHandler(void)
 {
 	dtSpiData *DataInstance = GetDataOfInstance(3);
-		dtSPI_I2S *Instance = GetSpiInstance(3);
-		uint32 BuffIndex = DataInstance->Indexer>>1;
-		if((DataInstance->Indexer & 1) != 0) DataInstance->RxBuffPointer[BuffIndex] = Instance->DR<<16;
-		else DataInstance->RxBuffPointer[BuffIndex] |= Instance->DR;
-		if(BuffIndex < DataInstance->TransferLength)
-		{
-			if((DataInstance->Indexer & 1) != 0)
-			{
-				Instance->DR = (uint16)DataInstance->TxBuffPointer[BuffIndex];
-			}
-			else
-			{
-				Instance->DR = (uint16)DataInstance->TxBuffPointer[BuffIndex]>>16;
-			}
-			DataInstance->Indexer++;
-		}
-		else
-		{
-			GPIO_Set(GetDataOfInstance(3)->ChipSelectPin, Set);
-		}
+	dtSPI_I2S *Instance = GetSpiInstance(3);
+	uint32 BuffIndex = DataInstance->Indexer>>1;
+	if((DataInstance->Indexer & 1) != 0) DataInstance->RxBuffPointer[BuffIndex] = Instance->DR<<16;
+	else DataInstance->RxBuffPointer[BuffIndex] |= Instance->DR;
+	if(BuffIndex < DataInstance->TransferLength)
+	{
+		if((DataInstance->Indexer & 1) != 0) Instance->DR = (uint16)DataInstance->TxBuffPointer[BuffIndex];
+		else Instance->DR = (uint16)DataInstance->TxBuffPointer[BuffIndex]>>16;
+		DataInstance->Indexer++;
+	}
+	else GPIO_Set(GetDataOfInstance(3)->ChipSelectPin, Set);
 }
 #endif
 
