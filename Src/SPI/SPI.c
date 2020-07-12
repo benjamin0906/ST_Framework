@@ -147,6 +147,7 @@ void SPI1_IRQHandler(void)
 	else
 	{
 		GPIO_Set(GetDataOfInstance(1)->ChipSelectPin, Set);
+		GetDataOfInstance(1)->Status = SpiIdle;
 	}
 }
 #endif
@@ -172,7 +173,11 @@ void SPI3_IRQHandler(void)
 		else Instance->DR = (uint16)DataInstance->TxBuffPointer[BuffIndex]>>16;
 		DataInstance->Indexer++;
 	}
-	else GPIO_Set(GetDataOfInstance(3)->ChipSelectPin, Set);
+	else
+	{
+		GPIO_Set(GetDataOfInstance(3)->ChipSelectPin, Set);
+		GetDataOfInstance(3)->Status = SpiIdle;
+	}
 }
 #endif
 
