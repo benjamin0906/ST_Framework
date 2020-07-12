@@ -99,15 +99,18 @@ void SPI_Init(dtSpiConf Config)
 	Cr1Temp.Fields.CPOL = Config.CPOL;
 	Cr1Temp.Fields.MSTR = 1;
 	Cr1Temp.Fields.SPE = 1;
+	Cr1Temp.Fields.SSM = 1;
+	Cr1Temp.Fields.SSI = 1;
 
-	Cr2Temp.Fields.FRF = 1;
+
+	Cr2Temp.Fields.FRF = 0;
 	Cr2Temp.Fields.RXNEIE =1;
 
 	Instance->CR2 = Cr2Temp;
 	Instance->CR1 = Cr1Temp;
 
-	GetDataOfInstance(Instance)->ChipSelectPin = Config.ChipSelectPin;
-	GPIO_Set(GetDataOfInstance(Instance)->ChipSelectPin, Set);
+	GetDataOfInstance(Config.Instance)->ChipSelectPin = Config.ChipSelectPin;
+	GPIO_Set(GetDataOfInstance(Config.Instance)->ChipSelectPin, Set);
 }
 
 void SPI_Send(uint8 Instance, uint32 *TxBuff, uint32 *RxBuff, uint32 Length)
@@ -142,7 +145,7 @@ void SPI1_IRQHandler(void)
 	}
 	else
 	{
-		GPIO_Set(GetDataOfInstance(Instance)->ChipSelectPin, Set);
+		GPIO_Set(GetDataOfInstance(1)->ChipSelectPin, Set);
 	}
 }
 #endif
@@ -164,12 +167,19 @@ void SPI3_IRQHandler(void)
 		else DataInstance->RxBuffPointer[BuffIndex] |= Instance->DR;
 		if(BuffIndex < DataInstance->TransferLength)
 		{
-			if((DataInstance->Indexer & 1) != 0) Instance->DR = (uint16)DataInstance->TxBuffPointer[DataInstance->Indexer++];
-			else Instance->DR = (uint16)DataInstance->TxBuffPointer[DataInstance->Indexer++]>>16;
+			if((DataInstance->Indexer & 1) != 0)
+			{
+				Instance->DR = (uint16)DataInstance->TxBuffPointer[BuffIndex];
+			}
+			else
+			{
+				Instance->DR = (uint16)DataInstance->TxBuffPointer[BuffIndex]>>16;
+			}
+			DataInstance->Indexer++;
 		}
 		else
 		{
-			GPIO_Set(GetDataOfInstance(Instance)->ChipSelectPin, Set);
+			GPIO_Set(GetDataOfInstance(3)->ChipSelectPin, Set);
 		}
 }
 #endif
