@@ -32,8 +32,8 @@ uint32 RCC_GetClock(dtBus Bus);
 
 void RCC_ClockEnable(dtRCCClock Clock, dtRCCClockSets Value)
 {
-	uint32 BusId = Clock & 0xFFFFFFE0;
-	uint32 ClockMask = 1 << (Clock & 0x1F);
+	uint32 BusId = Clock/32;
+	uint32 ClockMask = 1 << (Clock - (BusId*32));
 	dtSetOrClear SetOrClear = Set;
 	dtBusGroup *GroupPtr;
 
@@ -47,7 +47,12 @@ void RCC_ClockEnable(dtRCCClock Clock, dtRCCClockSets Value)
 		ClockMask = ~ClockMask;
 	}
 
-	switch(BusId)
+	uint32 *Pointer = &GroupPtr->AHB1.Word + BusId;
+
+	if(SetOrClear == Set) *Pointer |= ClockMask;
+	else *Pointer &= ClockMask;
+
+	/*switch(BusId)
 	{
 		case 0<<5:
 				if(SetOrClear == Set) GroupPtr->AHB1.Word |= ClockMask;
@@ -61,7 +66,7 @@ void RCC_ClockEnable(dtRCCClock Clock, dtRCCClockSets Value)
 				if(SetOrClear == Set) GroupPtr->APB2.Word |= ClockMask;
 				else GroupPtr->APB2.Word &= ClockMask;
 			break;
-	}
+	}*/
 }
 
 void RCC_ClockSet(dtRccInitConfig Config)
