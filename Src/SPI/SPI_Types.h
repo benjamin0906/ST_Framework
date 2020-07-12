@@ -9,6 +9,7 @@
 #define SPI_SPI_TYPES_H_
 
 #include "types.h"
+#include "SPI.h"
 
 typedef union
 {
@@ -111,5 +112,15 @@ typedef struct
 	dtI2SCFGR	I2SCFGR;
 	dtI2SPR	I2SPR;
 } dtSPI_I2S;
+
+typedef struct
+{
+	dtSpStatus Status;
+	uint32 *TxBuffPointer;
+	uint32 *RxBuffPointer;
+	uint32 TransferLength;
+	uint32 Indexer;
+	dtGPIOs ChipSelectPin;
+} dtSpiData;
 
 #endif /* SPI_SPI_TYPES_H_ */

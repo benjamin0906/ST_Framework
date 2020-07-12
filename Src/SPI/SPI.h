@@ -9,6 +9,7 @@
 #define ST_FRAMEWORK_SRC_SPI_SPI_H_
 
 #include "types.h"
+#include "GPIO.h"
 
 enum
 {
@@ -34,6 +35,12 @@ enum
 	Lsb,
 } eLsbOrMsb;
 
+typedef enum
+{
+	SpiIdle,
+	SpiInProgress,
+} dtSpStatus;
+
 typedef struct
 {
 	uint32 ClockDiv	:3;
@@ -42,8 +49,10 @@ typedef struct
 	uint32 CPOL		:1;
 	uint32 CHPA		:1;
 	uint32 Instance	:3;
+	dtGPIOs ChipSelectPin;
 } dtSpiConf;
 
 extern void SPI_Init(dtSpiConf Config);
+extern void SPI_Send(uint8 Instance, uint32 *TxBuff, uint32 *RxBuff, uint32 Length);
 
 #endif /* ST_FRAMEWORK_SRC_SPI_SPI_H_ */
