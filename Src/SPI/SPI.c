@@ -137,7 +137,7 @@ void SPI1_IRQHandler(void)
 	dtSPI_I2S *Instance = GetSpiInstance(1);
 	uint32 BuffIndex = DataInstance->Indexer>>1;
 	if((DataInstance->Indexer & 1) != 0) DataInstance->RxBuffPointer[BuffIndex] = Instance->DR<<16;
-	else DataInstance->RxBuffPointer[BuffIndex] |= Instance->DR;
+	else DataInstance->RxBuffPointer[BuffIndex-1] |= Instance->DR;
 	if(BuffIndex < DataInstance->TransferLength)
 	{
 		if((DataInstance->Indexer & 1) != 0) Instance->DR = (uint16)DataInstance->TxBuffPointer[BuffIndex];
