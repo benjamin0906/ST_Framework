@@ -24,11 +24,17 @@ enum eOCMode
 	Frozen,
 	ActiveOnMatch,
 	InactiveOnMatch,
-	Toggle,
+	OcToggle,
 	ForceInactive,
 	ForceActive,
 	Pwm1,
 	Pwm2,
+};
+
+enum eOcPolarity
+{
+	ActiveHigh,
+	ActiveLow,
 };
 
 typedef struct
@@ -38,6 +44,8 @@ typedef struct
 	uint32 Direction	:1;
 	uint32 Mode			:3;
 	uint32 OCMode		:3;
+	uint32 OcPolarity	:1;
+
 } dtGPT1Config;
 
 #endif /* ST_FRAMEWORK_SRC_GPT1_GPT_TIM_EXT_TYPES_H_ */

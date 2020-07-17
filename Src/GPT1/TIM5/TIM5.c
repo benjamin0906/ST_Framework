@@ -28,23 +28,32 @@ void TIM5_Init(dtGPT1Config Config)
 		TIM5->CCMR1.Out_Fields.CC1S = 0;
 		TIM5->CCMR1.Out_Fields.OC1PE = 1;
 		TIM5->CCMR1.Out_Fields.OC1M = Config.OCMode;
+		TIM5->CCER.Fields.CC1P = Config.OcPolarity;
+		TIM5->CCER.Fields.CC1E = 1;
 		break;
 	case Oc2:
 		TIM5->CCMR1.Out_Fields.CC2S = 0;
 		TIM5->CCMR1.Out_Fields.OC2PE = 1;
 		TIM5->CCMR1.Out_Fields.OC2M = Config.OCMode;
+		TIM5->CCER.Fields.CC2P = Config.OcPolarity;
+		TIM5->CCER.Fields.CC2E = 1;
 		break;
 	case Oc3:
 		TIM5->CCMR2.Out_Fields.CC3S = 0;
 		TIM5->CCMR2.Out_Fields.OC3PE = 1;
 		TIM5->CCMR2.Out_Fields.OC3M = Config.OCMode;
+		TIM5->CCER.Fields.CC3P = Config.OcPolarity;
+		TIM5->CCER.Fields.CC3E = 1;
 		break;
 	case Oc4:
 		TIM5->CCMR2.Out_Fields.CC4S = 0;
 		TIM5->CCMR2.Out_Fields.OC4PE = 1;
 		TIM5->CCMR2.Out_Fields.OC4M = Config.OCMode;
+		TIM5->CCER.Fields.CC4P = Config.OcPolarity;
+		TIM5->CCER.Fields.CC4E = 1;
 		break;
 	}
+	TIM5->CR1.Fields.CEN = 1;
 }
 
 void TIM5_SetCompare(uint8 Channel, uint32 Value)
