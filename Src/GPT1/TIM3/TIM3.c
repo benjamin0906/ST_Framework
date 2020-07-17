@@ -17,8 +17,8 @@ void TIM3_Init(dtGPT1Config Config)
 	TIM3->CR1.Fields.ARPE = 1;
 	TIM3->CR1.Fields.DIR = Config.Direction;
 
-	TIM3->ARR = Config.ARR;
-	TIM3->PSC = Config.Presc;
+	TIM3->ARR.Word = Config.ARR;
+	TIM3->PSC.Word = Config.Presc;
 
 	switch(Config.Mode)
 	{
@@ -26,15 +26,38 @@ void TIM3_Init(dtGPT1Config Config)
 		break;
 	case Oc1:
 		TIM3->CCMR1.Out_Fields.CC1S = 0;
+		TIM3->CCMR1.Out_Fields.OC1PE = 1;
+		TIM3->CCMR1.Out_Fields.OC1M = Config.OCMode;
 		break;
 	case Oc2:
 		TIM3->CCMR1.Out_Fields.CC2S = 0;
+		TIM3->CCMR1.Out_Fields.OC2PE = 1;
+		TIM3->CCMR1.Out_Fields.OC2M = Config.OCMode;
 		break;
 	case Oc3:
 		TIM3->CCMR2.Out_Fields.CC3S = 0;
+		TIM3->CCMR2.Out_Fields.OC3PE = 1;
+		TIM3->CCMR2.Out_Fields.OC3M = Config.OCMode;
 		break;
 	case Oc4:
 		TIM3->CCMR2.Out_Fields.CC4S = 0;
+		TIM3->CCMR2.Out_Fields.OC4PE = 1;
+		TIM3->CCMR2.Out_Fields.OC4M = Config.OCMode;
+		break;
+	}
+}
+
+void TIM3_SetCompare(uint8 Channel, uint32 Value)
+{
+	switch(Channel)
+	{
+	case 1:
+		break;
+	case 2:
+		break;
+	case 3:
+		break;
+	case 4:
 		break;
 	}
 }
