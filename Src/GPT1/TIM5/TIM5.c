@@ -56,17 +56,27 @@ void TIM5_Init(dtGPT1Config Config)
 	TIM5->CR1.Fields.CEN = 1;
 }
 
-void TIM5_SetCompare(uint8 Channel, uint32 Value)
+void TIM5_SetValue(dtGPT1SetTypes Type, uint32 Value)
 {
-	switch(Channel)
+	switch(Type)
 	{
-	case 1:
+	case GPT1_Prescaler:
+		TIM5->PSC.Word = Value;
 		break;
-	case 2:
+	case GPT1_AutoReload:
+		TIM5->ARR.Word = Value;
 		break;
-	case 3:
+	case GPT1_Oc1:
+		TIM5->CCR1.Word = Value;
 		break;
-	case 4:
+	case GPT1_Oc2:
+		TIM5->CCR2.Word = Value;
+		break;
+	case GPT1_Oc3:
+		TIM5->CCR3.Word = Value;
+		break;
+	case GPT1_Oc4:
+		TIM5->CCR4.Word = Value;
 		break;
 	}
 }

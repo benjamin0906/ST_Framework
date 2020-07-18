@@ -37,6 +37,16 @@ enum eOcPolarity
 	ActiveLow,
 };
 
+typedef enum
+{
+	GPT1_Prescaler,
+	GPT1_AutoReload,
+	GPT1_Oc1,
+	GPT1_Oc2,
+	GPT1_Oc3,
+	GPT1_Oc4,
+} dtGPT1SetTypes;
+
 typedef struct
 {
 	uint32 ARR;
