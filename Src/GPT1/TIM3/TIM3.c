@@ -6,9 +6,12 @@
  */
 
 #include "../GPT_TIM_Types.h"
-#include "../GPT_TIM_Ext_Types.h"
+#include "TIM3.h"
 
 static dtGPT1 *const TIM3 = (dtGPT1*)(0x40000400);
+
+void TIM3_Init(dtGPT1Config Config);
+void TIM3_SetValue(dtGPT1SetTypes Type, uint32 Value);
 
 void TIM3_Init(dtGPT1Config Config)
 {
@@ -28,36 +31,55 @@ void TIM3_Init(dtGPT1Config Config)
 		TIM3->CCMR1.Out_Fields.CC1S = 0;
 		TIM3->CCMR1.Out_Fields.OC1PE = 1;
 		TIM3->CCMR1.Out_Fields.OC1M = Config.OCMode;
+		TIM3->CCER.Fields.CC1P = Config.OcPolarity;
+		TIM3->CCER.Fields.CC1E = 1;
 		break;
 	case Oc2:
 		TIM3->CCMR1.Out_Fields.CC2S = 0;
 		TIM3->CCMR1.Out_Fields.OC2PE = 1;
 		TIM3->CCMR1.Out_Fields.OC2M = Config.OCMode;
+		TIM3->CCER.Fields.CC2P = Config.OcPolarity;
+		TIM3->CCER.Fields.CC2E = 1;
 		break;
 	case Oc3:
 		TIM3->CCMR2.Out_Fields.CC3S = 0;
 		TIM3->CCMR2.Out_Fields.OC3PE = 1;
 		TIM3->CCMR2.Out_Fields.OC3M = Config.OCMode;
+		TIM3->CCER.Fields.CC3P = Config.OcPolarity;
+		TIM3->CCER.Fields.CC3E = 1;
 		break;
 	case Oc4:
 		TIM3->CCMR2.Out_Fields.CC4S = 0;
 		TIM3->CCMR2.Out_Fields.OC4PE = 1;
 		TIM3->CCMR2.Out_Fields.OC4M = Config.OCMode;
+		TIM3->CCER.Fields.CC4P = Config.OcPolarity;
+		TIM3->CCER.Fields.CC4E = 1;
 		break;
 	}
+	TIM3->CR1.Fields.CEN = 1;
 }
 
-void TIM3_SetCompare(uint8 Channel, uint32 Value)
+void TIM3_SetValue(dtGPT1SetTypes Type, uint32 Value)
 {
-	switch(Channel)
+	switch(Type)
 	{
-	case 1:
+	case GPT1_Prescaler:
+		TIM3->PSC.Word = Value;
 		break;
-	case 2:
+	case GPT1_AutoReload:
+		TIM3->ARR.Word = Value;
 		break;
-	case 3:
+	case GPT1_Oc1:
+		TIM3->CCR1.Word = Value;
 		break;
-	case 4:
+	case GPT1_Oc2:
+		TIM3->CCR2.Word = Value;
+		break;
+	case GPT1_Oc3:
+		TIM3->CCR3.Word = Value;
+		break;
+	case GPT1_Oc4:
+		TIM3->CCR4.Word = Value;
 		break;
 	}
 }
