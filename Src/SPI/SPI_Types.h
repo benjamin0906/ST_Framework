@@ -33,6 +33,28 @@ typedef union
 	} Fields;
 	uint32 Word;
 } dtCR1;
+#elif defined(MCU_G070)
+typedef union
+{
+	struct
+	{
+		uint32 CPHA		:1;
+		uint32 CPOL		:1;
+		uint32 MSTR		:1;
+		uint32 BR		:3;
+		uint32 SPE		:1;
+		uint32 LSBFIRST	:1;
+		uint32 SSI		:1;
+		uint32 SSM		:1;
+		uint32 RXONLY	:1;
+		uint32 CRCL		:1;
+		uint32 CRCNEXT	:1;
+		uint32 CRCEN	:1;
+		uint32 BIDIOE	:1;
+		uint32 BIDIMODE	:1;
+	} Fields;
+	uint32 Word;
+} dtCR1;
 #endif
 
 #if defined(MCU_F446)
@@ -48,6 +70,26 @@ typedef union
 		uint32 ERRIE	:1;
 		uint32 RXNEIE	:1;
 		uint32 TXEIE	:1;
+	} Fields;
+	uint32 Word;
+} dtCR2;
+#elif defined(MCU_G070)
+typedef union
+{
+	struct
+	{
+		uint32 RXDMAEN	:1;
+		uint32 TXDMAEN	:1;
+		uint32 SSOE		:1;
+		uint32 NSSP		:1;
+		uint32 FRF		:1;
+		uint32 ERRIE	:1;
+		uint32 RXNEIE	:1;
+		uint32 TXEIE	:1;
+		uint32 DS		:1;
+		uint32 FRXTH	:1;
+		uint32 LDMA_RX	:1;
+		uint32 LDMA_TX	:1;
 	} Fields;
 	uint32 Word;
 } dtCR2;
@@ -67,6 +109,25 @@ typedef union
 		uint32 OVR		:1;
 		uint32 BSY		:1;
 		uint32 FRE		:1;
+	} Fields;
+	uint32 Word;
+} dtSR;
+#elif defined(MCU_G070)
+typedef union
+{
+	struct
+	{
+		uint32 RXNE		:1;
+		uint32 TXE		:1;
+		uint32 CHSIDE	:1;
+		uint32 UDR		:1;
+		uint32 CRCERR	:1;
+		uint32 MODF		:1;
+		uint32 OVR		:1;
+		uint32 BSY		:1;
+		uint32 FRE		:1;
+		uint32 FRLVL	:2;
+		uint32 FTLVL	:2;
 	} Fields;
 	uint32 Word;
 } dtSR;
