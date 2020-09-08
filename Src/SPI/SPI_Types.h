@@ -11,6 +11,7 @@
 #include "types.h"
 #include "SPI.h"
 
+#if defined(MCU_F446)
 typedef union
 {
 	struct
@@ -32,7 +33,9 @@ typedef union
 	} Fields;
 	uint32 Word;
 } dtCR1;
+#endif
 
+#if defined(MCU_F446)
 typedef union
 {
 	struct
@@ -48,7 +51,9 @@ typedef union
 	} Fields;
 	uint32 Word;
 } dtCR2;
+#endif
 
+#if defined(MCU_F446)
 typedef union
 {
 	struct
@@ -65,8 +70,9 @@ typedef union
 	} Fields;
 	uint32 Word;
 } dtSR;
+#endif
 
-
+#if defined(MCU_F446)
 typedef union
 {
 	struct
@@ -84,7 +90,9 @@ typedef union
 	} Fields;
 	uint32 Word;
 } dtI2SCFGR;
+#endif
 
+#if defined(MCU_F446)
 typedef union
 {
 	struct
@@ -95,6 +103,7 @@ typedef union
 	} Fields;
 	uint32 Word;
 } dtI2SPR;
+#endif
 
 typedef struct
 {
