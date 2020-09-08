@@ -139,12 +139,30 @@ typedef union
 	struct
 	{
 		uint32 CHLEN	:1;
-		uint32 DATLEN	:1;
+		uint32 DATLEN	:2;
 		uint32 CKPOL	:1;
-		uint32 I2SSTD	:1;
+		uint32 I2SSTD	:2;
 		uint32 			:1;
 		uint32 PCMSYNC	:1;
-		uint32 I2SCFG	:1;
+		uint32 I2SCFG	:2;
+		uint32 I2SE		:1;
+		uint32 I2SMOD	:1;
+		uint32 ASTREN	:1;
+	} Fields;
+	uint32 Word;
+} dtI2SCFGR;
+#elif defined(MCU_G070)
+typedef union
+{
+	struct
+	{
+		uint32 CHLEN	:1;
+		uint32 DATLEN	:2;
+		uint32 CKPOL	:1;
+		uint32 I2SSTD	:2;
+		uint32 			:1;
+		uint32 PCMSYNC	:1;
+		uint32 I2SCFG	:2;
 		uint32 I2SE		:1;
 		uint32 I2SMOD	:1;
 		uint32 ASTREN	:1;
@@ -153,7 +171,7 @@ typedef union
 } dtI2SCFGR;
 #endif
 
-#if defined(MCU_F446)
+#if defined(MCU_F446) || defined(MCU_G070)
 typedef union
 {
 	struct
