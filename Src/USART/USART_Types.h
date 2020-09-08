@@ -260,4 +260,22 @@ typedef union
 } dtPRESC
 #endif
 
+typedef struct
+{
+#if defined(MCU_G070)
+	dtCR1 CR1;
+	dtCR2 CR2;
+	dtCR3 CR3;
+	dtBRR BRR;
+	dtGTPR GTPR;
+	dtRTOR RTOR;
+	dtRQR RQR;
+	dtISR ISR;
+	dtICR ICR;
+	dtRDR RDR;
+	dtTDR TDR;
+	dtPRESC PRESC;
+#endif
+} dtUSART
+
 #endif /* USART_USART_TYPES_H_ */
