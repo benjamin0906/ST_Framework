@@ -41,7 +41,7 @@ typedef union
 		uint32 TXFEIE	:1;
 		uint32 RXFFIE	:1;
 	} Fields;
-} dtCR1
+} dtCR1;
 #endif
 
 #if defined(MCU_G070)
@@ -57,7 +57,7 @@ typedef union
 		uint32 LBDL		:1;
 		uint32 LBDIE	:1;
 		uint32 			:1;
-		uint32 LBCL		:;1
+		uint32 LBCL		:1;
 		uint32 CPHA		:1;
 		uint32 CPOL		:1;
 		uint32 CLKEN	:1;
@@ -72,8 +72,8 @@ typedef union
 		uint32 ABRMOD	:2;
 		uint32 RTOEN	:1;
 		uint32 ADD		:8;
-	}
-} dtCR2
+	};
+} dtCR2;
 #endif
 
 #if defined(MCU_G070)
@@ -107,8 +107,8 @@ typedef union
 		uint32 RXFTCFG	:3;
 		uint32 RXFTIE	:1;
 		uint32 TXFTCFG	:3;
-	}
-} dtCR3
+	};
+} dtCR3;
 #endif
 
 #if defined(MCU_G070)
@@ -118,8 +118,8 @@ typedef union
 	struct
 	{
 		uint32 BRR	:16;
-	}
-} dtBRR
+	};
+} dtBRR;
 #endif
 
 #if defined(MCU_G070)
@@ -130,8 +130,8 @@ typedef union
 	{
 		uint32 PSC	:8;
 		uint32 GT	:8;
-	}
-} dtGPTR
+	};
+} dtGTPR;
 #endif
 
 #if defined(MCU_G070)
@@ -142,8 +142,8 @@ typedef union
 	{
 		uint32 RTO	:24;
 		uint32 BLEN	:8;
-	}
-} dtRTOR
+	};
+} dtRTOR;
 #endif
 
 #if defined(MCU_G070)
@@ -157,8 +157,8 @@ typedef union
 		uint32 MMRQ		:1;
 		uint32 RXFRQ	:1;
 		uint32 TXFRQ	:1;
-	}
-} dtRQR
+	};
+} dtRQR;
 #endif
 
 #if defined(MCU_G070)
@@ -195,8 +195,8 @@ typedef union
 		uint32 TCBGT	:1;
 		uint32 RXFT		:1;
 		uint32 TXFT		:1;
-	}
-} dtISR
+	};
+} dtISR;
 #endif
 
 #if defined(MCU_G070)
@@ -223,8 +223,8 @@ typedef union
 		uint32 CMCF		:1;
 		uint32 			:2;
 		uint32 WUCF		:1;
-	}
-} dtICR
+	};
+} dtICR;
 #endif
 
 #if defined(MCU_G070)
@@ -234,8 +234,8 @@ typedef union
 	struct
 	{
 		uint32 RDR:9;
-	}
-} dtRDR
+	};
+} dtRDR;
 #endif
 
 #if defined(MCU_G070)
@@ -245,8 +245,8 @@ typedef union
 	struct
 	{
 		uint32 TDR:9;
-	}
-} dtTDR
+	};
+} dtTDR;
 #endif
 
 #if defined(MCU_G070)
@@ -256,8 +256,8 @@ typedef union
 	struct
 	{
 		uint32 PRESCALER	:4;
-	}
-} dtPRESC
+	};
+} dtPRESC;
 #endif
 
 typedef struct
@@ -276,6 +276,6 @@ typedef struct
 	dtTDR TDR;
 	dtPRESC PRESC;
 #endif
-} dtUSART
+} dtUSART;
 
 #endif /* USART_USART_TYPES_H_ */
