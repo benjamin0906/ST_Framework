@@ -645,7 +645,6 @@ typedef union
 	} Fields;
 } dtAPB2;
 
-
 typedef struct
 {
 	dtIOP 	IOP;	//+0x00
