@@ -8,7 +8,7 @@
 #include "DMA_Types.h"
 #include "DMA.h"
 #include "NVIC.h"
-
+#if defined(MCU_F446)
 static dtDMAx *const DMA[2] = {(dtDMAx*)(0x40020000),(dtDMAx*)(0x40020400)};
 static void (*DMA_IntFunc[2][7])(uint8 Flags, uint32 Cntr);
 
@@ -260,3 +260,4 @@ void DMA2_CH7_IRQHandler(void)
 {
 	if(DMA_IntFunc[1][6] != 0) (*DMA_IntFunc[1][6])((DMA[0]->ISR.Word>>24) & 0xF, DMA[1]->CH[6].CNDTR.Word);
 }
+#endif

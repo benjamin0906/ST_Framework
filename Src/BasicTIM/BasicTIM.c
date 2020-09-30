@@ -30,9 +30,10 @@ void BasicTIM_Set(dtBTimId Id, void (*IrqPtr)(void))
 	if(IrqPtr != 0) IrqPtrs[Id] = IrqPtr;
 
 	BTIMs[Id]->CR1.Field.CEN = 1;
-
+#if  defined(MCU_F446)
 	NVIC_SetPriority(IRQ_TIM6_DAC,1);
 	NVIC_EnableIRQ(IRQ_TIM6_DAC);
+#endif
 
 }
 

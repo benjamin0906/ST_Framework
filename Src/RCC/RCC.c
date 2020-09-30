@@ -32,13 +32,13 @@ uint32 RCC_GetClock(dtBus Bus);
 
 void RCC_ClockEnable(dtRCCClock Clock, dtRCCClockSets Value)
 {
-	uint32 BusId = Clock/32;
-	uint32 ClockMask = 1 << (Clock - (BusId*32));
+	uint32 BusId = Clock>>5;
+	uint32 ClockMask = 1 << (Clock - (BusId<<5));
 	dtSetOrClear SetOrClear = Set;
 	dtBusGroup *GroupPtr;
 
 	if((Value == Enable) || (Value == Disable)) GroupPtr = &RCC->ENR;
-	else if((Value == LpEnable) || (Value == LpDisable)) GroupPtr = &RCC->LPENR;
+	else if((Value == LpEnable) || (Value == LpDisable)) GroupPtr = &RCC->SMENR;
 	else GroupPtr = &RCC->RSTR;
 
 	if((Value == Disable) || (Value == LpDisable))
@@ -46,9 +46,11 @@ void RCC_ClockEnable(dtRCCClock Clock, dtRCCClockSets Value)
 		SetOrClear = Clear;
 		ClockMask = ~ClockMask;
 	}
-
+#if defined(MCU_G070)
+	uint32 *Pointer = &GroupPtr->IOP.Word + BusId;
+#elif defined(MCU_F446)
 	uint32 *Pointer = &GroupPtr->AHB1.Word + BusId;
-
+#endif
 	if(SetOrClear == Set) *Pointer |= ClockMask;
 	else *Pointer &= ClockMask;
 
@@ -105,13 +107,17 @@ void RCC_ClockSet(dtRccInitConfig Config)
 	{
 		RCC->CR.Fields.HSEON = 1;
 		while(RCC->CR.Fields.HSERDY == 0);
+#if defined(MCU_F446) || defined(MCU_F410)
 		RCC->PLLCFGR.Fields.PLLSRC = 1;
+#endif
 	}
 	else
 	{
 		RCC->CR.Fields.HSION = 1;
 		while(RCC->CR.Fields.HSIRDY == 0);
+#if defined(MCU_F446) || defined(MCU_F410)
 		RCC->PLLCFGR.Fields.PLLSRC = 0;
+#endif
 	}
 
 
@@ -126,12 +132,13 @@ void RCC_ClockSet(dtRccInitConfig Config)
 	RCC->CR.Fields.PLLON = 1;
 	while(RCC->CR.Fields.PLLRDY == 0);
 
+#if defined(MCU_F446) || defined(MCU_F410)
 	if(Config.APB2_Presc == APB_Presc1) RCC->CFGR.Fields.PPRE2 = 0;
 	else RCC->CFGR.Fields.PPRE2 = 0x4 | (Config.APB2_Presc-1);
 
 	if(Config.APB1_Presc == APB_Presc1) RCC->CFGR.Fields.PPRE1 = 0;
 	else RCC->CFGR.Fields.PPRE1 = 0x4 | (Config.APB1_Presc-1);
-
+#endif
 	if(Config.AHB_Presc == AHB_Presc1) RCC->CFGR.Fields.HRPE = 0;
 	else RCC->CFGR.Fields.HRPE = 0x8 | (Config.AHB_Presc-1);
 
@@ -154,9 +161,10 @@ uint32 RCC_GetClock(dtBus Bus)
 		AHBPresc = 1 << ((RCC->CFGR.Fields.HRPE & 0x7) + 1);
 		if(RCC->CFGR.Fields.HRPE >= 0xC) AHBPresc <<= 1;
 	}
+#if defined(MCU_F446) || defined(MCU_F410)
 	if(RCC->CFGR.Fields.PPRE2 >= 0x4) APB2Presc = 1 << ((RCC->CFGR.Fields.PPRE2 & 0x3) + 1);
 	if(RCC->CFGR.Fields.PPRE1 >= 0x4) APB1Presc = 1 << ((RCC->CFGR.Fields.PPRE1 & 0x3) + 1);
-
+#endif
 	AHBClock = ClockFreq/AHBPresc;
 	APB1Clock = AHBClock/APB1Presc;
 	APB2Clock = AHBClock/APB2Presc;
@@ -164,12 +172,16 @@ uint32 RCC_GetClock(dtBus Bus)
 	if(Bus == APB1_Timer)
 	{
 		ret = APB1Clock;
+#if defined(MCU_F446) || defined(MCU_F410)
 		if(RCC->CFGR.Fields.PPRE1 != 1) ret *= 2;
+#endif
 	}
 	else if(Bus == APB2_Timer)
 	{
 		ret = APB2Clock;
+#if defined(MCU_F446) || defined(MCU_F410)
 		if(RCC->CFGR.Fields.PPRE2 != 1) ret *= 2;
+#endif
 	}
 	else if(Bus == APB1_Peripheral) ret = APB1Clock;
 	else if(Bus == APB2_Peripheral) ret = APB2Clock;

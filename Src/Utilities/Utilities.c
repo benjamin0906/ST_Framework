@@ -25,11 +25,11 @@ uint32 IsPassed(uint32 TimeStamp, uint32 Limit)
 	if(PassedTime > Limit) ret=CurrentTicks;
 	return ret;
 }
-
+#if defined(MCU_F446)
 __asm(	".globl sqrt			\n"
 		".p2align 2				\n"
 		".type sqrt, %function	\n"
 		"sqrt:					\n"
 		"VSQRT.F32 s0, s0		\n"
 		"bx lr					\n");
-
+#endif

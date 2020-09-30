@@ -10,9 +10,15 @@
 #if defined(MCU_F410) | defined(MCU_F446)
 static dtSPI_I2S *const SPI1 = (dtSPI_I2S*)(0x40013000);
 static dtSpiData SPI1Data;
+#elif defined(MCU_G070)
+static dtSPI_I2S *const SPI1 = (dtSPI_I2S*)(0x40013000);
+static dtSpiData SPI1Data;
 #endif
 #if defined(MCU_F410) | defined(MCU_F446)
 static dtSPI_I2S *const SPI2 = (dtSPI_I2S*)(0x40003800);
+static dtSpiData SPI2Data;
+#elif defined(MCU_G070)
+static dtSPI_I2S *const SPI2 = (dtSPI_I2S*)(0x40013000);
 static dtSpiData SPI2Data;
 #endif
 #if defined(MCU_F446)
@@ -44,12 +50,16 @@ dtSpiData* GetDataOfInstance(uint8 instance)
 	case 2:
 		ret = &SPI2Data;
 		break;
+#if defined(MCU_F446)
 	case 3:
 		ret = &SPI3Data;
 		break;
+#endif
+#if defined(MCU_F446)
 	case 4:
 		ret = &SPI4Data;
 		break;
+#endif
 #if defined(MCU_F410)
 	case 5:
 		ret = &SPI5Data;
@@ -70,12 +80,16 @@ dtSPI_I2S* GetSpiInstance(uint8 instance)
 	case 2:
 		ret = SPI2;
 		break;
+#if defined(MCU_F446)
 	case 3:
 		ret = SPI3;
 		break;
+#endif
+#if defined(MCU_F446)
 	case 4:
 		ret = SPI4;
 		break;
+#endif
 #if defined(MCU_F410)
 	case 5:
 		ret = SPI5;
@@ -94,7 +108,9 @@ void SPI_Init(dtSpiConf Config)
 
 	Cr1Temp.Fields.BR = Config.ClockDiv;
 	Cr1Temp.Fields.LSBFIRST = Config.LsbOrMsb;
+#if defined(MCU_F446)
 	Cr1Temp.Fields.DFF = Config.DataSize;
+#endif
 	Cr1Temp.Fields.CPHA = Config.CHPA;
 	Cr1Temp.Fields.CPOL = Config.CPOL;
 	Cr1Temp.Fields.MSTR = 1;

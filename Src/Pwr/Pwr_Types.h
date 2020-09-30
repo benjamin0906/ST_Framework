@@ -109,8 +109,12 @@ typedef union
 
 typedef struct
 {
+#if defined(MCU_F410) || defined(MCU_F446)
 	dtCR CR;
 	dtCSR CSR;
+#elif defined(MCU_G070)
+
+#endif
 } dtPwr;
 
 #endif /* PWR_PWR_TYPES_H_ */
