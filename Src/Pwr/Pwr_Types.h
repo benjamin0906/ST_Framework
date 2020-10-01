@@ -106,14 +106,142 @@ typedef union
 	uint32 Word;
 } dtCSR;
 #endif
+#if defined(MCU_G070)
+typedef union
+{
+	uint32 Word;
+	struct
+	{
+		uint32 LPMS			:3;
+		uint32 FPD_STOP		:1;
+		uint32 FPD_LPRUN	:1;
+		uint32 FPD_LPSLP	:1;
+		uint32 				:2;
+		uint32 DBP			:1;
+		uint32 VOS			:1;
+		uint32 				:3;
+		uint32 LPR			:1;
+	} Fields;
+} dtCR;
+
+typedef union
+{
+	uint32 Word;
+	struct
+	{
+		uint32 EWUP1		:1;
+		uint32 EWUP2		:1;
+		uint32 				:1;
+		uint32 EWUP4		:1;
+		uint32 EWUP5		:1;
+		uint32 EWUP6		:1;
+		uint32 				:4;
+		uint32 APC			:1;
+		uint32 				:4;
+		uint32 EIWUL		:1;
+	} Fields;
+} dtCR3;
+
+typedef union
+{
+	uint32 Word;
+	struct
+	{
+		uint32 WP1			:1;
+		uint32 WP2			:1;
+		uint32 				:1;
+		uint32 WP4			:1;
+		uint32 WP5			:1;
+		uint32 WP6			:1;
+		uint32 				:2;
+		uint32 VBE			:1;
+		uint32 VBRS			:1;
+	} Fields;
+} dtCR4;
+
+typedef union
+{
+	uint32 Word;
+	struct
+	{
+		uint32 WUF1			:1;
+		uint32 WUF2			:1;
+		uint32 				:1;
+		uint32 WUF4			:1;
+		uint32 WUF5			:1;
+		uint32 WUF6			:1;
+		uint32 				:2;
+		uint32 SBF			:1;
+		uint32 				:6;
+		uint32 WUFI			:1;
+	} Fields;
+} dtSR1;
+
+typedef union
+{
+	uint32 Word;
+	struct
+	{
+		uint32 				:7;
+		uint32 FLASH_RDY	:1;
+		uint32 REGLPS		:1;
+		uint32 REGLPF		:1;
+		uint32 VOSF			:1;
+	} Fields;
+} dtSR2;
+
+typedef union
+{
+	uint32 Word;
+	struct
+	{
+		uint32 CWUF1		:1;
+		uint32 CWUF2		:1;
+		uint32 				:1;
+		uint32 CWUF4		:1;
+		uint32 CWUF5		:1;
+		uint32 CWUF6		:1;
+		uint32 				:2;
+		uint32 CSBF			:1;
+	} Fields;
+} dtSCR;
+
+/*typedef union
+{
+	uint32 Word;
+	struct
+	{
+		uint32 :;
+	} Fields;
+} dt; */
+
+#endif
 
 typedef struct
 {
+#if defined(MCU_F410) || defined(MCU_F446) || defined(MCU_G070)
+	dtCR 	CR;
+#endif
+#if defined(MCU_G070)
+	uint32	:32;
+#endif
+#if defined(MCU_G070)
+	dtCR3	CR3;
+#endif
+#if defined(MCU_G070)
+	dtCR4	CR4;
+#endif
+#if defined(MCU_G070)
+	dtSR1	SR1;
+#endif
+#if defined(MCU_G070)
+	dtSR2	SR2;
+#endif
+#if defined(MCU_G070)
+	dtSCR	SCR;
+#endif
 #if defined(MCU_F410) || defined(MCU_F446)
-	dtCR CR;
 	dtCSR CSR;
-#elif defined(MCU_G070)
-
 #endif
 } dtPwr;
 

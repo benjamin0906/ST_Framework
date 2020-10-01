@@ -17,12 +17,17 @@ void Pwr_SetVos(uint8 mode)
 #if defined(MCU_F446) || defined(MCU_F410)
 	Pwr->CR.Fields.VOS = mode & 0x3;
 	while(Pwr->CSR.Fields.VOSRDY != 1);
+#elif defined(MCU_G070)
+	Pwr->CR.Fields.VOS = mode & 0x3;
+	while(Pwr->SR2.Fields.VOSF != 0);
 #endif
 }
 
 uint8 Prw_GetVos(uint8 mode)
 {
 #if defined(MCU_F446) || defined(MCU_F410)
+	return Pwr->CR.Fields.VOS;
+#elif defined(MCU_G070)
 	return Pwr->CR.Fields.VOS;
 #endif
 }
