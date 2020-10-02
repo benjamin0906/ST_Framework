@@ -14,16 +14,16 @@ int FailedTests;
 dtRCC TestRCC;
 dtFlash TestFlash;
 
-void TestCheck(int value,char const* filename,int line, char const* function_name)
+void ASSERT(int value,char const* filename,int line, char const* function_name)
 {
 	if(value != 0)
 	{
-		printf("Test Passed: %s:%d %s\r\n",filename,line, function_name);
+		printf("Test Passed: %s:%d %s()\r\n",filename,line, function_name);
 		PassedTests++;
 	}
 	else
 	{
-		printf("Test failed: %s\r\n", function_name);
+		printf("Test failed: %s:%d %s()\r\n",filename,line, function_name);
 		FailedTests++;
 	}
 }

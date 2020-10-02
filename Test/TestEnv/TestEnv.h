@@ -8,9 +8,9 @@
 #ifndef TEST_TESTENV_TESTENV_H_
 #define TEST_TESTENV_TESTENV_H_
 
-extern void TestCheck(int value,char const* filename,int line, char const* function_name);
+extern void ASSERT(int value,char const* filename,int line, char const* function_name);
 
-#define TEST_CHECK(a) TestCheck(a,__FILE__, __LINE__, __func__)
+#define TEST_CHECK(a) ASSERT(a,__FILE__, __LINE__, __func__)
 
 #ifdef RCC_RCC_TYPES_H_
 extern dtRCC TestRCC;
