@@ -10,10 +10,15 @@
 #include "Pwr.h"
 #include "Flash.h"
 
+#ifndef MODULE_TEST
 #if defined(MCU_L476) || defined(MCU_G070)
 static dtRCC *const RCC = (dtRCC*) (0x40021000);
 #elif defined(MCU_F446) || defined(MCU_F410)
 static dtRCC *const RCC = (dtRCC*) (0x40023800);
+#endif
+#else
+#include "TestEnv.h"
+static dtRCC *const RCC = (dtRCC*)&TestRCC;
 #endif
 
 #if defined(MCU_F446) || defined(MCU_F410)
