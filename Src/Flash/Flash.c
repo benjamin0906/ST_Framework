@@ -8,7 +8,11 @@
 #include "Flash_Types.h"
 #include "Flash.h"
 
+#if defined(MCU_F446) || defined(MCU_F446)
 static dtFlash *const Flash = (dtFlash*)(0x40023C00);
+#elif defined(MCU_G070)
+static dtFlash *const Flash = (dtFlash*)(0x40022000);
+#endif
 
 dtSetLatRet Flash_SetLatency(uint32 clock, uint8 VoltageRange);
 
