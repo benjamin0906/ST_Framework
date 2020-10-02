@@ -16,12 +16,29 @@ static dtRCC *const RCC = (dtRCC*) (0x40021000);
 static dtRCC *const RCC = (dtRCC*) (0x40023800);
 #endif
 
+#if defined(MCU_F446) || defined(MCU_F410)
 #define DIVIDER_M_MIN	2
 #define DIVIDER_M_MAX	63
 #define DIVIDER_P_MIN	0
 #define DIVIDER_P_MAX	3
 #define MULT_N_MIN		50
 #define MULT_N_MAX		432
+#define PLL_INPUT_FREQ_MIN	1000000
+#define PLL_INPUT_FREQ_MAX	2000000
+#define PLL_VCO_FREQ_MIN	100000000
+#define PLL_VCO_FREQ_MAX	432000000
+#elif defined(MCU_G070)
+#define DIVIDER_M_MIN	1
+#define DIVIDER_M_MAX	8
+#define DIVIDER_P_MIN	1
+#define DIVIDER_P_MAX	31
+#define MULT_N_MIN		8
+#define MULT_N_MAX		86
+#define PLL_INPUT_FREQ_MIN	4000000
+#define PLL_INPUT_FREQ_MAX	16000000
+#define PLL_VCO_FREQ_MIN	64000000
+#define PLL_VCO_FREQ_MAX	344000000
+#endif
 
 uint32 ClockFreq = 2000000;
 uint32 CrystalFreq = 16000000;
@@ -33,7 +50,7 @@ uint32 RCC_GetClock(dtBus Bus);
 void RCC_ClockEnable(dtRCCClock Clock, dtRCCClockSets Value)
 {
 	uint32 BusId = Clock>>5;
-	uint32 ClockMask = 1 << (Clock - (BusId<<5));
+	uint32 ClockMask = 1 << (Clock&0x1F);
 	dtSetOrClear SetOrClear = Set;
 	dtBusGroup *GroupPtr;
 
@@ -53,22 +70,6 @@ void RCC_ClockEnable(dtRCCClock Clock, dtRCCClockSets Value)
 #endif
 	if(SetOrClear == Set) *Pointer |= ClockMask;
 	else *Pointer &= ClockMask;
-
-	/*switch(BusId)
-	{
-		case 0<<5:
-				if(SetOrClear == Set) GroupPtr->AHB1.Word |= ClockMask;
-				else GroupPtr->AHB1.Word &= ClockMask;
-			break;
-		case 1<<5:
-				if(SetOrClear == Set) GroupPtr->APB1.Word |= ClockMask;
-				else GroupPtr->APB1.Word &= ClockMask;
-			break;
-		case 2<<5:
-				if(SetOrClear == Set) GroupPtr->APB2.Word |= ClockMask;
-				else GroupPtr->APB2.Word &= ClockMask;
-			break;
-	}*/
 }
 
 void RCC_ClockSet(dtRccInitConfig Config)
@@ -86,16 +87,20 @@ void RCC_ClockSet(dtRccInitConfig Config)
 	for(DividerM = DIVIDER_M_MIN; (DividerM <= DIVIDER_M_MAX) && (Result == 0); DividerM++)
 	{
 		uint32 PllInClock = CrystalFreq/DividerM;
-		if((PllInClock >= 1000000) && (PllInClock <= 2000000))
+		if((PllInClock >= PLL_INPUT_FREQ_MIN) && (PllInClock <= PLL_INPUT_FREQ_MAX))
 		{
 			for(MultiplierN = MULT_N_MIN; (MultiplierN <= MULT_N_MAX) && (Result == 0); MultiplierN++)
 			{
 				uint32 PllClock = PllInClock*MultiplierN;
-				if((PllClock >= 100000000) && (PllClock <= 432000000))
+				if((PllClock >= PLL_VCO_FREQ_MIN) && (PllClock <= PLL_VCO_FREQ_MAX))
 				{
 					for(DividerP = DIVIDER_P_MIN; (DividerP <= DIVIDER_P_MAX) && (Result == 0); DividerP++)
 					{
+#if defined(MCU_F446) || defined(MCU_F410)
 						CalculatedClock = PllClock / ((DividerP+1)*2);
+#elif defined(MCU_G070)
+						CalculatedClock = PllClock / (DividerP+1);
+#endif
 						if(CalculatedClock == Config.Clock) Result = 1;
 					}
 				}
