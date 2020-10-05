@@ -679,30 +679,37 @@ void RCC_TestCase_3(void)
 	uint32 CalculatedClock;
 	dtRccInitConfig config;
 	int looper;
+	int looper2;
 	int GotClock;
-
 	config.CrystalOrInternal = Internal;
-	for(looper = 8000000; looper <= 64000000; looper += 8000000)
+
+	for(config.APB1_Presc = 0, looper2 = 0; looper2 < 8; looper2++, config.APB1_Presc++)
 	{
-		MemClear((unsigned char *)&TestRCC, sizeof(TestRCC));
+		for(config.AHB_Presc = 0, looper = 0; looper < 16; looper++, config.AHB_Presc++)
+		{
+			for(looper = 8000000; looper <= 64000000; looper += 8000000)
+			{
+				MemClear((unsigned char *)&TestRCC, sizeof(TestRCC));
 
-		config.Clock = looper;
-		RCC_ClockSet(config);
+				config.Clock = looper;
+				RCC_ClockSet(config);
 
-		/* Calculate the input frequency of the PLL */
-		CalculatedClock = 16000000/(TestRCC.PLLCFGR.Fields.PLLM+1);
+				/* Calculate the input frequency of the PLL */
+				CalculatedClock = 16000000/(TestRCC.PLLCFGR.Fields.PLLM+1);
 
-		/* Calculate the VCO frequency */
-		CalculatedClock *= TestRCC.PLLCFGR.Fields.PLLN;
+				/* Calculate the VCO frequency */
+				CalculatedClock *= TestRCC.PLLCFGR.Fields.PLLN;
 
-		/* Calculate the output frequency */
-		CalculatedClock /= (TestRCC.PLLCFGR.Fields.PLLR+1);
+				/* Calculate the output frequency */
+				CalculatedClock /= (TestRCC.PLLCFGR.Fields.PLLR+1);
 
-		ASSERT(config.Clock, RCC_GetClock(Core));
-		ASSERT(AHB_Calc(config.Clock), RCC_GetClock(AHB));
-		ASSERT(APB_Per_Calc(config.Clock),RCC_GetClock(APB1_Peripheral));
-		ASSERT(APB_Tim_Calc(config.Clock),RCC_GetClock(APB1_Timer));
-		ASSERT(config.Clock, CalculatedClock);
+				ASSERT(config.Clock, RCC_GetClock(Core));
+				ASSERT(AHB_Calc(config.Clock), RCC_GetClock(AHB));
+				ASSERT(APB_Per_Calc(config.Clock),RCC_GetClock(APB1_Peripheral));
+				ASSERT(APB_Tim_Calc(config.Clock),RCC_GetClock(APB1_Timer));
+				ASSERT(config.Clock, CalculatedClock);
+			}
+		}
 	}
 }
 

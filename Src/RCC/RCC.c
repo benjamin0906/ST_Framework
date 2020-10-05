@@ -227,11 +227,7 @@ uint32 RCC_GetClock(dtBus Bus)
 	if(Bus == APB1_Timer)
 	{
 		ret = APB1Clock;
-#if defined(MCU_F446) || defined(MCU_F410)
-		if(RCC->CFGR.Fields.PPRE1 != 1) ret *= 2;
-#elif defined(MCU_G070)
-		if(RCC->CFGR.Fields.PPRE != 1) ret *= 2;
-#endif
+		if(APB1Presc != 1) ret *= 2;
 	}
 #if defined(MCU_F446) || defined(MCU_F410)
 	else if(Bus == APB2_Timer)
