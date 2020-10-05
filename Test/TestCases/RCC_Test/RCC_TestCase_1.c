@@ -13,6 +13,7 @@ void RCC_TestCase_3(void);
 int AHB_Calc(int clock);
 int APB_Per_Calc(int clock);
 int APB_Tim_Calc(int clock);
+void LatencyCheck(int clock);
 
 /*
  * This test case tests the various enabling and disabling of the peripherals
@@ -621,7 +622,7 @@ void RCC_TestCase_2(void)
 		ASSERT(TestRCC.CFGR.Fields.SW, 0);
 		ASSERT(TestRCC.CR.Fields.PLLON, 0);
 		ASSERT(TestPwr.CR.Fields.VOS, 0);
-		//ASSERT(TestRCC.ACR.Fields.LATENCY, 0);
+		ASSERT(TestFlash.ACR.Fields.LATENCY, 0);
 
 		config.Clock = looper;
 		RCC_ClockSet(config);
@@ -642,7 +643,7 @@ void RCC_TestCase_2(void)
 		ASSERT(TestRCC.CR.Fields.PLLON, 1);
 		if(config.Clock > 16000000)	ASSERT(TestPwr.CR.Fields.VOS, 1);
 		else ASSERT(TestPwr.CR.Fields.VOS, 2);
-		//ASSERT(TestRCC.ACR.Fields.LATENCY, 0);
+		LatencyCheck(config.Clock);
 	}
 
 	/* Test the PLL calculation with external crystal oscillator configuration */
@@ -763,4 +764,21 @@ int APB_Tim_Calc(int clock)
 		ret = APB_Per_Calc(clock)*2;
 	}
 	return ret;
+}
+
+void LatencyCheck(int clock)
+{
+	if(TestPwr.CR.Fields.VOS == 1)
+	{
+		if(clock <= 24000000) ASSERT(TestFlash.ACR.Fields.LATENCY, 0);
+		else if(clock <= 48000000) ASSERT(TestFlash.ACR.Fields.LATENCY, 1);
+		else if(clock <= 64000000) ASSERT(TestFlash.ACR.Fields.LATENCY, 2);
+		else ASSERT(1, 0);
+	}
+	else if(TestPwr.CR.Fields.VOS == 2)
+	{
+		if(clock <= 8000000) ASSERT(TestFlash.ACR.Fields.LATENCY, 0);
+		else if(clock <= 16000000) ASSERT(TestFlash.ACR.Fields.LATENCY, 1);
+		else ASSERT(1, 0);
+	}
 }
