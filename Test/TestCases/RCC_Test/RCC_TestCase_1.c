@@ -614,10 +614,14 @@ void RCC_TestCase_2(void)
 	for(looper = 8000000; looper <= 64000000; looper += 8000000)
 	{
 		MemClear((unsigned char *)&TestRCC, sizeof(TestRCC));
+		MemClear((unsigned char *)&TestFlash, sizeof(TestFlash));
+		MemClear((unsigned char *)&TestPwr, sizeof(TestPwr));
 		ASSERT(TestRCC.PLLCFGR.Fields.PLLSRC, 0);
 		ASSERT(TestRCC.PLLCFGR.Fields.PLLREN, 0);
 		ASSERT(TestRCC.CFGR.Fields.SW, 0);
 		ASSERT(TestRCC.CR.Fields.PLLON, 0);
+		ASSERT(TestPwr.CR.Fields.VOS, 0);
+		//ASSERT(TestRCC.ACR.Fields.LATENCY, 0);
 
 		config.Clock = looper;
 		RCC_ClockSet(config);
@@ -636,6 +640,9 @@ void RCC_TestCase_2(void)
 		ASSERT(TestRCC.PLLCFGR.Fields.PLLREN, 1);
 		ASSERT(TestRCC.CFGR.Fields.SW, 2);
 		ASSERT(TestRCC.CR.Fields.PLLON, 1);
+		if(config.Clock > 16000000)	ASSERT(TestPwr.CR.Fields.VOS, 1);
+		else ASSERT(TestPwr.CR.Fields.VOS, 2);
+		//ASSERT(TestRCC.ACR.Fields.LATENCY, 0);
 	}
 
 	/* Test the PLL calculation with external crystal oscillator configuration */
@@ -680,7 +687,6 @@ void RCC_TestCase_3(void)
 	dtRccInitConfig config;
 	int looper;
 	int looper2;
-	int GotClock;
 	config.CrystalOrInternal = Internal;
 
 	for(config.APB1_Presc = 0, looper2 = 0; looper2 < 8; looper2++, config.APB1_Presc++)

@@ -24,5 +24,8 @@ extern dtRCC TestRCC;
 #include "Flash_Types.h"
 extern dtFlash TestFlash;
 #endif
-
+#if defined(PWR_PWR_TYPES_H_) || defined(TEST_CASE)
+#include "Pwr_Types.h"
+dtPwr TestPwr;
+#endif
 #endif /* TEST_TESTENV_TESTENV_H_ */

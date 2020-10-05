@@ -11,6 +11,6 @@
 #include "types.h"
 
 extern void Pwr_SetVos(uint8 mode);
-extern uint8 Prw_GetVos(uint8 mode);
+extern uint8 Pwr_GetVos(void);
 
 #endif /* PWR_PWR_H_ */

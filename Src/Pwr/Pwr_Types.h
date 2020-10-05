@@ -118,11 +118,11 @@ typedef union
 		uint32 FPD_LPSLP	:1;
 		uint32 				:2;
 		uint32 DBP			:1;
-		uint32 VOS			:1;
+		uint32 VOS			:2;
 		uint32 				:3;
 		uint32 LPR			:1;
 	} Fields;
-} dtCR;
+} dtPwrCR;
 
 typedef union
 {
@@ -220,7 +220,7 @@ typedef union
 typedef struct
 {
 #if defined(MCU_F410) || defined(MCU_F446) || defined(MCU_G070)
-	dtCR 	CR;
+	dtPwrCR 	CR;
 #endif
 #if defined(MCU_G070)
 	uint32	:32;

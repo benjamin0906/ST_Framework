@@ -7,12 +7,14 @@
 
 #include "RCC_Types.h"
 #include "Flash_Types.h"
+#include "Pwr_Types.h"
 #include "stdio.h"
 
 int PassedTests;
 int FailedTests;
 dtRCC TestRCC;
 dtFlash TestFlash;
+dtPwr TestPwr;
 
 void TestAssert(int value1, int value2, char const* filename,int line, char const* function_name)
 {

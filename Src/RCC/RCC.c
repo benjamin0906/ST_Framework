@@ -79,9 +79,6 @@ void RCC_ClockEnable(dtRCCClock Clock, dtRCCClockSets Value)
 
 void RCC_ClockSet(dtRccInitConfig Config)
 {
-	ClockFreq = Config.Clock;
-	Flash_SetLatency(Config.Clock,33);
-
 	uint8 Result = 0;
 	uint16 DividerM;
 	uint16 MultiplierN;
@@ -122,75 +119,91 @@ void RCC_ClockSet(dtRccInitConfig Config)
 		}
 	}
 
-	if(Config.CrystalOrInternal == Crystal)
+	if(Result == 1)
 	{
-		RCC->CR.Fields.HSEON = 1;
+		ClockFreq = Config.Clock;
+		if(Config.CrystalOrInternal == Crystal)
+		{
+			RCC->CR.Fields.HSEON = 1;
 #ifdef MODULE_TEST
-		RCC->CR.Fields.HSERDY = 1;
+			RCC->CR.Fields.HSERDY = 1;
 #endif
-		while(RCC->CR.Fields.HSERDY == 0);
+			while(RCC->CR.Fields.HSERDY == 0);
 #if defined(MCU_F446) || defined(MCU_F410)
-		RCC->PLLCFGR.Fields.PLLSRC = 1;
+			RCC->PLLCFGR.Fields.PLLSRC = 1;
 #elif defined(MCU_G070)
-		RCC->PLLCFGR.Fields.PLLSRC = 3;
+			RCC->PLLCFGR.Fields.PLLSRC = 3;
 #endif
-	}
-	else
-	{
-		RCC->CR.Fields.HSION = 1;
+		}
+		else
+		{
+			RCC->CR.Fields.HSION = 1;
 #ifdef MODULE_TEST
-		RCC->CR.Fields.HSIRDY = 1;
+			RCC->CR.Fields.HSIRDY = 1;
 #endif
-		while(RCC->CR.Fields.HSIRDY == 0);
+			while(RCC->CR.Fields.HSIRDY == 0);
 #if defined(MCU_F446) || defined(MCU_F410)
-		RCC->PLLCFGR.Fields.PLLSRC = 0;
+			RCC->PLLCFGR.Fields.PLLSRC = 0;
 #elif defined(MCU_G070)
-		RCC->PLLCFGR.Fields.PLLSRC = 2;
+			RCC->PLLCFGR.Fields.PLLSRC = 2;
 #endif
-	}
+		}
 
 #if defined(MCU_F446) || defined(MCU_F410)
-	/* We use the MSI clock, being by default 4MHz, for the PLL so it not need to divide. */
-	RCC->PLLCFGR.Fields.PLLM = DividerM-1;
+		/* We use the MSI clock, being by default 4MHz, for the PLL so it not need to divide. */
+		RCC->PLLCFGR.Fields.PLLM = DividerM-1;
 #elif defined(MCU_G070)
-	RCC->PLLCFGR.Fields.PLLM = DividerM-2;
+		RCC->PLLCFGR.Fields.PLLM = DividerM-2;
 #endif
 
-	/* 4MHz * 40 = 160 MHz for VCO frequency */
-	RCC->PLLCFGR.Fields.PLLN = MultiplierN-1;
+		/* 4MHz * 40 = 160 MHz for VCO frequency */
+		RCC->PLLCFGR.Fields.PLLN = MultiplierN-1;
 #if defined(MCU_F446) || defined(MCU_F410)
-	RCC->PLLCFGR.Fields.PLLP = DividerP-1;
+		RCC->PLLCFGR.Fields.PLLP = DividerP-1;
 #elif defined(MCU_G070)
-	RCC->PLLCFGR.Fields.PLLR = DividerR-1;
+		RCC->PLLCFGR.Fields.PLLR = DividerR-1;
 #endif
-	RCC->CR.Fields.PLLON = 1;
+		RCC->CR.Fields.PLLON = 1;
 #ifdef MODULE_TEST
-	RCC->CR.Fields.PLLRDY = 1;
+		RCC->CR.Fields.PLLRDY = 1;
 #endif
-	while(RCC->CR.Fields.PLLRDY == 0);
-
-#if defined(MCU_F446) || defined(MCU_F410)
-	if(Config.APB2_Presc == APB_Presc1) RCC->CFGR.Fields.PPRE2 = 0;
-	else RCC->CFGR.Fields.PPRE2 = 0x4 | (Config.APB2_Presc-1);
-
-	if(Config.APB1_Presc == APB_Presc1) RCC->CFGR.Fields.PPRE1 = 0;
-	else RCC->CFGR.Fields.PPRE1 = 0x4 | (Config.APB1_Presc-1);
-#elif defined(MCU_G070)
-	if(Config.APB1_Presc == APB_Presc1) RCC->CFGR.Fields.PPRE = 0;
-	else RCC->CFGR.Fields.PPRE = 0x4 | (Config.APB1_Presc-1);
-#endif
-	if(Config.AHB_Presc == AHB_Presc1) RCC->CFGR.Fields.HPRE = 0;
-	else RCC->CFGR.Fields.HPRE = 0x8 | (Config.AHB_Presc-1);
+		while(RCC->CR.Fields.PLLRDY == 0);
 
 #if defined(MCU_G070)
-	if(Result == 1) RCC->PLLCFGR.Fields.PLLREN = 1;
+		if(ClockFreq <= 16000000)
+		{
+			Pwr_SetVos(2);
+		}
+		else
+		{
+			Pwr_SetVos(1);
+		}
+		Flash_SetLatency(ClockFreq);
 #endif
 
-	RCC->CFGR.Fields.SW = 2;
-#ifdef MODULE_TEST
-	RCC->CFGR.Fields.SWS = 2;
+#if defined(MCU_F446) || defined(MCU_F410)
+		if(Config.APB2_Presc == APB_Presc1) RCC->CFGR.Fields.PPRE2 = 0;
+		else RCC->CFGR.Fields.PPRE2 = 0x4 | (Config.APB2_Presc-1);
+
+		if(Config.APB1_Presc == APB_Presc1) RCC->CFGR.Fields.PPRE1 = 0;
+		else RCC->CFGR.Fields.PPRE1 = 0x4 | (Config.APB1_Presc-1);
+#elif defined(MCU_G070)
+		if(Config.APB1_Presc == APB_Presc1) RCC->CFGR.Fields.PPRE = 0;
+		else RCC->CFGR.Fields.PPRE = 0x4 | (Config.APB1_Presc-1);
 #endif
-	while(RCC->CFGR.Fields.SWS != 2);
+		if(Config.AHB_Presc == AHB_Presc1) RCC->CFGR.Fields.HPRE = 0;
+		else RCC->CFGR.Fields.HPRE = 0x8 | (Config.AHB_Presc-1);
+
+#if defined(MCU_G070)
+		RCC->PLLCFGR.Fields.PLLREN = 1;
+#endif
+
+		RCC->CFGR.Fields.SW = 2;
+#ifdef MODULE_TEST
+		RCC->CFGR.Fields.SWS = 2;
+#endif
+		while(RCC->CFGR.Fields.SWS != 2);
+	}
 }
 
 uint32 RCC_GetClock(dtBus Bus)

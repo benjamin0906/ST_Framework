@@ -7,6 +7,7 @@
 
 #include "Flash_Types.h"
 #include "Flash.h"
+#include "Pwr.h"
 
 #ifndef MODULE_TEST
 #if defined(MCU_F446) || defined(MCU_F446)
@@ -19,8 +20,13 @@ static dtFlash *const Flash = (dtFlash*)(0x40022000);
 static dtFlash *const Flash = (dtFlash*)&TestFlash;
 #endif
 
+#if defined(MCU_F410) || defined(MCU_F446)
 dtSetLatRet Flash_SetLatency(uint32 clock, uint8 VoltageRange);
+#elif defined(MCU_G070)
+dtSetLatRet Flash_SetLatency(uint32 clock);
+#endif
 
+#if defined(MCU_F410) || defined(MCU_F446)
 dtSetLatRet Flash_SetLatency(uint32 clock, uint8 VoltageRange)
 {
 	dtSetLatRet ret = LatIsSet;
@@ -107,3 +113,24 @@ dtSetLatRet Flash_SetLatency(uint32 clock, uint8 VoltageRange)
 	if(Flash->ACR.Fields.LATENCY != Latency) ret = LatFailed;
 	return ret;
 }
+#elif defined(MCU_G070)
+dtSetLatRet Flash_SetLatency(uint32 clock)
+{
+	uint8 Latency = 2;
+	dtSetLatRet ret = LatIsSet;
+	if(Pwr_GetVos() == 1)
+	{
+		if(clock > 48000000) Latency = 2;
+		else if(clock > 24000000) Latency = 1;
+		else Latency = 0;
+	}
+	else
+	{
+		if(clock > 8000000) Latency = 1;
+		else Latency = 0;
+	}
+	Flash->ACR.Fields.LATENCY = Latency;
+	if(Flash->ACR.Fields.LATENCY != Latency) ret = LatFailed;
+	return ret;
+}
+#endif

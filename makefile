@@ -26,6 +26,7 @@ INCLUDES += -I$(SRC_INC_DIR)
 INCLUDES += -I$(SRC_INC_DIR)
 INCLUDES += -I$(SRC_DIR)/RCC
 INCLUDES += -I$(SRC_DIR)/Flash
+INCLUDES += -I$(SRC_DIR)/Pwr
 
 ##############################
 # Module test folders
@@ -42,6 +43,7 @@ RCC_MODULE_TEST += $(RCC_TEST)/RCC_TestCase_1.c
 ##############################
 MODULES += $(SRC_DIR)/RCC/RCC.c
 MODULES += $(SRC_DIR)/Flash/Flash.c
+MODULES += $(SRC_DIR)/Pwr/Pwr.c
 
 ##############################
 # Test cases
