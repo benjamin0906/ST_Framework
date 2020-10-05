@@ -14,15 +14,13 @@
 
 extern void PrintSomething(void);
 extern void RCC_TestCase_1(void);
+extern void RCC_TestCase_2(void);
 
-int main(void) {
-#ifdef MODULE_TEST
-puts("mukodik!!");
-#else
-	puts("!!!Hello Worlddd!!!");
-#endif
-	//PrintSomething();
+int main(void)
+{
 	RCC_TestCase_1();
-	puts("!!!Hello World!!!");
+	RCC_TestCase_2();
+	printf("PASSED TESTS: %i\n", PassedTests);
+	printf("FAILED TESTS: %i\n", FailedTests);
 	return EXIT_SUCCESS;
 }

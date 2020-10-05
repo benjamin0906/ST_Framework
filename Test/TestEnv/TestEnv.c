@@ -14,16 +14,25 @@ int FailedTests;
 dtRCC TestRCC;
 dtFlash TestFlash;
 
-void ASSERT(int value,char const* filename,int line, char const* function_name)
+void TestAssert(int value1, int value2, char const* filename,int line, char const* function_name)
 {
-	if(value != 0)
+	if(value1 == value2)
 	{
-		printf("Test Passed: %s:%d %s()\r\n",filename,line, function_name);
+		printf("Test Passed: %s:%d %s()\n",filename,line, function_name);
 		PassedTests++;
 	}
 	else
 	{
-		printf("Test failed: %s:%d %s()\r\n",filename,line, function_name);
+		printf("Test failed: %s:%d %s(); %d, %d\n",filename,line, function_name, value1, value2);
 		FailedTests++;
+	}
+}
+
+void MemClear(unsigned char *pointer, int size)
+{
+	int looper;
+	for(looper = 0; looper < size; looper++)
+	{
+		pointer[looper] = 0;
 	}
 }

@@ -8,14 +8,20 @@
 #ifndef TEST_TESTENV_TESTENV_H_
 #define TEST_TESTENV_TESTENV_H_
 
-extern void ASSERT(int value,char const* filename,int line, char const* function_name);
+extern int PassedTests;
+extern int FailedTests;
+extern void TestAssert(int value1, int value2, char const* filename,int line, char const* function_name);
+extern void MemClear(unsigned char *pointer, int size);
 
-#define TEST_CHECK(a) ASSERT(a,__FILE__, __LINE__, __func__)
+#define ASSERT(a,b) TestAssert(a,b,__FILE__, __LINE__, __func__)
 
-#ifdef RCC_RCC_TYPES_H_
+#if defined(RCC_RCC_TYPES_H_) || defined(TEST_CASE)
+#include "RCC_Types.h"
+#include "RCC.h"
 extern dtRCC TestRCC;
 #endif
-#ifdef FLASH_FLASH_TYPES_H_
+#if defined(FLASH_FLASH_TYPES_H_) || defined(TEST_CASE)
+#include "Flash_Types.h"
 extern dtFlash TestFlash;
 #endif
 

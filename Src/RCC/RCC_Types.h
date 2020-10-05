@@ -510,7 +510,7 @@ typedef union
 {
 	struct
 	{
-		uint32 PLLSCR	:2;
+		uint32 PLLSRC	:2;
 		uint32			:2;
 		uint32 PLLM		:3;
 		uint32			:1;

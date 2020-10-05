@@ -11,6 +11,7 @@ ifeq ($(MODULE_TEST),1)
 CFLAGS += -DMODULE_TEST
 ifeq ($(MCU_TYPE),G070)
 CFLAGS += -DMCU_G070
+CFLAGS += -g
 endif
 
 ##############################
