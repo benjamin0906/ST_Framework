@@ -9,6 +9,10 @@
 
 void RCC_TestCase_1(void);
 void RCC_TestCase_2(void);
+void RCC_TestCase_3(void);
+int AHB_Calc(int clock);
+int APB_Per_Calc(int clock);
+int APB_Tim_Calc(int clock);
 
 /*
  * This test case tests the various enabling and disabling of the peripherals
@@ -665,4 +669,85 @@ void RCC_TestCase_2(void)
 			ASSERT(TestRCC.CR.Fields.PLLON, 1);
 		}
 	}
+}
+
+/*
+ * This test case test the clock getting functionality
+ */
+void RCC_TestCase_3(void)
+{
+	uint32 CalculatedClock;
+	dtRccInitConfig config;
+	int looper;
+	int GotClock;
+
+	config.CrystalOrInternal = Internal;
+	for(looper = 8000000; looper <= 64000000; looper += 8000000)
+	{
+		MemClear((unsigned char *)&TestRCC, sizeof(TestRCC));
+
+		config.Clock = looper;
+		RCC_ClockSet(config);
+
+		/* Calculate the input frequency of the PLL */
+		CalculatedClock = 16000000/(TestRCC.PLLCFGR.Fields.PLLM+1);
+
+		/* Calculate the VCO frequency */
+		CalculatedClock *= TestRCC.PLLCFGR.Fields.PLLN;
+
+		/* Calculate the output frequency */
+		CalculatedClock /= (TestRCC.PLLCFGR.Fields.PLLR+1);
+
+		ASSERT(config.Clock, RCC_GetClock(Core));
+		ASSERT(AHB_Calc(config.Clock), RCC_GetClock(AHB));
+		ASSERT(APB_Per_Calc(config.Clock),RCC_GetClock(APB1_Peripheral));
+		ASSERT(APB_Tim_Calc(config.Clock),RCC_GetClock(APB1_Timer));
+		ASSERT(config.Clock, CalculatedClock);
+	}
+}
+
+int AHB_Calc(int clock)
+{
+	int ret = clock;
+	if(TestRCC.CFGR.Fields.HPRE & 0x8)
+	{
+		switch(TestRCC.CFGR.Fields.HPRE & 0x7)
+		{
+		case 0: ret /= 2; break;
+		case 1: ret /= 4; break;
+		case 2: ret /= 8; break;
+		case 3: ret /= 16; break;
+		case 4: ret /= 64; break;
+		case 5: ret /= 128; break;
+		case 6: ret /= 256; break;
+		case 7: ret /= 512; break;
+		}
+	}
+	return ret;
+}
+
+int APB_Per_Calc(int clock)
+{
+	int ret = AHB_Calc(clock);
+	if(TestRCC.CFGR.Fields.PPRE & 0x4)
+	{
+		switch(TestRCC.CFGR.Fields.PPRE & 0x3)
+		{
+		case 0: ret /= 2; break;
+		case 1: ret /= 4; break;
+		case 2: ret /= 8; break;
+		case 3: ret /= 16; break;
+		}
+	}
+	return ret;
+}
+
+int APB_Tim_Calc(int clock)
+{
+	int ret = APB_Per_Calc(clock);
+	if((TestRCC.CFGR.Fields.PPRE & 0x4) != 0)
+	{
+		ret = APB_Per_Calc(clock)*2;
+	}
+	return ret;
 }

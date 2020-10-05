@@ -496,7 +496,7 @@ typedef union
 		uint32 SW		:3;
 		uint32 SWS		:3;
 		uint32			:2;
-		uint32 HRPE		:4;
+		uint32 HPRE		:4;
 		uint32 PPRE		:3;
 		uint32 			:9;
 		uint32 MCOSEL	:3;

@@ -325,8 +325,10 @@ typedef enum
 {
 	APB1_Peripheral,
 	APB1_Timer,
+#if defined(MCU_F446) || defined(MCU_F410)
 	APB2_Peripheral,
 	APB2_Timer,
+#endif
 	AHB,
 	Core,
 } dtBus;
@@ -363,7 +365,9 @@ typedef struct
 {
 	uint32 Clock;
 	uint32 CrystalOrInternal	:1;
+#if defined(MCU_F446) || defined(MCU_F410)
 	uint32 APB2_Presc			:3;	//max 90MHz
+#endif
 	uint32 APB1_Presc			:3;	//max 45MHz
 	uint32 AHB_Presc			:4;
 	uint32 CrystalClockFreq;

@@ -179,8 +179,8 @@ void RCC_ClockSet(dtRccInitConfig Config)
 	if(Config.APB1_Presc == APB_Presc1) RCC->CFGR.Fields.PPRE = 0;
 	else RCC->CFGR.Fields.PPRE = 0x4 | (Config.APB1_Presc-1);
 #endif
-	if(Config.AHB_Presc == AHB_Presc1) RCC->CFGR.Fields.HRPE = 0;
-	else RCC->CFGR.Fields.HRPE = 0x8 | (Config.AHB_Presc-1);
+	if(Config.AHB_Presc == AHB_Presc1) RCC->CFGR.Fields.HPRE = 0;
+	else RCC->CFGR.Fields.HPRE = 0x8 | (Config.AHB_Presc-1);
 
 #if defined(MCU_G070)
 	if(Result == 1) RCC->PLLCFGR.Fields.PLLREN = 1;
@@ -198,40 +198,52 @@ uint32 RCC_GetClock(dtBus Bus)
 	uint32 ret = 0;
 	uint16 AHBPresc = 1;
 	uint8 APB1Presc = 1;
+#if defined(MCU_F446) || defined(MCU_F410)
 	uint8 APB2Presc = 1;
+#endif
 	uint32 AHBClock;
 	uint32 APB1Clock;
+#if defined(MCU_F446) || defined(MCU_F410)
 	uint32 APB2Clock;
+#endif
 
-	if(RCC->CFGR.Fields.HRPE >= 0x8)
+	if(RCC->CFGR.Fields.HPRE >= 0x8)
 	{
-		AHBPresc = 1 << ((RCC->CFGR.Fields.HRPE & 0x7) + 1);
-		if(RCC->CFGR.Fields.HRPE >= 0xC) AHBPresc <<= 1;
+		AHBPresc = 1 << ((RCC->CFGR.Fields.HPRE & 0x7) + 1);
+		if(RCC->CFGR.Fields.HPRE >= 0xC) AHBPresc <<= 1;
 	}
 #if defined(MCU_F446) || defined(MCU_F410)
 	if(RCC->CFGR.Fields.PPRE2 >= 0x4) APB2Presc = 1 << ((RCC->CFGR.Fields.PPRE2 & 0x3) + 1);
 	if(RCC->CFGR.Fields.PPRE1 >= 0x4) APB1Presc = 1 << ((RCC->CFGR.Fields.PPRE1 & 0x3) + 1);
+#elif defined(MCU_G070)
+	if(RCC->CFGR.Fields.PPRE >= 0x4) APB1Presc = 1 << ((RCC->CFGR.Fields.PPRE & 0x3) + 1);
 #endif
 	AHBClock = ClockFreq/AHBPresc;
 	APB1Clock = AHBClock/APB1Presc;
+#if defined(MCU_F446) || defined(MCU_F410)
 	APB2Clock = AHBClock/APB2Presc;
+#endif
 
 	if(Bus == APB1_Timer)
 	{
 		ret = APB1Clock;
 #if defined(MCU_F446) || defined(MCU_F410)
 		if(RCC->CFGR.Fields.PPRE1 != 1) ret *= 2;
+#elif defined(MCU_G070)
+		if(RCC->CFGR.Fields.PPRE != 1) ret *= 2;
 #endif
 	}
+#if defined(MCU_F446) || defined(MCU_F410)
 	else if(Bus == APB2_Timer)
 	{
 		ret = APB2Clock;
-#if defined(MCU_F446) || defined(MCU_F410)
 		if(RCC->CFGR.Fields.PPRE2 != 1) ret *= 2;
-#endif
 	}
+#endif
 	else if(Bus == APB1_Peripheral) ret = APB1Clock;
+#if defined(MCU_F446) || defined(MCU_F410)
 	else if(Bus == APB2_Peripheral) ret = APB2Clock;
+#endif
 	else if(Bus == AHB) ret = AHBClock;
 	else if(Bus == Core) ret = ClockFreq;
 	return ret;

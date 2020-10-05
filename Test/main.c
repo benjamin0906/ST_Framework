@@ -15,11 +15,13 @@
 extern void PrintSomething(void);
 extern void RCC_TestCase_1(void);
 extern void RCC_TestCase_2(void);
+extern void RCC_TestCase_3(void);
 
 int main(void)
 {
 	RCC_TestCase_1();
 	RCC_TestCase_2();
+	RCC_TestCase_3();
 	printf("PASSED TESTS: %i\n", PassedTests);
 	printf("FAILED TESTS: %i\n", FailedTests);
 	return EXIT_SUCCESS;
