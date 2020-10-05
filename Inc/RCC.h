@@ -366,6 +366,7 @@ typedef struct
 	uint32 APB2_Presc			:3;	//max 90MHz
 	uint32 APB1_Presc			:3;	//max 45MHz
 	uint32 AHB_Presc			:4;
+	uint32 CrystalClockFreq;
 } dtRccInitConfig;
 
 extern void RCC_ClockEnable(dtRCCClock Clock, dtRCCClockSets Value);

@@ -286,7 +286,7 @@ typedef union
 		uint32 LOCK			:1;
 	} Fields;
 	uint32 Word;
-} dtCR;
+} dtFlashCR;
 
 typedef union
 {
@@ -367,7 +367,7 @@ typedef struct
 	dtSR 		SR;
 #endif
 #if defined(MCU_F410) || defined(MCU_G070)
-	dtCR 		CR;
+	dtFlashCR 		CR;
 #endif
 #if defined(MCU_G070)
 	dtECCR		ECCR;
