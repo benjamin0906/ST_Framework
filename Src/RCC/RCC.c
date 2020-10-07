@@ -176,14 +176,8 @@ void RCC_ClockSet(dtRccInitConfig Config)
 		while(RCC->CR.Fields.PLLRDY == 0);
 
 #if defined(MCU_G070)
-		if(ClockFreq <= 16000000)
-		{
-			Pwr_SetVos(2);
-		}
-		else
-		{
-			Pwr_SetVos(1);
-		}
+		if(ClockFreq <= 16000000) Pwr_SetVos(2);
+		else Pwr_SetVos(1);
 		Flash_SetLatency(ClockFreq);
 #endif
 
