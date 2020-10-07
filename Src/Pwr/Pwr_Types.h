@@ -10,7 +10,7 @@
 
 #include "types.h"
 
-#ifdef MCU_F410
+#if defined(MCU_F410)
 typedef union
 {
 	struct
@@ -34,7 +34,7 @@ typedef union
 		uint32 			:10;
 	} Fields;
 	uint32 Word;
-} dtCR;
+} dtPwrCR;
 #elif defined(MCU_F446)
 typedef union
 {

@@ -56,7 +56,7 @@ typedef union
 	{
 		uint32 SW		:2;
 		uint32 SWS		:2;
-		uint32 HRPE		:4;
+		uint32 HPRE		:4;
 		uint32 MCO1EN	:1;
 		uint32 MCO2EN	:1;
 		uint32 PPRE1	:3;

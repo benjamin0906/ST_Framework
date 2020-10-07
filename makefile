@@ -11,8 +11,12 @@ ifeq ($(MODULE_TEST),1)
 CFLAGS += -DMODULE_TEST
 ifeq ($(MCU_TYPE),G070)
 CFLAGS += -DMCU_G070
-CFLAGS += -g
+else
+ifeq ($(MCU_TYPE),F410)
+CFLAGS += -DMCU_F410
 endif
+endif
+CFLAGS += -g
 
 ##############################
 # Test includes
@@ -36,7 +40,13 @@ RCC_TEST = $(TEST_CASES_DIR)/RCC_Test
 ##############################
 # RCC module test
 ##############################
-RCC_MODULE_TEST += $(RCC_TEST)/RCC_TestCase_1.c
+ifeq ($(MCU_TYPE),G070)
+RCC_MODULE_TEST += $(RCC_TEST)/RCC_Test_G070.c
+else 
+ifeq ($(MCU_TYPE),F410)
+RCC_MODULE_TEST += $(RCC_TEST)/RCC_Test_F410.c
+endif
+endif
 
 ##############################
 # Modules

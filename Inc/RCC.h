@@ -56,95 +56,37 @@ typedef enum
 #elif defined(MCU_G070)
 	RCC_DMA		= 32,
 #endif
-#if defined(MCU_F410)
-	RCC_TIM5	= 35,
-#endif
-#if defined(MCU_F410)
-	RCC_TIM6	= 36,
-#endif
-#if defined(MCU_F446)
-	RCC_OTGFS	= 39,
-#endif
 #if defined(MCU_G070)
 	RCC_FLASH	= 40,
-#endif
-#if defined(MCU_F410)
-	RCC_LPTIM1	= 41,
-#endif
-#if defined(MCU_F410)
-	RCC_WWDG	= 43,
 #endif
 #if defined(MCU_G070)
 	RCC_CRC		= 44,
 #endif
-#if defined(MCU_F410)
-	RCC_SPI2	= 46,
-#endif
-#if defined(MCU_F410)
-	RCC_USART2	= 49,
-#endif
-#if defined(MCU_F410)
-	RCC_I2C1	=53,
-#endif
-#if defined(MCU_F410)
-	RCC_I2C2	=54,
-#endif
-#if defined(MCU_F410)
-	RCC_I2C4	=56,
-#endif
-#if defined(MCU_F410)
-	RCC_PWR		=60,
-#endif
-#if defined(MCU_F410)
-	RCC_DAC		=61,
-#endif
 #if defined(MCU_F446)
 	RCC_FMC		= 64,
-#elif defined(MCU_F410)
-	RCC_TIM1	= 64,
 #endif
 #if defined(MCU_F446)
 	RCC_QSPI	= 65,
 #elif defined(MCU_G070)
 	RCC_TIM3	= 65,
 #endif
-#if defined(MCU_F410)
-	RCC_USART1	= 68,
-#elif defined(MCU_G070)
+#if defined(MCU_G070)
 	RCC_TIM6	= 68,
 #endif
-#if defined(MCU_F410)
-	RCC_USART6	= 69,
-#elif defined(MCU_G070)
+#if defined(MCU_G070)
 	RCC_TIM7	= 69,
 #endif
-#if defined(MCU_F410)
-	RCC_ADC1	= 72,
-#endif
-#if defined(MCU_F410)
-	RCC_SPI1	= 76,
-#endif
-#if defined(MCU_F410)
-	RCC_SYSCFG	= 78,
-#elif defined(MCU_G070)
+#if defined(MCU_G070)
 	RCC_SPI2	= 78,
-#endif
-#if defined(MCU_F410)
-	RCC_TIM9	= 80,
 #endif
 #if defined(MCU_G070)
 	RCC_USART2	= 81,
 #endif
-#if defined(MCU_F410)
-	RCC_TIM11	= 82,
-#elif defined(MCU_G070)
+#if defined(MCU_G070)
 	RCC_USART3	= 82,
 #endif
 #if defined(MCU_G070)
 	RCC_USART4	= 83,
-#endif
-#if defined(MCU_F410)
-	RCC_SPI5	= 84,
 #endif
 #if defined(MCU_G070)
 	RCC_I2C1	= 85,
@@ -194,10 +136,10 @@ typedef enum
 #if defined(MCU_F446)
 	RCC_TIM4	= 130,
 #endif
-#if defined(MCU_F446)
+#if defined(MCU_F446) || defined(MCU_F410)
 	RCC_TIM5	= 131,
 #endif
-#if defined(MCU_F446)
+#if defined(MCU_F446) || defined(MCU_F410)
 	RCC_TIM6	= 132,
 #endif
 #if defined(MCU_F446)
@@ -212,13 +154,13 @@ typedef enum
 #if defined(MCU_F446)
 	RCC_TIM14	= 136,
 #endif
-#if defined(MCU_F410)
+#if defined(MCU_F410) || defined(MCU_F410)
 	RCC_LPTIM1	= 137,
 #endif
-#if defined(MCU_F446)
+#if defined(MCU_F446) || defined(MCU_F410)
 	RCC_WWDG	= 139,
 #endif
-#if defined(MCU_F446)
+#if defined(MCU_F446) || defined(MCU_F410)
 	RCC_SPI2	= 142,
 #endif
 #if defined(MCU_F446)
@@ -227,7 +169,7 @@ typedef enum
 #if defined(MCU_F446)
 	RCC_SPDIFRX = 144,
 #endif
-#if defined(MCU_F446)
+#if defined(MCU_F446) || defined(MCU_F410)
 	RCC_USART2	= 145,
 #endif
 #if defined(MCU_F446)
@@ -239,10 +181,10 @@ typedef enum
 #if defined(MCU_F446)
 	RCC_USART5	= 148,
 #endif
-#if defined(MCU_F446)
+#if defined(MCU_F446) || defined(MCU_F410)
 	RCC_I2C1	= 149,
 #endif
-#if defined(MCU_F446)
+#if defined(MCU_F446) || defined(MCU_F410)
 	RCC_I2C2	= 150,
 #endif
 #if defined(MCU_F446)
@@ -262,47 +204,50 @@ typedef enum
 #if defined(MCU_F446)
 	RCC_CEC		= 155,
 #endif
-#if defined(MCU_F446)
+#if defined(MCU_F446) || defined(MCU_F410)
 	RCC_PWR		= 156,
 #endif
-#if defined(MCU_F446)
+#if defined(MCU_F446) || defined(MCU_F410)
 	RCC_DAC		= 157,
 #endif
-#if defined(MCU_F446)
+#if defined(MCU_F446) || defined(MCU_F410)
 	RCC_TIM1	= 160,
 #endif
 #if defined(MCU_F446)
 	RCC_TIM8	= 161,
 #endif
-#if defined(MCU_F446)
+#if defined(MCU_F446) || defined(MCU_F410)
 	RCC_USART1	= 164,
 #endif
-#if defined(MCU_F446)
+#if defined(MCU_F446) || defined(MCU_F410)
 	RCC_USART6	= 165,
 #endif
-#if defined(MCU_F446)
+#if defined(MCU_F446) || defined(MCU_F410)
 	RCC_ADC1	= 168,
 #endif
 #if defined(MCU_F446)
 	RCC_SDIO	= 171,
 #endif
-#if defined(MCU_F446)
+#if defined(MCU_F446) || defined(MCU_F410)
 	RCC_SPI1	= 172,
 #endif
 #if defined(MCU_F446)
 	RCC_SPI4	= 173,
 #endif
-#if defined(MCU_F446)
+#if defined(MCU_F446) || defined(MCU_F410)
 	RCC_SYSCFG	= 174,
 #endif
-#if defined(MCU_F446)
+#if defined(MCU_F446) || defined(MCU_F410)
 	RCC_TIM9	= 176,
 #endif
 #if defined(MCU_F446)
 	RCC_TIM10	= 177,
 #endif
-#if defined(MCU_F446)
+#if defined(MCU_F446) || defined(MCU_F410)
 	RCC_TIM11	= 178,
+#endif
+#if defined(MCU_F410)
+	RCC_SPI5	= 180,
 #endif
 #if defined(MCU_F446)
 	RCC_SAI1	= 182,

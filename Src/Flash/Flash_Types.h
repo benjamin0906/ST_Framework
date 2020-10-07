@@ -83,7 +83,7 @@ typedef union
 		uint32 LOCK			:1;
 	} Fields;
 	uint32 Word;
-} dtCR;
+} dtFlashCR;
 
 typedef union
 {
@@ -103,16 +103,6 @@ typedef union
 	}Fields;
 	uint32 Word;
 } dtOPTCR;
-
-typedef struct
-{
-	dtACR ACR;
-	dtKEYR KEY;
-	dtOPTKEYR OPTKEYR;
-	dtSR SR;
-	dtCR CR;
-	dtOPTCR OPTCR;
-} dtFlash;
 #elif defined(MCU_F446)
 typedef union
 {

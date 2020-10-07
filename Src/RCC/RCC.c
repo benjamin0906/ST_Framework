@@ -32,6 +32,8 @@ static dtRCC *const RCC = (dtRCC*)&TestRCC;
 #define PLL_INPUT_FREQ_MAX	2000000
 #define PLL_VCO_FREQ_MIN	100000000
 #define PLL_VCO_FREQ_MAX	432000000
+#define INTERNAL_CLOCK_FREQ	16000000
+
 #elif defined(MCU_G070)
 #define DIVIDER_M_MIN	1
 #define DIVIDER_M_MAX	8
@@ -60,7 +62,11 @@ void RCC_ClockEnable(dtRCCClock Clock, dtRCCClockSets Value)
 	dtBusGroup *GroupPtr;
 
 	if((Value == Enable) || (Value == Disable)) GroupPtr = &RCC->ENR;
+#if defined(MCU_G070)
 	else if((Value == LpEnable) || (Value == LpDisable)) GroupPtr = &RCC->SMENR;
+#elif defined(MCU_F410)
+	else if((Value == LpEnable) || (Value == LpDisable)) GroupPtr = &RCC->LPENR;
+#endif
 	else GroupPtr = &RCC->RSTR;
 
 	if((Value == Disable) || (Value == LpDisable))
@@ -70,7 +76,7 @@ void RCC_ClockEnable(dtRCCClock Clock, dtRCCClockSets Value)
 	}
 #if defined(MCU_G070)
 	uint32 *Pointer = &GroupPtr->IOP.Word + BusId;
-#elif defined(MCU_F446)
+#elif defined(MCU_F446) || defined(MCU_F410)
 	uint32 *Pointer = &GroupPtr->AHB1.Word + BusId;
 #endif
 	if(SetOrClear == Set) *Pointer |= ClockMask;
@@ -105,7 +111,7 @@ void RCC_ClockSet(dtRccInitConfig Config)
 					for(DividerP = DIVIDER_P_MIN; (DividerP <= DIVIDER_P_MAX) && (Result == 0); DividerP++)
 					{
 						CalculatedClock = PllClock / ((DividerP+1)*2);
-
+						if(CalculatedClock == Config.Clock) Result = 1;
 					}
 #elif defined(MCU_G070)
 					for(DividerR = DIVIDER_R_MIN; (DividerR <= DIVIDER_R_MAX) && (Result == 0); DividerR++)

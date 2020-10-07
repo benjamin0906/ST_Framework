@@ -1,4 +1,12 @@
 eclipse.preferences.version=1
+environment/project/cdt.managedbuild.toolchain.gnu.cross.base.1274477337.650310406/MCU_TYPE/delimiter=;
+environment/project/cdt.managedbuild.toolchain.gnu.cross.base.1274477337.650310406/MCU_TYPE/operation=replace
+environment/project/cdt.managedbuild.toolchain.gnu.cross.base.1274477337.650310406/MCU_TYPE/value=F410
+environment/project/cdt.managedbuild.toolchain.gnu.cross.base.1274477337.650310406/MODULE_TEST/delimiter=;
+environment/project/cdt.managedbuild.toolchain.gnu.cross.base.1274477337.650310406/MODULE_TEST/operation=replace
+environment/project/cdt.managedbuild.toolchain.gnu.cross.base.1274477337.650310406/MODULE_TEST/value=1
+environment/project/cdt.managedbuild.toolchain.gnu.cross.base.1274477337.650310406/append=true
+environment/project/cdt.managedbuild.toolchain.gnu.cross.base.1274477337.650310406/appendContributed=true
 environment/project/cdt.managedbuild.toolchain.gnu.cross.base.1274477337/MCU_TYPE/delimiter=;
 environment/project/cdt.managedbuild.toolchain.gnu.cross.base.1274477337/MCU_TYPE/operation=append
 environment/project/cdt.managedbuild.toolchain.gnu.cross.base.1274477337/MCU_TYPE/value=G070

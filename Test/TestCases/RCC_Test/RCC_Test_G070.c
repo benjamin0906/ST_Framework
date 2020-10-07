@@ -23,7 +23,6 @@ void RCC_TestCase_1(void)
 	/********************************/
 	/* Test of enabling peripherals */
 	/********************************/
-
 	ASSERT(TestRCC.ENR.IOP.Fields.GPIOA, 0);
 	RCC_ClockEnable(RCC_GPIOA, Enable);
 	ASSERT(TestRCC.ENR.IOP.Fields.GPIOA, 1);
@@ -623,7 +622,6 @@ void RCC_TestCase_2(void)
 		ASSERT(TestRCC.CR.Fields.PLLON, 0);
 		ASSERT(TestPwr.CR.Fields.VOS, 0);
 		ASSERT(TestFlash.ACR.Fields.LATENCY, 0);
-
 		config.Clock = looper;
 		RCC_ClockSet(config);
 
