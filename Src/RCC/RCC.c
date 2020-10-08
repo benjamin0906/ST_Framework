@@ -9,6 +9,7 @@
 #include "RCC.h"
 #include "Pwr.h"
 #include "Flash.h"
+#include "config.h"
 
 #ifndef MODULE_TEST
 #if defined(MCU_L476) || defined(MCU_G070)
@@ -17,7 +18,6 @@ static dtRCC *const RCC = (dtRCC*) (0x40021000);
 static dtRCC *const RCC = (dtRCC*) (0x40023800);
 #endif
 #else
-#include "TestEnv.h"
 static dtRCC *const RCC = (dtRCC*)&TestRCC;
 #endif
 
@@ -179,6 +179,11 @@ void RCC_ClockSet(dtRccInitConfig Config)
 		if(ClockFreq <= 16000000) Pwr_SetVos(2);
 		else Pwr_SetVos(1);
 		Flash_SetLatency(ClockFreq);
+#elif defined(MCU_F410)
+		if(ClockFreq <= 64000000) Pwr_SetVos(1);
+		else if(ClockFreq <= 84000000) Pwr_SetVos(2);
+		else Pwr_SetVos(3);
+		Flash_SetLatency(ClockFreq, SUPPLY_VOLTAGE);
 #endif
 
 #if defined(MCU_F446) || defined(MCU_F410)
@@ -246,7 +251,7 @@ uint32 RCC_GetClock(dtBus Bus)
 	else if(Bus == APB2_Timer)
 	{
 		ret = APB2Clock;
-		if(RCC->CFGR.Fields.PPRE2 != 1) ret *= 2;
+		if(APB2Presc != 1) ret *= 2;
 	}
 #endif
 	else if(Bus == APB1_Peripheral) ret = APB1Clock;

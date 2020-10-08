@@ -15,10 +15,39 @@ int FailedTests;
 dtRCC TestRCC;
 dtFlash TestFlash;
 dtPwr TestPwr;
+unsigned char PowerSupplyVoltage = 33;
 
-void TestAssert(int value1, int value2, char const* filename,int line, char const* function_name)
+void TestAssert_eq(int value1, int value2, char const* filename,int line, char const* function_name)
 {
 	if(value1 == value2)
+	{
+		printf("Test Passed: %s:%d %s()\n",filename,line, function_name);
+		PassedTests++;
+	}
+	else
+	{
+		printf("Test failed: %s:%d %s(); %d, %d\n",filename,line, function_name, value1, value2);
+		FailedTests++;
+	}
+}
+
+void TestAssert_le(int value1, int value2, char const* filename,int line, char const* function_name)
+{
+	if(value1 <= value2)
+	{
+		printf("Test Passed: %s:%d %s()\n",filename,line, function_name);
+		PassedTests++;
+	}
+	else
+	{
+		printf("Test failed: %s:%d %s(); %d, %d\n",filename,line, function_name, value1, value2);
+		FailedTests++;
+	}
+}
+
+void TestAssert_ge(int value1, int value2, char const* filename,int line, char const* function_name)
+{
+	if(value1 >= value2)
 	{
 		printf("Test Passed: %s:%d %s()\n",filename,line, function_name);
 		PassedTests++;

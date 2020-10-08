@@ -21,6 +21,9 @@ void Pwr_SetVos(uint8 mode)
 {
 #if defined(MCU_F446) || defined(MCU_F410)
 	Pwr->CR.Fields.VOS = mode & 0x3;
+#ifdef MODULE_TEST
+	Pwr->CSR.Fields.VOSRDY = 1;
+#endif
 	while(Pwr->CSR.Fields.VOSRDY != 1);
 #elif defined(MCU_G070)
 	Pwr->CR.Fields.VOS = mode & 0x3;

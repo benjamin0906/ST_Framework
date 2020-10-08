@@ -10,10 +10,15 @@
 
 extern int PassedTests;
 extern int FailedTests;
-extern void TestAssert(int value1, int value2, char const* filename,int line, char const* function_name);
+extern unsigned char PowerSupplyVoltage;
+extern void TestAssert_eq(int value1, int value2, char const* filename,int line, char const* function_name);
+extern void TestAssert_le(int value1, int value2, char const* filename,int line, char const* function_name);
+extern void TestAssert_ge(int value1, int value2, char const* filename,int line, char const* function_name);
 extern void MemClear(unsigned char *pointer, int size);
 
-#define ASSERT(a,b) TestAssert(a,b,__FILE__, __LINE__, __func__)
+#define ASSERT_EQ(a,b) TestAssert_eq(a,b,__FILE__, __LINE__, __func__)
+#define ASSERT_LE(a,b) TestAssert_le(a,b,__FILE__, __LINE__, __func__)
+#define ASSERT_GE(a,b) TestAssert_ge(a,b,__FILE__, __LINE__, __func__)
 
 #if defined(RCC_RCC_TYPES_H_) || defined(TEST_CASE)
 #include "RCC_Types.h"
