@@ -31,6 +31,7 @@ INCLUDES += -I$(SRC_INC_DIR)
 INCLUDES += -I$(SRC_DIR)/RCC
 INCLUDES += -I$(SRC_DIR)/Flash
 INCLUDES += -I$(SRC_DIR)/Pwr
+INCLUDES += -I$(SRC_DIR)/BasicTIM
 
 ##############################
 # Module test folders
@@ -54,6 +55,7 @@ endif
 MODULES += $(SRC_DIR)/RCC/RCC.c
 MODULES += $(SRC_DIR)/Flash/Flash.c
 MODULES += $(SRC_DIR)/Pwr/Pwr.c
+MODULES += $(SRC_DIR)/BasicTIM/BasicTIM.c
 
 ##############################
 # Test cases

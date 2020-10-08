@@ -10,10 +10,25 @@
 
 typedef enum
 {
+#if defined(MCU_F410) || defined(MCU_G070)
 	TIM6 = 0,
+#endif
+#if defined(MCU_G070)
 	TIM7 = 1,
+#endif
 } dtBTimId;
 
-extern void BasicTIM_Set(dtBTimId Id, void (*IrqPtr)(void));
+typedef struct
+{
+	uint16 	AutoReload;
+	uint16 	Prescaler;
+	uint8	UpdateDisable	:1;
+	uint8	UpdateSource	:1;
+	uint8	OnePulse		:1;
+	uint8	ARPreload		:1;
+	uint8	Enable			:1;
+} dtBasicTimConfig;
+
+extern void BasicTIM_Set(dtBTimId Id, dtBasicTimConfig Config, void (*IrqPtr)(void));
 
 #endif /* BASICTIM_BASICTIM_H_ */

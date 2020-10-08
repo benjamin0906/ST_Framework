@@ -9,35 +9,53 @@
 #include "BasicTIM.h"
 #include "NVIC.h"
 
+#if defined(MCU_F410)
+static dtBTIM *const BTIMs[1] = {	(dtBTIM*)(0x40001000)};//TIM6
+static void (*IrqPtrs[1])(void);
+#elif defined(MCU_G070)
 static dtBTIM *const BTIMs[2] = {	(dtBTIM*)(0x40001000),//TIM6
-									(dtBTIM*)(0x40001000),//TIM7
+									(dtBTIM*)(0x40001400),//TIM7
 };
 static void (*IrqPtrs[2])(void);
+#endif
 
-void BasicTIM_Set(dtBTimId Id, void (*IrqPtr)(void));
+void BasicTIM_Set(dtBTimId Id, dtBasicTimConfig Config, void (*IrqPtr)(void));
 
-void BasicTIM_Set(dtBTimId Id, void (*IrqPtr)(void))
+void BasicTIM_Set(dtBTimId Id, dtBasicTimConfig Config, void (*IrqPtr)(void))
 {
-	BTIMs[Id]->CR1.Field.ARPE = 1;
-	BTIMs[Id]->CR1.Field.OPM = 0;
-	BTIMs[Id]->CR1.Field.URS =1;
-	BTIMs[Id]->CR1.Field.UDIS = 0;
+	BTIMs[Id]->CR1.Field.ARPE = Config.ARPreload;
+	BTIMs[Id]->CR1.Field.OPM = Config.OnePulse;
+	BTIMs[Id]->CR1.Field.URS = Config.UpdateSource;
+	BTIMs[Id]->CR1.Field.UDIS = Config.UpdateDisable;
+	BTIMs[Id]->PSC.Field.PSC = Config.Prescaler;
+	BTIMs[Id]->ARR.Field.ARR = Config.AutoReload;
 
-	BTIMs[Id]->DIER.Field.UIE = 1;
-	BTIMs[Id]->PSC.Field.PSC = 7999;
-	BTIMs[Id]->ARR.Field.ARR = 10;
-
-	if(IrqPtr != 0) IrqPtrs[Id] = IrqPtr;
-
-	BTIMs[Id]->CR1.Field.CEN = 1;
+	if(IrqPtr != 0)
+	{
+		BTIMs[Id]->DIER.Field.UIE = 1;
+		IrqPtrs[Id] = IrqPtr;
 #if  defined(MCU_F446)
 	NVIC_SetPriority(IRQ_TIM6_DAC,1);
 	NVIC_EnableIRQ(IRQ_TIM6_DAC);
+#elif defined(MCU_G070)
+	NVIC_SetPriority(IRQ_TIM6,1);
+	NVIC_EnableIRQ(IRQ_TIM6);
 #endif
+	}
+	else BTIMs[Id]->DIER.Field.UIE = 0;
 
+	BTIMs[Id]->CR1.Field.CEN = Config.Enable;
 }
 
-void TIM6_DACUNDER_IRQHandler(void)
+#if defined(MCU_F446)
+void TIM6_DAC_IRQHandler(void)
+#elif defined(MCU_F410)
+void TIM6_DAC1_IRQHandler(void)
+#elif defined(MCU_G070)
+void TIM6_DAC_LPTIM1_IRQHandler(void)
+#else
+#error undefined BasicTIM interrupt;
+#endif
 {
 	BTIMs[0]->SR.Field.UIF = 0;
 	if(IrqPtrs[0] != 0) IrqPtrs[0]();
