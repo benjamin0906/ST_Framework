@@ -58,7 +58,7 @@ typedef union
 		uint32		:31;
 	} Field;
 	uint32 Word;
-} dtSR;
+} dtBasicTIMSR;
 
 typedef union
 {
@@ -107,7 +107,7 @@ typedef struct
 	dtCR2 CR2;
 	uint32 :32;
 	dtDIER DIER;
-	dtSR SR;
+	dtBasicTIMSR SR;
 	dtEGR EGR;
 	uint32 :32;
 	uint32 :32;
@@ -115,6 +115,6 @@ typedef struct
 	dtCNT CNT;
 	dtPSC PSC;
 	dtARR ARR;
-} dtBTIM;
+} dtBasicTIM;
 
 #endif /* BASICTIM_BASICTIM_TYPES_H_ */

@@ -10,11 +10,11 @@
 #include "NVIC.h"
 
 #if defined(MCU_F410)
-static dtBTIM *const BTIMs[1] = {	(dtBTIM*)(0x40001000)};//TIM6
+static dtBasicTIM *const BTIMs[1] = {	(dtBasicTIM*)(0x40001000)};//TIM6
 static void (*IrqPtrs[1])(void);
 #elif defined(MCU_G070)
-static dtBTIM *const BTIMs[2] = {	(dtBTIM*)(0x40001000),//TIM6
-									(dtBTIM*)(0x40001400),//TIM7
+static dtBasicTIM *const BTIMs[2] = {	(dtBasicTIM*)(0x40001000),//TIM6
+									(dtBasicTIM*)(0x40001400),//TIM7
 };
 static void (*IrqPtrs[2])(void);
 #endif

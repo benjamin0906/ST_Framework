@@ -33,4 +33,8 @@ extern dtFlash TestFlash;
 #include "Pwr_Types.h"
 dtPwr TestPwr;
 #endif
+#if defined(BASICTIM_BASICTIM_TYPES_H_) || defined(TEST_CASE)
+#include "BasicTIM_Types.h"
+dtBasicTIM TestBasicTIM;
+#endif
 #endif /* TEST_TESTENV_TESTENV_H_ */
