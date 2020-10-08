@@ -99,7 +99,6 @@
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
 	<storageModule moduleId="refreshScope"/>
-	<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets"/>
 	<storageModule moduleId="scannerConfiguration">
 		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 		<scannerConfigBuildInfo instanceId="cdt.managedbuild.toolchain.gnu.cross.base.1274477337;cdt.managedbuild.toolchain.gnu.cross.base.1274477337.581356819;cdt.managedbuild.tool.gnu.cross.c.compiler.1298814590;cdt.managedbuild.tool.gnu.c.compiler.input.579492189">
@@ -108,5 +107,8 @@
 		<scannerConfigBuildInfo instanceId="cdt.managedbuild.toolchain.gnu.cross.base.1274477337;cdt.managedbuild.toolchain.gnu.cross.base.1274477337.581356819;cdt.managedbuild.tool.gnu.cross.cpp.compiler.479837209;cdt.managedbuild.tool.gnu.cpp.compiler.input.1167682842">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 		</scannerConfigBuildInfo>
+	</storageModule>
+	<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets">
+		<buildTargets/>
 	</storageModule>
 </cproject>

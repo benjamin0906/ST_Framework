@@ -67,8 +67,8 @@ TEST_CASE += $(RCC_MODULE_TEST)
 SRC_FILES += $(MODULES)
 SRC_FILES += $(TEST_CASE)
 SRC_FILES += $(TEST_DIR)/TestEnv/TestEnv.c
-
-
+	
 make all: 
-	$(CC) -o MakeTest $(TEST_DIR)/main.c $(SRC_FILES)  $(INCLUDES) $(CFLAGS)
+	$(CC) -o Test $(TEST_DIR)/main.c $(SRC_FILES)  $(INCLUDES) $(CFLAGS)
+	
 endif
