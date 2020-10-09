@@ -23,7 +23,7 @@ typedef union
 		uint32 			:3;
 		uint32 UIFREMA	:1;
 		uint32 			:20;
-	} Field;
+	} Fields;
 	uint32 Word;
 } dtCR1;
 
@@ -34,7 +34,7 @@ typedef union
 		uint32		:4;
 		uint32 MMS	:3;
 		uint32		:25;
-	} Field;
+	} Fields;
 	uint32 Word;
 } dtCR2;
 
@@ -46,7 +46,7 @@ typedef union
 		uint32		:7;
 		uint32 UDE	:1;
 		uint32		:23;
-	} Field;
+	} Fields;
 	uint32 Word;
 } dtDIER;
 
@@ -56,7 +56,7 @@ typedef union
 	{
 		uint32 UIF	:1;
 		uint32		:31;
-	} Field;
+	} Fields;
 	uint32 Word;
 } dtBasicTIMSR;
 
@@ -66,7 +66,7 @@ typedef union
 	{
 		uint32 UG	:1;
 		uint32		:31;
-	} Field;
+	} Fields;
 	uint32 Word;
 } dtEGR;
 
@@ -77,7 +77,7 @@ typedef union
 		uint32 CNT		:16;
 		uint32			:15;
 		uint32 UIFCPY	:1;
-	} Field;
+	} Fields;
 	uint32 Word;
 } dtCNT;
 
@@ -87,7 +87,7 @@ typedef union
 	{
 		uint32 PSC	:16;
 		uint32		:16;
-	} Field;
+	} Fields;
 	uint32 Word;
 } dtPSC;
 
@@ -97,7 +97,7 @@ typedef union
 	{
 		uint32 ARR	:16;
 		uint32		:16;
-	} Field;
+	} Fields;
 	uint32 Word;
 } dtARR;
 

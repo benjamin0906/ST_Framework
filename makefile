@@ -16,6 +16,11 @@ ifeq ($(MCU_TYPE),F410)
 CFLAGS += -DMCU_F410
 endif
 endif
+
+ifeq ($(SILENT_BUILD),1)
+CFLAGS += -DSILENT
+endif
+
 CFLAGS += -g
 
 ##############################
@@ -38,6 +43,7 @@ INCLUDES += -I$(SRC_DIR)/BasicTIM
 # Module test folders
 ##############################
 RCC_TEST = $(TEST_CASES_DIR)/RCC_Test
+BASIC_TIM_TEST = $(TEST_CASES_DIR)/BasicTIM_Test
 
 ##############################
 # RCC module test
@@ -47,6 +53,17 @@ RCC_MODULE_TEST += $(RCC_TEST)/RCC_Test_G070.c
 else 
 ifeq ($(MCU_TYPE),F410)
 RCC_MODULE_TEST += $(RCC_TEST)/RCC_Test_F410.c
+endif
+endif
+
+##############################
+# BASIC TIM module test
+##############################
+ifeq ($(MCU_TYPE),G070)
+#BASIC_TIM_MODULE_TEST += $(BASIC_TIM_TEST)/BasicTIM_Test_G070.c
+else 
+ifeq ($(MCU_TYPE),F410)
+BASIC_TIM_MODULE_TEST += $(BASIC_TIM_TEST)/BasicTIM_Test_F410.c
 endif
 endif
 
@@ -63,6 +80,7 @@ MODULES += $(SRC_DIR)/BasicTIM/BasicTIM.c
 # Test cases
 ##############################
 TEST_CASE += $(RCC_MODULE_TEST)
+TEST_CASE += $(BASIC_TIM_MODULE_TEST)
 
 
 ##############################

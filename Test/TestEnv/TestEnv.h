@@ -31,10 +31,16 @@ extern dtFlash TestFlash;
 #endif
 #if defined(PWR_PWR_TYPES_H_) || defined(TEST_CASE)
 #include "Pwr_Types.h"
-dtPwr TestPwr;
+extern dtPwr TestPwr;
 #endif
 #if defined(BASICTIM_BASICTIM_TYPES_H_) || defined(TEST_CASE)
 #include "BasicTIM_Types.h"
-dtBasicTIM TestBasicTIM;
+#include "BasicTIM.h"
+#if defined(MCU_F410)
+extern dtBasicTIM TestBasicTIM6;
+#elif defined(MCU_G070)
+extern tBasicTIM TestBasicTIM6;
+extern tBasicTIM TestBasicTIM7;
+#endif
 #endif
 #endif /* TEST_TESTENV_TESTENV_H_ */
