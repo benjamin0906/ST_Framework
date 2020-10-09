@@ -71,7 +71,7 @@ endif
 # BASIC TIM module test
 ##############################
 ifeq ($(MCU_TYPE),G070)
-#BASIC_TIM_MODULE_TEST += $(BASIC_TIM_TEST)/BasicTIM_Test_G070.c
+BASIC_TIM_MODULE_TEST += $(BASIC_TIM_TEST)/BasicTIM_Test_G070.c
 else 
 ifeq ($(MCU_TYPE),F410)
 BASIC_TIM_MODULE_TEST += $(BASIC_TIM_TEST)/BasicTIM_Test_F410.c

@@ -10,6 +10,7 @@
 #include "Pwr_Types.h"
 #include "BasicTIM_Types.h"
 #include "GPIO_Types.h"
+#include "NVIC_Types.h"
 #include "stdio.h"
 
 int PassedTests;
@@ -19,8 +20,9 @@ dtFlash 	TestFlash;
 dtPwr 		TestPwr;
 #if defined(MCU_F410)
 dtBasicTIM 	TestBasicTIM6;
-#elif #elif defined(MCU_G070)
-dtBasicTIM 	TestBasicTIM[2];
+#elif defined(MCU_G070)
+dtBasicTIM	TestBasicTIM6;
+dtBasicTIM	TestBasicTIM7;
 #endif
 dtGPIO		TestGPIOA;
 dtGPIO		TestGPIOB;
@@ -30,7 +32,12 @@ dtGPIO		TestGPIOE;
 dtGPIO		TestGPIOF;
 dtGPIO		TestGPIOG;
 dtGPIO		TestGPIOH;
-
+dtISER		TestISER;
+dtICER		TestICER;
+dtISPR		TestISPR;
+dtICPR		TestICPR;
+dtIABR		TestIABR;
+dtIPR		TestIPR;
 
 unsigned char PowerSupplyVoltage = 33;
 

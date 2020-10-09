@@ -39,8 +39,8 @@ extern dtPwr TestPwr;
 #if defined(MCU_F410)
 extern dtBasicTIM TestBasicTIM6;
 #elif defined(MCU_G070)
-extern tBasicTIM TestBasicTIM6;
-extern tBasicTIM TestBasicTIM7;
+extern dtBasicTIM TestBasicTIM6;
+extern dtBasicTIM TestBasicTIM7;
 #endif
 #endif
 #if defined(GPIO_GPIO_TYPES_H_) || defined(TEST_CASE)
@@ -53,5 +53,14 @@ extern dtGPIO		TestGPIOE;
 extern dtGPIO		TestGPIOF;
 extern dtGPIO		TestGPIOG;
 extern dtGPIO		TestGPIOH;
+#endif
+#if defined(NVIC_NVIC_TYPES_H_) || defined(TEST_CASE)
+#include "NVIC_Types.h"
+extern dtISER		TestISER;
+extern dtICER		TestICER;
+extern dtISPR		TestISPR;
+extern dtICPR		TestICPR;
+extern dtIABR		TestIABR;
+extern dtIPR		TestIPR;
 #endif
 #endif /* TEST_TESTENV_TESTENV_H_ */
