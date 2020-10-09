@@ -9,18 +9,29 @@
 #include "Flash_Types.h"
 #include "Pwr_Types.h"
 #include "BasicTIM_Types.h"
+#include "GPIO_Types.h"
 #include "stdio.h"
 
 int PassedTests;
 int FailedTests;
-dtRCC TestRCC;
-dtFlash TestFlash;
-dtPwr TestPwr;
+dtRCC 		TestRCC;
+dtFlash 	TestFlash;
+dtPwr 		TestPwr;
 #if defined(MCU_F410)
-dtBasicTIM TestBasicTIM6;
+dtBasicTIM 	TestBasicTIM6;
 #elif #elif defined(MCU_G070)
-dtBasicTIM TestBasicTIM[2];
+dtBasicTIM 	TestBasicTIM[2];
 #endif
+dtGPIO		TestGPIOA;
+dtGPIO		TestGPIOB;
+dtGPIO		TestGPIOC;
+dtGPIO		TestGPIOD;
+dtGPIO		TestGPIOE;
+dtGPIO		TestGPIOF;
+dtGPIO		TestGPIOG;
+dtGPIO		TestGPIOH;
+
+
 unsigned char PowerSupplyVoltage = 33;
 
 void TestAssert_eq(int value1, int value2, char const* filename,int line, char const* function_name)

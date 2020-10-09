@@ -9,6 +9,7 @@
 #include "GPIO.h"
 
 /* ----------Register definition section---------- */
+#ifndef MODULE_TEST
 #if defined(MCU_F446)
 static dtGPIO *GPIOA = (dtGPIO*) 0x40020000;
 #endif
@@ -32,6 +33,33 @@ static dtGPIO *GPIOG = (dtGPIO*) 0x40021800;
 #endif
 #if defined(MCU_F446)
 static dtGPIO *GPIOH = (dtGPIO*) 0x40021C00;
+#endif
+#else
+#include "TestEnv.h"
+#if defined(MCU_F446) || defined(MCU_F410)
+static dtGPIO *GPIOA = (dtGPIO*) &TestGPIOA;
+#endif
+#if defined(MCU_F446) || defined(MCU_F410)
+static dtGPIO *GPIOB = (dtGPIO*) &TestGPIOB;
+#endif
+#if defined(MCU_F446) || defined(MCU_F410)
+static dtGPIO *GPIOC = (dtGPIO*) &TestGPIOC;
+#endif
+#if defined(MCU_F446)
+static dtGPIO *GPIOD = (dtGPIO*) &TestGPIOD;
+#endif
+#if defined(MCU_F446)
+static dtGPIO *GPIOE = (dtGPIO*) &TestGPIOE;
+#endif
+#if defined(MCU_F446)
+static dtGPIO *GPIOF = (dtGPIO*) &TestGPIOF;
+#endif
+#if defined(MCU_F446)
+static dtGPIO *GPIOG = (dtGPIO*) &TestGPIOG;
+#endif
+#if defined(MCU_F446) || defined(MCU_F410)
+static dtGPIO *GPIOH = (dtGPIO*) &TestGPIOH;
+#endif
 #endif
 /* ----------End of register definition section---------- */
 

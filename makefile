@@ -38,6 +38,17 @@ INCLUDES += -I$(SRC_DIR)/Flash
 INCLUDES += -I$(SRC_DIR)/Pwr
 INCLUDES += -I$(SRC_DIR)/NVIC
 INCLUDES += -I$(SRC_DIR)/BasicTIM
+INCLUDES += -I$(SRC_DIR)/GPIO
+
+##############################
+# Modules sources
+##############################
+MODULES += $(SRC_DIR)/RCC/RCC.c
+MODULES += $(SRC_DIR)/Flash/Flash.c
+MODULES += $(SRC_DIR)/Pwr/Pwr.c
+MODULES += $(SRC_DIR)/NVIC/NVIC.c
+MODULES += $(SRC_DIR)/BasicTIM/BasicTIM.c
+MODULES += $(SRC_DIR)/GPIO/GPIO.c
 
 ##############################
 # Module test folders
@@ -66,15 +77,6 @@ ifeq ($(MCU_TYPE),F410)
 BASIC_TIM_MODULE_TEST += $(BASIC_TIM_TEST)/BasicTIM_Test_F410.c
 endif
 endif
-
-##############################
-# Modules
-##############################
-MODULES += $(SRC_DIR)/RCC/RCC.c
-MODULES += $(SRC_DIR)/Flash/Flash.c
-MODULES += $(SRC_DIR)/Pwr/Pwr.c
-MODULES += $(SRC_DIR)/NVIC/NVIC.c
-MODULES += $(SRC_DIR)/BasicTIM/BasicTIM.c
 
 ##############################
 # Test cases
