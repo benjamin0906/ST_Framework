@@ -42,6 +42,7 @@ void BasicTIM_Test(void)
 								for(looper8 = 0; looper8 < 2; looper8++)
 								{
 									MemClear(&TestBasicTIM6, sizeof(TestBasicTIM6));
+									TestISER.ISER[2] = 0;
 									ASSERT_EQ(TestBasicTIM6.CR1.Fields.CEN, 0);
 									ASSERT_EQ(TestBasicTIM6.CR1.Fields.UDIS, 0);
 									ASSERT_EQ(TestBasicTIM6.CR1.Fields.URS, 0);
@@ -65,10 +66,15 @@ void BasicTIM_Test(void)
 									else ASSERT_EQ(TestBasicTIM6.CR1.Fields.URS, 0);
 									ASSERT_EQ(TestBasicTIM6.ARR.Fields.ARR, Config.AutoReload);
 									ASSERT_EQ(TestBasicTIM6.PSC.Fields.PSC, Config.Prescaler);
-									if(looper8 == 0) ASSERT_EQ(TestBasicTIM6.DIER.Fields.UIE, 0);
+									if(looper8 == 0)
+									{
+										ASSERT_EQ(TestBasicTIM6.DIER.Fields.UIE, 0);
+										ASSERT_EQ(TestISER.ISER[2]&(1<<1), 0);
+									}
 									else
 									{
 										ASSERT_EQ(TestBasicTIM6.DIER.Fields.UIE, 1);
+										ASSERT_EQ(TestISER.ISER[2]&(1<<1), 1<<1);
 									}
 								}
 							}
@@ -89,13 +95,14 @@ void BasicTIM_Test(void)
 				{
 					for(Config.UpdateSource = 0, looper5 = 0; looper5 < 2; looper5++, Config.UpdateSource++)
 					{
-						for(Config.AutoReload = 0, looper6 = 0; looper6 < 65536; looper6+=32, Config.AutoReload++)
+						for(Config.AutoReload = 0, looper6 = 0; looper6 < 65536; looper6+=64, Config.AutoReload++)
 						{
-							for(Config.Prescaler = 0, looper7 = 0; looper7 < 65536; looper7+=32, Config.Prescaler)
+							for(Config.Prescaler = 0, looper7 = 0; looper7 < 65536; looper7+=64, Config.Prescaler)
 							{
 								for(looper8 = 0; looper8 < 2; looper8++)
 								{
 									MemClear(&TestBasicTIM7, sizeof(TestBasicTIM7));
+									TestISER.ISER[2] = 0;
 									ASSERT_EQ(TestBasicTIM7.CR1.Fields.CEN, 0);
 									ASSERT_EQ(TestBasicTIM7.CR1.Fields.UDIS, 0);
 									ASSERT_EQ(TestBasicTIM7.CR1.Fields.URS, 0);
@@ -119,8 +126,16 @@ void BasicTIM_Test(void)
 									else ASSERT_EQ(TestBasicTIM7.CR1.Fields.URS, 0);
 									ASSERT_EQ(TestBasicTIM7.ARR.Fields.ARR, Config.AutoReload);
 									ASSERT_EQ(TestBasicTIM7.PSC.Fields.PSC, Config.Prescaler);
-									if(looper8 == 0) ASSERT_EQ(TestBasicTIM7.DIER.Fields.UIE, 0);
-									else ASSERT_EQ(TestBasicTIM7.DIER.Fields.UIE, 1);
+									if(looper8 == 0)
+									{
+										ASSERT_EQ(TestBasicTIM7.DIER.Fields.UIE, 0);
+										ASSERT_EQ(TestISER.ISER[2]&(1<<2), 0);
+									}
+									else
+									{
+										ASSERT_EQ(TestBasicTIM7.DIER.Fields.UIE, 1);
+										ASSERT_EQ(TestISER.ISER[2]&(1<<2), 1<<2);
+									}
 								}
 							}
 						}
