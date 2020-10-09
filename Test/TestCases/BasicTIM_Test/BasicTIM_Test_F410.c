@@ -43,6 +43,7 @@ void BasicTIM_Test(void)
 								for(looper8 = 0; looper8 < 2; looper8++)
 								{
 									MemClear(&TestBasicTIM6, sizeof(TestBasicTIM6));
+									TestISER.ISER[6] = 0;
 									ASSERT_EQ(TestBasicTIM6.CR1.Fields.CEN, 0);
 									ASSERT_EQ(TestBasicTIM6.CR1.Fields.UDIS, 0);
 									ASSERT_EQ(TestBasicTIM6.CR1.Fields.URS, 0);
@@ -66,8 +67,16 @@ void BasicTIM_Test(void)
 									else ASSERT_EQ(TestBasicTIM6.CR1.Fields.URS, 0);
 									ASSERT_EQ(TestBasicTIM6.ARR.Fields.ARR, Config.AutoReload);
 									ASSERT_EQ(TestBasicTIM6.PSC.Fields.PSC, Config.Prescaler);
-									if(looper8 == 0) ASSERT_EQ(TestBasicTIM6.DIER.Fields.UIE, 0);
-									else ASSERT_EQ(TestBasicTIM6.DIER.Fields.UIE, 1);
+									if(looper8 == 0)
+									{
+										ASSERT_EQ(TestBasicTIM6.DIER.Fields.UIE, 0);
+										ASSERT_EQ(TestISER.ISER[6]&(1<<6), 0);
+									}
+									else
+									{
+										ASSERT_EQ(TestBasicTIM6.DIER.Fields.UIE, 1);
+										ASSERT_EQ(TestISER.ISER[6]&(1<<6), 1<<6);
+									}
 								}
 							}
 						}
