@@ -48,8 +48,16 @@ void BasicTIM_Set(dtBTimId Id, dtBasicTimConfig Config, void (*IrqPtr)(void))
 	NVIC_SetPriority(IRQ_TIM6_DAC,1);
 	NVIC_EnableIRQ(IRQ_TIM6_DAC);
 #elif defined(MCU_G070)
-	NVIC_SetPriority(IRQ_TIM6,1);
-	NVIC_EnableIRQ(IRQ_TIM6);
+	if(Id == TIM6)
+	{
+		NVIC_SetPriority(IRQ_TIM6,1);
+		NVIC_EnableIRQ(IRQ_TIM6);
+	}
+	else
+	{
+		NVIC_SetPriority(IRQ_TIM7,1);
+		NVIC_EnableIRQ(IRQ_TIM7);
+	}
 #endif
 	}
 	else BTIMs[Id]->DIER.Fields.UIE = 0;

@@ -13,8 +13,8 @@
 #include "NVIC_Types.h"
 #include "stdio.h"
 
-int PassedTests;
-int FailedTests;
+unsigned int PassedTests;
+unsigned int FailedTests;
 dtRCC 		TestRCC;
 dtFlash 	TestFlash;
 dtPwr 		TestPwr;

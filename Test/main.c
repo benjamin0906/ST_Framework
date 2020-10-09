@@ -24,7 +24,7 @@ int main(void)
 	RCC_TestCase_2();
 	RCC_TestCase_3();
 	BasicTIM_Test();
-	printf("PASSED TESTS: %i\n", PassedTests);
-	printf("FAILED TESTS: %i\n", FailedTests);
+	printf("PASSED TESTS: %u\n", PassedTests);
+	printf("FAILED TESTS: %u\n", FailedTests);
 	return EXIT_SUCCESS;
 }
