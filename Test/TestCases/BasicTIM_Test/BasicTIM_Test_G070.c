@@ -66,7 +66,10 @@ void BasicTIM_Test(void)
 									ASSERT_EQ(TestBasicTIM6.ARR.Fields.ARR, Config.AutoReload);
 									ASSERT_EQ(TestBasicTIM6.PSC.Fields.PSC, Config.Prescaler);
 									if(looper8 == 0) ASSERT_EQ(TestBasicTIM6.DIER.Fields.UIE, 0);
-									else ASSERT_EQ(TestBasicTIM6.DIER.Fields.UIE, 1);
+									else
+									{
+										ASSERT_EQ(TestBasicTIM6.DIER.Fields.UIE, 1);
+									}
 								}
 							}
 						}
