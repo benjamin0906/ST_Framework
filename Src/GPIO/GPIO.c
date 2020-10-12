@@ -10,13 +10,13 @@
 
 /* ----------Register definition section---------- */
 #ifndef MODULE_TEST
-#if defined(MCU_F446)
+#if defined(MCU_F446) || defined(MCU_F410)
 static dtGPIO *GPIOA = (dtGPIO*) 0x40020000;
 #endif
-#if defined(MCU_F446)
+#if defined(MCU_F446) || defined(MCU_F410)
 static dtGPIO *GPIOB = (dtGPIO*) 0x40020400;
 #endif
-#if defined(MCU_F446)
+#if defined(MCU_F446) || defined(MCU_F410)
 static dtGPIO *GPIOC = (dtGPIO*) 0x40020800;
 #endif
 #if defined(MCU_F446)
@@ -31,7 +31,7 @@ static dtGPIO *GPIOF = (dtGPIO*) 0x40021400;
 #if defined(MCU_F446)
 static dtGPIO *GPIOG = (dtGPIO*) 0x40021800;
 #endif
-#if defined(MCU_F446)
+#if defined(MCU_F446) || defined(MCU_F410)
 static dtGPIO *GPIOH = (dtGPIO*) 0x40021C00;
 #endif
 #else

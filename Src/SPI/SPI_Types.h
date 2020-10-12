@@ -11,7 +11,7 @@
 #include "types.h"
 #include "SPI.h"
 
-#if defined(MCU_F446)
+#if defined(MCU_F446) || defined(MCU_F410)
 typedef union
 {
 	struct
@@ -57,7 +57,7 @@ typedef union
 } dtCR1;
 #endif
 
-#if defined(MCU_F446)
+#if defined(MCU_F446) || defined(MCU_F410)
 typedef union
 {
 	struct
@@ -95,7 +95,7 @@ typedef union
 } dtCR2;
 #endif
 
-#if defined(MCU_F446)
+#if defined(MCU_F446) || defined(MCU_F410)
 typedef union
 {
 	struct
@@ -133,7 +133,7 @@ typedef union
 } dtSR;
 #endif
 
-#if defined(MCU_F446)
+#if defined(MCU_F446) || defined(MCU_F410)
 typedef union
 {
 	struct
@@ -171,7 +171,7 @@ typedef union
 } dtI2SCFGR;
 #endif
 
-#if defined(MCU_F446) || defined(MCU_G070)
+#if defined(MCU_F446) || defined(MCU_G070) || defined(MCU_F410)
 typedef union
 {
 	struct
