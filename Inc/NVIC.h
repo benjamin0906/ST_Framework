@@ -12,93 +12,93 @@
 
 typedef enum
 {
-#if defined(MCU_F446) || defined(MCU_G070)
+#if defined(MCU_F446) || defined(MCU_G070) || defined(MCU_F410)
 	IRQ_WWDG 			= 0,
 #endif
-#if defined(MCU_F446)
+#if defined(MCU_F446) || defined(MCU_F410)
 	IRQ_PVD				= 1,
 #endif
-#if defined(MCU_F410)
+#if defined(MCU_F410) || defined(MCU_F410)
 	IRQ_EXTI21			= 2,
 #elif defined(MCU_F446)
 	IRQ_TAMP_STAMP		= 2,
 #elif defined(MCU_G070)
 	IRQ_RTC_TAMP		= 2,
 #endif
-#if defined(MCU_F410)
+#if defined(MCU_F410) || defined(MCU_F410)
 	IRQ_EXTI22			= 3,
 #elif defined(MCU_F446)
 	IRQ_RTC_WKUP		= 3,
 #elif defined(MCU_G070)
 	IRQ_FLASH			= 3,
 #endif
-#if defined(MCU_F446)
+#if defined(MCU_F446) || defined(MCU_F410)
 	IRQ_FLASH			= 4,
 #elif defined(MCU_G070)
 	IRQ_RCC				= 4,
 #endif
-#if defined(MCU_F446)
+#if defined(MCU_F446) || defined(MCU_F410)
 	IRQ_RCC				= 5,
 #elif defined(MCU_G070)
 	IRQ_EXTI0_1			= 5,
 #endif
-#if defined(MCU_F446)
+#if defined(MCU_F446) || defined(MCU_F410)
 	IRQ_EXTI0			= 6,
 #elif defined(MCU_G070)
 	IRQ_EXTI2_3			= 6,
 #endif
-#if defined(MCU_F446)
+#if defined(MCU_F446) || defined(MCU_F410)
 	IRQ_EXTI1			= 7,
 #elif defined(MCU_G070)
 	IRQ_EXTI4_15		= 7,
 #endif
-#if defined(MCU_F446)
+#if defined(MCU_F446) || defined(MCU_F410)
 	IRQ_EXTI2			= 8,
 #endif
-#if defined(MCU_F446)
+#if defined(MCU_F446) || defined(MCU_F410)
 	IRQ_EXTI3			= 9,
 #elif defined(MCU_G070)
 	IRQ_DMA_Ch1			= 9,
 #endif
-#if defined(MCU_F446)
+#if defined(MCU_F446) || defined(MCU_F410)
 	IRQ_EXTI4			= 10,
 #elif defined(MCU_G070)
 	IRQ_DMA_Ch2_3		= 10,
 #endif
-#if defined(MCU_F446)
+#if defined(MCU_F446) || defined(MCU_F410)
 	IRQ_DMA1_Stream0	= 11,
 #elif defined(MCU_G070)
 	IRQ_DMA_Ch4_5_6_7	= 11,
 #endif
-#if defined(MCU_F446)
+#if defined(MCU_F446) || defined(MCU_F410)
 	IRQ_DMA1_Stream1	= 12,
 #elif defined(MCU_G070)
 	IRQ_ADC				= 12,
 #endif
-#if defined(MCU_F446)
+#if defined(MCU_F446) || defined(MCU_F410)
 	IRQ_DMA1_Stream2	= 13,
 #elif defined(MCU_G070)
 	IRQ_TIM1_BRK_UP_TRG	= 13,
 #endif
-#if defined(MCU_F446)
+#if defined(MCU_F446) || defined(MCU_F410)
 	IRQ_DMA1_Stream3	= 14,
 #elif defined(MCU_G070)
 	IRQ_TIM1_CC			= 14,
 #endif
-#if defined(MCU_F446)
+#if defined(MCU_F446) || defined(MCU_F410)
 	IRQ_DMA1_Stream4	= 15,
 #endif
-#if defined(MCU_F446)
+#if defined(MCU_F446) || defined(MCU_F410)
 	IRQ_DMA1_Stream5	= 16,
 #elif defined(MCU_G070)
 	IRQ_TIM3			= 16,
 #endif
-#if defined(MCU_F446)
+#if defined(MCU_F446) || defined(MCU_F410)
 	IRQ_DMA1_Stream6	= 17,
 #elif defined(MCU_G070)
 	IRQ_TIM6			= 17,
 #endif
-#if defined(MCU_F446)
+#if defined(MCU_F446) || defined(MCU_F410)
 	IRQ_ADC				= 18,
 #elif defined(MCU_G070)
 	IRQ_TIM7			= 18,
@@ -123,12 +123,12 @@ typedef enum
 #elif defined(MCU_G070)
 	IRQ_TIM17			= 22,
 #endif
-#if defined(MCU_F446)
+#if defined(MCU_F446) || defined(MCU_F410)
 	IRQ_EXTI9_5 		= 23,
 #elif defined(MCU_G070)
 	IRQ_I2C1			= 23,
 #endif
-#if defined(MCU_F446)
+#if defined(MCU_F446) || defined(MCU_F410)
 	IRQ_TIM1_BRK_TIM9	= 24,
 #elif defined(MCU_G070)
 	IRQ_I2C2			= 24,
@@ -140,12 +140,12 @@ typedef enum
 #elif defined(MCU_G070)
 	IRQ_SPI1			= 25,
 #endif
-#if defined(MCU_F446)
+#if defined(MCU_F446) || defined(MCU_F410)
 	IRQ_TIM1_TRG_COM_TIM11	= 26,
 #elif defined(MCU_G070)
 	IRQ_SPI2				= 26,
 #endif
-#if defined(MCU_F446)
+#if defined(MCU_F446) || defined(MCU_F410)
 	IRQ_TIM1_CC				= 27,
 #elif defined(MCU_G070)
 	IRQ_USART1				= 27,
@@ -163,34 +163,34 @@ typedef enum
 #if defined(MCU_F446)
 	IRQ_TIM4				= 30,
 #endif
-#if defined(MCU_F446)
+#if defined(MCU_F446) || defined(MCU_F410)
 	IRQ_I2C1_EV 			= 31,
 #endif
-#if defined(MCU_F446)
+#if defined(MCU_F446) || defined(MCU_F410)
 	IRQ_I2C1_ER				= 32,
 #endif
-#if defined(MCU_F446)
+#if defined(MCU_F446) || defined(MCU_F410)
 	IRQ_I2C2_EV				= 33,
 #endif
-#if defined(MCU_F446)
+#if defined(MCU_F446) || defined(MCU_F410)
 	IRQ_I2C2_ER				= 34,
 #endif
-#if defined(MCU_F446)
+#if defined(MCU_F446) || defined(MCU_F410)
 	IRQ_SPI1				= 35,
 #endif
-#if defined(MCU_F446)
+#if defined(MCU_F446) || defined(MCU_F410)
 	IRQ_SPI2				= 36,
 #endif
-#if defined(MCU_F446)
+#if defined(MCU_F446) || defined(MCU_F410)
 	IRQ_USART1				= 37,
 #endif
-#if defined(MCU_F446)
+#if defined(MCU_F446) || defined(MCU_F410)
 	IRQ_USART2				= 38,
 #endif
 #if defined(MCU_F446)
 	IRQ_USART3				= 39,
 #endif
-#if defined(MCU_F446)
+#if defined(MCU_F446) || defined(MCU_F410)
 	IRQ_EXTI15_10			= 40,
 #endif
 #if defined(MCU_F410)
@@ -213,7 +213,7 @@ typedef enum
 #if defined(MCU_F446)
 	IRQ_TIM8_CC				= 46,
 #endif
-#if defined(MCU_F446)
+#if defined(MCU_F446) || defined(MCU_F410)
 	IRQ_DMA1_Stream7		= 47,
 #endif
 #if defined(MCU_F446)
@@ -222,7 +222,7 @@ typedef enum
 #if defined(MCU_F446)
 	IRQ_SDIO				= 49,
 #endif
-#if defined(MCU_F446)
+#if defined(MCU_F446) || defined(MCU_F410)
 	IRQ_TIM5				= 50,
 #endif
 #if defined(MCU_F446)
@@ -234,25 +234,25 @@ typedef enum
 #if defined(MCU_F446)
 	IRQ_UART5				= 53,
 #endif
-#if defined(MCU_F446)
+#if defined(MCU_F446) || defined(MCU_F410)
 	IRQ_TIM6_DAC 			= 54,
 #endif
 #if defined(MCU_F446)
 	IRQ_TIM7				= 55,
 #endif
-#if defined(MCU_F446)
+#if defined(MCU_F446) || defined(MCU_F410)
 	IRQ_DMA2_Stream0		= 56,
 #endif
-#if defined(MCU_F446)
+#if defined(MCU_F446) || defined(MCU_F410)
 	IRQ_DMA2_Stream1		= 57,
 #endif
-#if defined(MCU_F446)
+#if defined(MCU_F446) || defined(MCU_F410)
 	IRQ_DMA2_Stream2		= 58,
 #endif
-#if defined(MCU_F446)
+#if defined(MCU_F446) || defined(MCU_F410)
 	IRQ_DMA2_Stream3		= 59,
 #endif
-#if defined(MCU_F446)
+#if defined(MCU_F446) || defined(MCU_F410)
 	IRQ_DMA2_Stream4		= 60,
 #endif
 #if defined(MCU_F410)
@@ -273,16 +273,16 @@ typedef enum
 #if defined(MCU_F446)
 	IRQ_OTG_FS				= 67,
 #endif
-#if defined(MCU_F446)
+#if defined(MCU_F446) || defined(MCU_F410)
 	IRQ_DMA2_Stream5		= 68,
 #endif
-#if defined(MCU_F446)
+#if defined(MCU_F446) || defined(MCU_F410)
 	IRQ_DMA2_Stream6		= 69,
 #endif
-#if defined(MCU_F446)
+#if defined(MCU_F446) || defined(MCU_F410)
 	IRQ_DMA2_Stream7		= 70,
 #endif
-#if defined(MCU_F446)
+#if defined(MCU_F446) || defined(MCU_F410)
 	IRQ_USART6				= 71,
 #endif
 #if defined(MCU_F446)
@@ -299,6 +299,8 @@ typedef enum
 #endif
 #if defined(MCU_F446)
 	IRQ_HS_WKUP				= 76,
+#elif defined(MCU_F410)
+	IRQ_EXTI20				= 76,
 #endif
 #if defined(MCU_F446)
 	IRQ_OTG_HS				= 77,
@@ -306,11 +308,17 @@ typedef enum
 #if defined(MCU_F446)
 	IRQ_DCMI				= 78,
 #endif
-#if defined(MCU_F446)
+#if defined(MCU_F410)
+	IRQ_RNG					= 80,
+#endif
+#if defined(MCU_F446) || defined(MCU_F410)
 	IRQ_FPU					= 81,
 #endif
 #if defined(MCU_F446)
 	IRQ_SPI4				= 84,
+#endif
+#if defined(MCU_F410)
+	IRQ_SPI5				= 85,
 #endif
 #if defined(MCU_F446)
 	IRQ_SAI1				= 87,
@@ -329,6 +337,8 @@ typedef enum
 #endif
 #if defined(MCU_F446)
 	IRQ_FMPI2C1				= 95,
+#elif defined(MCU_F410)
+	IRQ_I2C4_EV				= 95,
 #endif
 #if defined(MCU_F446)
 	IRQ_FMPI2C1_ER			= 96,
