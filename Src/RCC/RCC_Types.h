@@ -1007,14 +1007,14 @@ typedef union
 
 typedef struct
 {
-	dtAHB1		AHB1;
-	dtAHB2		AHB2;
-	dtAHB3		AHB3;
-	uint32		:32;
-	dtAPB1		APB1;
-	dtAPB1_2	APB1_2;
-	dtAPB2		APB2;
-	uint32		:32;
+	uint32		:32;	//0x04
+	dtAHB1		AHB1;	//0x08
+	dtAHB2		AHB2;	//0x0C
+	dtAHB3		AHB3;	//0x10
+	uint32		:32;	//0x14
+	dtAPB1		APB1;	//0x18
+	dtAPB1_2	APB1_2;	//0x1C
+	dtAPB2		APB2;	//0x20
 } dtBusGroup;
 
 typedef union
@@ -1111,16 +1111,16 @@ typedef union
 
 typedef struct
 {
-	dtCR			CR;
-	dtICSCR			ICSCR;
-	dtCFGR			CFGR;
-	dtPLLCFGR		PLLCFGR;
-	dtPLLSAI1CFGR	PLLSAI1CFGR;
-	uint32			:32;
-	dtCIER			CIER;
-	dtCIFR			CIFR;
-	dtCICR			CICR;
-	dtBusGroup		RSTR;
+	dtCR			CR;				//0x00
+	dtICSCR			ICSCR;			//0x04
+	dtCFGR			CFGR;			//0x08
+	dtPLLCFGR		PLLCFGR;		//0x0C
+	dtPLLSAI1CFGR	PLLSAI1CFGR;	//0x10
+	uint32			:32;			//0x14
+	dtCIER			CIER;			//0x18
+	dtCIFR			CIFR;			//0x1C
+	dtCICR			CICR;			//0x20
+	dtBusGroup		RSTR;			//0x24
 	dtBusGroup		ENR;
 	dtBusGroup		SMENR;
 	dtCCIPR			CCIPR;
