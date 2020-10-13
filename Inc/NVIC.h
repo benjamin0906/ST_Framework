@@ -373,6 +373,7 @@ typedef enum
 #endif
 #if defined(MCU_L433)
 	IRQ_AES					= 79,
+#endif
 #if defined(MCU_F410) || defined(MCU_L433)
 	IRQ_RNG					= 80,
 #endif
