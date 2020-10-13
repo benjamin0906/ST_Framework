@@ -14,6 +14,10 @@ CFLAGS += -DMCU_G070
 else
 ifeq ($(MCU_TYPE),F410)
 CFLAGS += -DMCU_F410
+else
+ifeq ($(MCU_TYPE),L433)
+CFLAGS += -DMCU_L433
+endif
 endif
 endif
 
@@ -64,6 +68,9 @@ RCC_MODULE_TEST += $(RCC_TEST)/RCC_Test_G070.c
 else 
 ifeq ($(MCU_TYPE),F410)
 RCC_MODULE_TEST += $(RCC_TEST)/RCC_Test_F410.c
+endif
+ifeq ($(MCU_TYPE),L433)
+RCC_MODULE_TEST += $(RCC_TEST)/RCC_Test_L433.c
 endif
 endif
 

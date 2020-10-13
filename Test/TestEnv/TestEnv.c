@@ -20,7 +20,7 @@ dtFlash 	TestFlash;
 dtPwr 		TestPwr;
 #if defined(MCU_F410)
 dtBasicTIM 	TestBasicTIM6;
-#elif defined(MCU_G070)
+#elif defined(MCU_G070) || defined(MCU_L433)
 dtBasicTIM	TestBasicTIM6;
 dtBasicTIM	TestBasicTIM7;
 #endif

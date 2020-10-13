@@ -10,6 +10,17 @@ environment/project/cdt.managedbuild.toolchain.gnu.cross.base.1274477337.1270035
 environment/project/cdt.managedbuild.toolchain.gnu.cross.base.1274477337.1270035947/SILENT_BUILD/value=1
 environment/project/cdt.managedbuild.toolchain.gnu.cross.base.1274477337.1270035947/append=true
 environment/project/cdt.managedbuild.toolchain.gnu.cross.base.1274477337.1270035947/appendContributed=true
+environment/project/cdt.managedbuild.toolchain.gnu.cross.base.1274477337.1518310388/MCU_TYPE/delimiter=;
+environment/project/cdt.managedbuild.toolchain.gnu.cross.base.1274477337.1518310388/MCU_TYPE/operation=replace
+environment/project/cdt.managedbuild.toolchain.gnu.cross.base.1274477337.1518310388/MCU_TYPE/value=L433
+environment/project/cdt.managedbuild.toolchain.gnu.cross.base.1274477337.1518310388/MODULE_TEST/delimiter=;
+environment/project/cdt.managedbuild.toolchain.gnu.cross.base.1274477337.1518310388/MODULE_TEST/operation=replace
+environment/project/cdt.managedbuild.toolchain.gnu.cross.base.1274477337.1518310388/MODULE_TEST/value=1
+environment/project/cdt.managedbuild.toolchain.gnu.cross.base.1274477337.1518310388/SILENT_BUILD/delimiter=;
+environment/project/cdt.managedbuild.toolchain.gnu.cross.base.1274477337.1518310388/SILENT_BUILD/operation=replace
+environment/project/cdt.managedbuild.toolchain.gnu.cross.base.1274477337.1518310388/SILENT_BUILD/value=1
+environment/project/cdt.managedbuild.toolchain.gnu.cross.base.1274477337.1518310388/append=true
+environment/project/cdt.managedbuild.toolchain.gnu.cross.base.1274477337.1518310388/appendContributed=true
 environment/project/cdt.managedbuild.toolchain.gnu.cross.base.1274477337.498991767/MCU_TYPE/delimiter=;
 environment/project/cdt.managedbuild.toolchain.gnu.cross.base.1274477337.498991767/MCU_TYPE/operation=append
 environment/project/cdt.managedbuild.toolchain.gnu.cross.base.1274477337.498991767/MCU_TYPE/value=G070

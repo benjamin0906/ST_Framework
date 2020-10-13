@@ -38,7 +38,7 @@ extern dtPwr TestPwr;
 #include "BasicTIM.h"
 #if defined(MCU_F410)
 extern dtBasicTIM TestBasicTIM6;
-#elif defined(MCU_G070)
+#elif defined(MCU_G070) || defined(MCU_L433)
 extern dtBasicTIM TestBasicTIM6;
 extern dtBasicTIM TestBasicTIM7;
 #endif

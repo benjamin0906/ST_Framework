@@ -47,7 +47,7 @@ typedef enum
 	RCC_CRC		= 12,
 #endif
 #if defined(MCU_L433)
-	RCC_TCS		= 16,
+	RCC_TSC		= 16,
 #endif
 #if defined(MCU_F410) || defined(MCU_F446)
 	RCC_DMA1	= 21,
@@ -111,6 +111,9 @@ typedef enum
 #endif
 #if defined(MCU_G070)
 	RCC_TIM7	= 69,
+#endif
+#if defined(MCU_L433)
+	RCC_QSPI	= 72,
 #endif
 #if defined(MCU_G070)
 	RCC_SPI2	= 78,
