@@ -33,7 +33,7 @@ typedef union
 	} Fields;
 	uint32 Word;
 } dtCR1;
-#elif defined(MCU_G070)
+#elif defined(MCU_G070) || defined(MCU_L433)
 typedef union
 {
 	struct
@@ -73,7 +73,7 @@ typedef union
 	} Fields;
 	uint32 Word;
 } dtCR2;
-#elif defined(MCU_G070)
+#elif defined(MCU_G070) || defined(MCU_L433)
 typedef union
 {
 	struct
@@ -86,7 +86,7 @@ typedef union
 		uint32 ERRIE	:1;
 		uint32 RXNEIE	:1;
 		uint32 TXEIE	:1;
-		uint32 DS		:1;
+		uint32 DS		:4;
 		uint32 FRXTH	:1;
 		uint32 LDMA_RX	:1;
 		uint32 LDMA_TX	:1;
@@ -121,6 +121,24 @@ typedef union
 		uint32 TXE		:1;
 		uint32 CHSIDE	:1;
 		uint32 UDR		:1;
+		uint32 CRCERR	:1;
+		uint32 MODF		:1;
+		uint32 OVR		:1;
+		uint32 BSY		:1;
+		uint32 FRE		:1;
+		uint32 FRLVL	:2;
+		uint32 FTLVL	:2;
+	} Fields;
+	uint32 Word;
+} dtSR;
+#elif defined(MCU_L433)
+typedef union
+{
+	struct
+	{
+		uint32 RXNE		:1;
+		uint32 TXE		:1;
+		uint32 			:2;
 		uint32 CRCERR	:1;
 		uint32 MODF		:1;
 		uint32 OVR		:1;
@@ -197,8 +215,10 @@ typedef struct
 	uint16	:16;
 	uint16	TxCRC;
 	uint16	:16;
+#if defined(MCU_F446) || defined(MCU_F410) || defined(G070)
 	dtI2SCFGR	I2SCFGR;
 	dtI2SPR	I2SPR;
+#endif
 } dtSPI_I2S;
 
 typedef struct
