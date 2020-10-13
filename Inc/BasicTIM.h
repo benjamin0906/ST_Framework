@@ -10,10 +10,10 @@
 
 typedef enum
 {
-#if defined(MCU_F410) || defined(MCU_G070)
+#if defined(MCU_F410) || defined(MCU_G070) || defined(MCU_L433)
 	TIM6 = 0,
 #endif
-#if defined(MCU_G070)
+#if defined(MCU_G070) || defined(MCU_L433)
 	TIM7 = 1,
 #endif
 } dtBTimId;

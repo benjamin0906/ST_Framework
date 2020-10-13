@@ -12,7 +12,7 @@
 #include "config.h"
 
 #ifndef MODULE_TEST
-#if defined(MCU_L476) || defined(MCU_G070)
+#if defined(MCU_L476) || defined(MCU_G070) || defined(MCU_L433)
 static dtRCC *const RCC = (dtRCC*) (0x40021000);
 #elif defined(MCU_F446) || defined(MCU_F410)
 static dtRCC *const RCC = (dtRCC*) (0x40023800);
@@ -46,6 +46,18 @@ static dtRCC *const RCC = (dtRCC*)&TestRCC;
 #define PLL_VCO_FREQ_MIN	64000000
 #define PLL_VCO_FREQ_MAX	344000000
 #define INTERNAL_CLOCK_FREQ	16000000
+#elif defined(MCU_L433)
+#define DIVIDER_M_MIN	1
+#define DIVIDER_M_MAX	8
+#define DIVIDER_R_MIN	2
+#define DIVIDER_R_MAX	8
+#define MULT_N_MIN		8
+#define MULT_N_MAX		86
+#define PLL_INPUT_FREQ_MIN	4000000
+#define PLL_INPUT_FREQ_MAX	16000000
+#define PLL_VCO_FREQ_MIN	64000000
+#define PLL_VCO_FREQ_MAX	344000000
+#define INTERNAL_CLOCK_FREQ	16000000
 #endif
 
 uint32 ClockFreq = 2000000;
@@ -62,7 +74,7 @@ void RCC_ClockEnable(dtRCCClock Clock, dtRCCClockSets Value)
 	dtBusGroup *GroupPtr;
 
 	if((Value == Enable) || (Value == Disable)) GroupPtr = &RCC->ENR;
-#if defined(MCU_G070)
+#if defined(MCU_G070) || defined(MCU_L433)
 	else if((Value == LpEnable) || (Value == LpDisable)) GroupPtr = &RCC->SMENR;
 #elif defined(MCU_F410)
 	else if((Value == LpEnable) || (Value == LpDisable)) GroupPtr = &RCC->LPENR;
@@ -76,7 +88,7 @@ void RCC_ClockEnable(dtRCCClock Clock, dtRCCClockSets Value)
 	}
 #if defined(MCU_G070)
 	uint32 *Pointer = &GroupPtr->IOP.Word + BusId;
-#elif defined(MCU_F446) || defined(MCU_F410)
+#elif defined(MCU_F446) || defined(MCU_F410) || defined(MCU_L433)
 	uint32 *Pointer = &GroupPtr->AHB1.Word + BusId;
 #endif
 	if(SetOrClear == Set) *Pointer |= ClockMask;
