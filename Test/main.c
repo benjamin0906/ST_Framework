@@ -12,12 +12,14 @@
 #include <stdlib.h>
 #include "TestEnv.h"
 #include "RCC_Test.h"
+#include "GPIO_Test.h"
 
 extern void BasicTIM_Test(void);
 
 int main(void)
 {
 	RCC_Test();
+	GPIO_Test();
 	//BasicTIM_Test();
 	printf("PASSED TESTS: %u\n", PassedTests);
 	printf("FAILED TESTS: %u\n", FailedTests);

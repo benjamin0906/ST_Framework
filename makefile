@@ -57,9 +57,11 @@ MODULES += $(SRC_DIR)/GPIO/GPIO.c
 ##############################
 # Module test folders
 ##############################
-RCC_TEST = $(TEST_CASES_DIR)/RCC_Test
-BASIC_TIM_TEST = $(TEST_CASES_DIR)/BasicTIM_Test
-INCLUDES += -I$(RCC_TEST)
+RCC_TEST 		= $(TEST_CASES_DIR)/RCC_Test
+BASIC_TIM_TEST 	= $(TEST_CASES_DIR)/BasicTIM_Test
+GPIO_TEST 		= $(TEST_CASES_DIR)/GPIO_Test
+INCLUDES 		+= -I$(RCC_TEST)
+INCLUDES		+= -I$(GPIO_TEST)
 
 ##############################
 # RCC module test
@@ -87,10 +89,22 @@ endif
 endif
 
 ##############################
+# GPIO module test
+##############################
+ifeq ($(MCU_TYPE),G070)
+GPIO_MODULE_TEST += $(GPIO_TEST)/GPIO_Test_G070.c
+else
+ifeq ($(MCU_TYPE),F410)
+GPIO_MODULE_TEST += $(GPIO_TEST)/GPIO_Test_F410.c
+endif
+endif
+
+##############################
 # Test cases
 ##############################
 TEST_CASE += $(RCC_MODULE_TEST)
 TEST_CASE += $(BASIC_TIM_MODULE_TEST)
+TEST_CASE += $(GPIO_MODULE_TEST)
 
 
 ##############################
