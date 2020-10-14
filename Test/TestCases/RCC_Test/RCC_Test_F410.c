@@ -7,6 +7,7 @@
 #define TEST_CASE
 #include "TestEnv.h"
 
+void RCC_Test(void);
 void RCC_TestCase_1(void);
 void RCC_TestCase_2(void);
 void RCC_TestCase_3(void);
@@ -16,6 +17,13 @@ int APB1_Tim_Calc(int clock);
 int APB2_Per_Calc(int clock);
 int APB2_Tim_Calc(int clock);
 void LatencyCheck(int clock);
+
+void RCC_Test(void)
+{
+	RCC_TestCase_1();
+	RCC_TestCase_2();
+	RCC_TestCase_3();
+}
 
 /*
  * This test case tests the various enabling and disabling of the peripherals

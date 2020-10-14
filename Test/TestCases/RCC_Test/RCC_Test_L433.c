@@ -8,7 +8,13 @@
 #define TEST_CASE
 #include "TestEnv.h"
 
+void RCC_Test(void);
 void RCC_TestCase_1(void);
+
+void RCC_Test(void)
+{
+	RCC_TestCase_1();
+}
 
 /*
  * This test case tests the various enabling and disabling of the peripherals
