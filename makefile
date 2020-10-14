@@ -61,6 +61,7 @@ RCC_TEST 		= $(TEST_CASES_DIR)/RCC_Test
 BASIC_TIM_TEST 	= $(TEST_CASES_DIR)/BasicTIM_Test
 GPIO_TEST 		= $(TEST_CASES_DIR)/GPIO_Test
 INCLUDES 		+= -I$(RCC_TEST)
+INCLUDES		+= -I$(BASIC_TIM_TEST)
 INCLUDES		+= -I$(GPIO_TEST)
 
 ##############################

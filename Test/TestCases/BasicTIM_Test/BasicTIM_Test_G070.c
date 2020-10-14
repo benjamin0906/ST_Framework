@@ -9,10 +9,15 @@
 #include "TestEnv.h"
 
 void BasicTIM_Test(void);
-
+void BasicTIM_Test_TC1(void);
 void TestInterrupt(void);
 
 void BasicTIM_Test(void)
+{
+	BasicTIM_Test_TC1();
+}
+
+void BasicTIM_Test_TC1(void)
 {
 	dtBasicTimConfig Config;
 
