@@ -43,8 +43,9 @@ extern dtBasicTIM TestBasicTIM6;
 extern dtBasicTIM TestBasicTIM7;
 #endif
 #endif
-#if defined(GPIO_GPIO_TYPES_H_) || defined(TEST_CASE)
+#if defined(GPIO_GPIO_TYPES_H_) || defined(TEST_CASE_GPIO)
 #include "GPIO_Types.h"
+#include "GPIO.h"
 extern dtGPIO		TestGPIOA;
 extern dtGPIO		TestGPIOB;
 extern dtGPIO		TestGPIOC;

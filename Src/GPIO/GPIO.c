@@ -10,22 +10,22 @@
 
 /* ----------Register definition section---------- */
 #ifndef MODULE_TEST
-#if defined(MCU_F446) || defined(MCU_F410)
+#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_G070)
 static dtGPIO *GPIOA = (dtGPIO*) 0x40020000;
 #endif
-#if defined(MCU_F446) || defined(MCU_F410)
+#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_G070)
 static dtGPIO *GPIOB = (dtGPIO*) 0x40020400;
 #endif
-#if defined(MCU_F446) || defined(MCU_F410)
+#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_G070)
 static dtGPIO *GPIOC = (dtGPIO*) 0x40020800;
 #endif
-#if defined(MCU_F446)
+#if defined(MCU_F446) || defined(MCU_G070)
 static dtGPIO *GPIOD = (dtGPIO*) 0x40020C00;
 #endif
 #if defined(MCU_F446)
 static dtGPIO *GPIOE = (dtGPIO*) 0x40021000;
 #endif
-#if defined(MCU_F446)
+#if defined(MCU_F446) || defined(MCU_G070)
 static dtGPIO *GPIOF = (dtGPIO*) 0x40021400;
 #endif
 #if defined(MCU_F446)
@@ -36,22 +36,22 @@ static dtGPIO *GPIOH = (dtGPIO*) 0x40021C00;
 #endif
 #else
 #include "TestEnv.h"
-#if defined(MCU_F446) || defined(MCU_F410)
+#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_G070)
 static dtGPIO *GPIOA = (dtGPIO*) &TestGPIOA;
 #endif
-#if defined(MCU_F446) || defined(MCU_F410)
+#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_G070)
 static dtGPIO *GPIOB = (dtGPIO*) &TestGPIOB;
 #endif
-#if defined(MCU_F446) || defined(MCU_F410)
+#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_G070)
 static dtGPIO *GPIOC = (dtGPIO*) &TestGPIOC;
 #endif
-#if defined(MCU_F446)
+#if defined(MCU_F446) || defined(MCU_G070)
 static dtGPIO *GPIOD = (dtGPIO*) &TestGPIOD;
 #endif
 #if defined(MCU_F446)
 static dtGPIO *GPIOE = (dtGPIO*) &TestGPIOE;
 #endif
-#if defined(MCU_F446)
+#if defined(MCU_F446) || defined(MCU_G070)
 static dtGPIO *GPIOF = (dtGPIO*) &TestGPIOF;
 #endif
 #if defined(MCU_F446)
@@ -102,7 +102,7 @@ void GPIO_PinInit(dtGPIOs Gpio, dtGPIOConfig Config)
 		}
 
 		/* Setting the type of the pin (push-pull or open-drain) */
-		Temp->OTYPER.Word &= ~(1 << FieldId);
+		Temp->OTYPER.Word &= ~(1 << (FieldId>>1));
 		if(Config.Type == OpenDrain) Temp->OTYPER.Word |= (1 << (FieldId>>1));
 
 		/* Setting the speed of the pin */
@@ -127,29 +127,53 @@ void GPIO_Set(dtGPIOs Gpio, dtPortValue Value)
 static inline dtGPIO* GetPort(dtGPIOs Gpio)
 {
 	dtGPIO *Temp = 0;
+	if(Gpio >= PortH_0)
+	{
 #if defined(MCU_F446) || defined(MCU_F410)
-	if(Gpio >= PortH_0) Temp = GPIOH;
+		Temp = GPIOH;
 #endif
+	}
+	else if(Gpio >= PortG_0)
+	{
 #if defined(MCU_F446)
-	else if(Gpio >= PortG_0) Temp = GPIOG;
+		Temp = GPIOG;
 #endif
+	}
+	else if(Gpio >= PortF_0)
+	{
+#if defined(MCU_F446) || defined(MCU_G070)
+		Temp = GPIOF;
+#endif
+	}
+	else if(Gpio >= PortE_0)
+	{
 #if defined(MCU_F446)
-	else if(Gpio >= PortF_0) Temp = GPIOF;
+		Temp = GPIOE;
 #endif
-#if defined(MCU_F446)
-	else if(Gpio >= PortE_0) Temp = GPIOE;
+	}
+	else if(Gpio >= PortD_0)
+	{
+#if defined(MCU_F446) || defined(MCU_G070)
+		Temp = GPIOD;
 #endif
-#if defined(MCU_F446)
-	else if(Gpio >= PortD_0) Temp = GPIOD;
+	}
+	else if(Gpio >= PortC_0)
+	{
+#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_G070)
+		Temp = GPIOC;
 #endif
-#if defined(MCU_F446) || defined(MCU_F410)
-	else if(Gpio >= PortC_0) Temp = GPIOC;
+	}
+	else if(Gpio >= PortB_0)
+	{
+#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_G070)
+		Temp = GPIOB;
 #endif
-#if defined(MCU_F446) || defined(MCU_F410)
-	else if(Gpio >= PortB_0) Temp = GPIOB;
+	}
+	else if(Gpio >= PortA_0)
+	{
+#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_G070)
+		Temp = GPIOA;
 #endif
-#if defined(MCU_F446) || defined(MCU_F410)
-	else if(Gpio >= PortA_0) Temp = GPIOA;
-#endif
+	}
 	return Temp;
 }

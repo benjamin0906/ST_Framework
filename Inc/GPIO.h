@@ -131,7 +131,7 @@ typedef enum
 	PortG_14,
 	PortG_15,
 
-	PortH_0 = 48,
+	PortH_0,
 	PortH_1,
 	PortH_2,
 	PortH_3,
