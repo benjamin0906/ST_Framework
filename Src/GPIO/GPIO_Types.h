@@ -88,8 +88,11 @@ typedef union
 
 typedef union
 {
-	dtOneBitPins BS;
-	dtOneBitPins BR;
+	struct
+	{
+		dtOneBitPins BS;
+		dtOneBitPins BR;
+	} Fields;
 	uint32 Word;
 } dtBSRR;
 

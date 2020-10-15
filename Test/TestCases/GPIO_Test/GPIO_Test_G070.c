@@ -10,14 +10,18 @@
 
 void GPIO_Test(void);
 void GPIO_TestCase_1(void);
+void GPIO_TestCase_2(void);
 int GetGpioModerValue(dtGPIOs value);
 int GetGpioOtyperValue(dtGPIOs value);
 int GetGpioOspeedrValue(dtGPIOs value);
 int GetGpioPupdrValue(dtGPIOs value);
+int GetGpioBSBit(dtGPIOs value);
+int GetGpioBRBit(dtGPIOs value);
 
 void GPIO_Test(void)
 {
 	GPIO_TestCase_1();
+	GPIO_TestCase_2();
 }
 
 void GPIO_TestCase_1(void)
@@ -79,6 +83,562 @@ void GPIO_TestCase_1(void)
 			}
 		}
 	}
+}
+
+void GPIO_TestCase_2(void)
+{
+	dtGPIOs looper5;
+	int looper;
+
+	for(looper = Clear; looper <= Toggle; looper++)
+	{
+		for(looper5 = PortA_0; looper5 <= PortH_15; looper5++)
+		{
+			if((looper5 <= PortD_15) || ((looper >= PortF_0) && (looper <= PortF_15)))
+			{
+				GPIO_Set(looper5, looper);
+				if(looper == Clear)
+				{
+					ASSERT_EQ(GetGpioBSBit(looper5),0);
+					ASSERT_EQ(GetGpioBRBit(looper5),1);
+				}
+				else if((looper == Set) || (looper == Toggle))
+				{
+					ASSERT_EQ(GetGpioBSBit(looper5),1);
+					ASSERT_EQ(GetGpioBRBit(looper5),0);
+				}
+			}
+		}
+	}
+
+	for(looper = Clear; looper <= Toggle; looper++)
+	{
+		MemClear(&TestGPIOA, sizeof(TestGPIOA));
+		MemClear(&TestGPIOB, sizeof(TestGPIOB));
+		MemClear(&TestGPIOC, sizeof(TestGPIOC));
+		MemClear(&TestGPIOD, sizeof(TestGPIOD));
+		MemClear(&TestGPIOF, sizeof(TestGPIOF));
+		TestGPIOA.IDR.Word = 0xFFFFFFFF;
+		TestGPIOB.IDR.Word = 0xFFFFFFFF;
+		TestGPIOC.IDR.Word = 0xFFFFFFFF;
+		TestGPIOD.IDR.Word = 0xFFFFFFFF;
+		TestGPIOF.IDR.Word = 0xFFFFFFFF;
+		for(looper5 = PortA_0; looper5 <= PortH_15; looper5++)
+		{
+			if((looper5 <= PortD_15) || ((looper >= PortF_0) && (looper <= PortF_15)))
+			{
+				GPIO_Set(looper5, looper);
+				if((looper == Clear) || (looper == Toggle))
+				{
+					ASSERT_EQ(GetGpioBSBit(looper5),0);
+					ASSERT_EQ(GetGpioBRBit(looper5),1);
+				}
+				else if((looper == Set))
+				{
+					ASSERT_EQ(GetGpioBSBit(looper5),1);
+					ASSERT_EQ(GetGpioBRBit(looper5),0);
+				}
+			}
+		}
+	}
+}
+
+int GetGpioBSBit(dtGPIOs value)
+{
+	int GpioValue = 0;
+    switch(value)
+    {
+    case PortA_0:
+    	GpioValue = TestGPIOA.BSRR.Fields.BS.PIN0;
+    	break;
+    case PortA_1:
+    	GpioValue = TestGPIOA.BSRR.Fields.BS.PIN1;
+    	break;
+    case PortA_2:
+    	GpioValue = TestGPIOA.BSRR.Fields.BS.PIN2;
+    	break;
+    case PortA_3:
+    	GpioValue = TestGPIOA.BSRR.Fields.BS.PIN3;
+    	break;
+    case PortA_4:
+    	GpioValue = TestGPIOA.BSRR.Fields.BS.PIN4;
+    	break;
+    case PortA_5:
+    	GpioValue = TestGPIOA.BSRR.Fields.BS.PIN5;
+    	break;
+    case PortA_6:
+    	GpioValue = TestGPIOA.BSRR.Fields.BS.PIN6;
+    	break;
+    case PortA_7:
+    	GpioValue = TestGPIOA.BSRR.Fields.BS.PIN7;
+    	break;
+    case PortA_8:
+    	GpioValue = TestGPIOA.BSRR.Fields.BS.PIN8;
+    	break;
+    case PortA_9:
+    	GpioValue = TestGPIOA.BSRR.Fields.BS.PIN9;
+    	break;
+    case PortA_10:
+    	GpioValue = TestGPIOA.BSRR.Fields.BS.PIN10;
+    	break;
+    case PortA_11:
+    	GpioValue = TestGPIOA.BSRR.Fields.BS.PIN11;
+    	break;
+    case PortA_12:
+    	GpioValue = TestGPIOA.BSRR.Fields.BS.PIN12;
+    	break;
+    case PortA_13:
+    	GpioValue = TestGPIOA.BSRR.Fields.BS.PIN13;
+    	break;
+    case PortA_14:
+    	GpioValue = TestGPIOA.BSRR.Fields.BS.PIN14;
+    	break;
+    case PortA_15:
+    	GpioValue = TestGPIOA.BSRR.Fields.BS.PIN15;
+    	break;
+    case PortB_0:
+    	GpioValue = TestGPIOB.BSRR.Fields.BS.PIN0;
+    	break;
+    case PortB_1:
+    	GpioValue = TestGPIOB.BSRR.Fields.BS.PIN1;
+    	break;
+    case PortB_2:
+    	GpioValue = TestGPIOB.BSRR.Fields.BS.PIN2;
+    	break;
+    case PortB_3:
+    	GpioValue = TestGPIOB.BSRR.Fields.BS.PIN3;
+    	break;
+    case PortB_4:
+    	GpioValue = TestGPIOB.BSRR.Fields.BS.PIN4;
+    	break;
+    case PortB_5:
+    	GpioValue = TestGPIOB.BSRR.Fields.BS.PIN5;
+    	break;
+    case PortB_6:
+    	GpioValue = TestGPIOB.BSRR.Fields.BS.PIN6;
+    	break;
+    case PortB_7:
+    	GpioValue = TestGPIOB.BSRR.Fields.BS.PIN7;
+    	break;
+    case PortB_8:
+    	GpioValue = TestGPIOB.BSRR.Fields.BS.PIN8;
+    	break;
+    case PortB_9:
+    	GpioValue = TestGPIOB.BSRR.Fields.BS.PIN9;
+    	break;
+    case PortB_10:
+    	GpioValue = TestGPIOB.BSRR.Fields.BS.PIN10;
+    	break;
+    case PortB_11:
+    	GpioValue = TestGPIOB.BSRR.Fields.BS.PIN11;
+    	break;
+    case PortB_12:
+    	GpioValue = TestGPIOB.BSRR.Fields.BS.PIN12;
+    	break;
+    case PortB_13:
+    	GpioValue = TestGPIOB.BSRR.Fields.BS.PIN13;
+    	break;
+    case PortB_14:
+    	GpioValue = TestGPIOB.BSRR.Fields.BS.PIN14;
+    	break;
+    case PortB_15:
+    	GpioValue = TestGPIOB.BSRR.Fields.BS.PIN15;
+    	break;
+    case PortC_0:
+    	GpioValue = TestGPIOC.BSRR.Fields.BS.PIN0;
+    	break;
+    case PortC_1:
+    	GpioValue = TestGPIOC.BSRR.Fields.BS.PIN1;
+    	break;
+    case PortC_2:
+    	GpioValue = TestGPIOC.BSRR.Fields.BS.PIN2;
+    	break;
+    case PortC_3:
+    	GpioValue = TestGPIOC.BSRR.Fields.BS.PIN3;
+    	break;
+    case PortC_4:
+    	GpioValue = TestGPIOC.BSRR.Fields.BS.PIN4;
+    	break;
+    case PortC_5:
+    	GpioValue = TestGPIOC.BSRR.Fields.BS.PIN5;
+    	break;
+    case PortC_6:
+    	GpioValue = TestGPIOC.BSRR.Fields.BS.PIN6;
+    	break;
+    case PortC_7:
+    	GpioValue = TestGPIOC.BSRR.Fields.BS.PIN7;
+    	break;
+    case PortC_8:
+    	GpioValue = TestGPIOC.BSRR.Fields.BS.PIN8;
+    	break;
+    case PortC_9:
+    	GpioValue = TestGPIOC.BSRR.Fields.BS.PIN9;
+    	break;
+    case PortC_10:
+    	GpioValue = TestGPIOC.BSRR.Fields.BS.PIN10;
+    	break;
+    case PortC_11:
+    	GpioValue = TestGPIOC.BSRR.Fields.BS.PIN11;
+    	break;
+    case PortC_12:
+    	GpioValue = TestGPIOC.BSRR.Fields.BS.PIN12;
+    	break;
+    case PortC_13:
+    	GpioValue = TestGPIOC.BSRR.Fields.BS.PIN13;
+    	break;
+    case PortC_14:
+    	GpioValue = TestGPIOC.BSRR.Fields.BS.PIN14;
+    	break;
+    case PortC_15:
+    	GpioValue = TestGPIOC.BSRR.Fields.BS.PIN15;
+    	break;
+    case PortD_0:
+    	GpioValue = TestGPIOD.BSRR.Fields.BS.PIN0;
+    	break;
+    case PortD_1:
+    	GpioValue = TestGPIOD.BSRR.Fields.BS.PIN1;
+    	break;
+    case PortD_2:
+    	GpioValue = TestGPIOD.BSRR.Fields.BS.PIN2;
+    	break;
+    case PortD_3:
+    	GpioValue = TestGPIOD.BSRR.Fields.BS.PIN3;
+    	break;
+    case PortD_4:
+    	GpioValue = TestGPIOD.BSRR.Fields.BS.PIN4;
+    	break;
+    case PortD_5:
+    	GpioValue = TestGPIOD.BSRR.Fields.BS.PIN5;
+    	break;
+    case PortD_6:
+    	GpioValue = TestGPIOD.BSRR.Fields.BS.PIN6;
+    	break;
+    case PortD_7:
+    	GpioValue = TestGPIOD.BSRR.Fields.BS.PIN7;
+    	break;
+    case PortD_8:
+    	GpioValue = TestGPIOD.BSRR.Fields.BS.PIN8;
+    	break;
+    case PortD_9:
+    	GpioValue = TestGPIOD.BSRR.Fields.BS.PIN9;
+    	break;
+    case PortD_10:
+    	GpioValue = TestGPIOD.BSRR.Fields.BS.PIN10;
+    	break;
+    case PortD_11:
+    	GpioValue = TestGPIOD.BSRR.Fields.BS.PIN11;
+    	break;
+    case PortD_12:
+    	GpioValue = TestGPIOD.BSRR.Fields.BS.PIN12;
+    	break;
+    case PortD_13:
+    	GpioValue = TestGPIOD.BSRR.Fields.BS.PIN13;
+    	break;
+    case PortD_14:
+    	GpioValue = TestGPIOD.BSRR.Fields.BS.PIN14;
+    	break;
+    case PortD_15:
+    	GpioValue = TestGPIOD.BSRR.Fields.BS.PIN15;
+    	break;
+    case PortF_0:
+    	GpioValue = TestGPIOF.BSRR.Fields.BS.PIN0;
+    	break;
+    case PortF_1:
+    	GpioValue = TestGPIOF.BSRR.Fields.BS.PIN1;
+    	break;
+    case PortF_2:
+    	GpioValue = TestGPIOF.BSRR.Fields.BS.PIN2;
+    	break;
+    case PortF_3:
+    	GpioValue = TestGPIOF.BSRR.Fields.BS.PIN3;
+    	break;
+    case PortF_4:
+    	GpioValue = TestGPIOF.BSRR.Fields.BS.PIN4;
+    	break;
+    case PortF_5:
+    	GpioValue = TestGPIOF.BSRR.Fields.BS.PIN5;
+    	break;
+    case PortF_6:
+    	GpioValue = TestGPIOF.BSRR.Fields.BS.PIN6;
+    	break;
+    case PortF_7:
+    	GpioValue = TestGPIOF.BSRR.Fields.BS.PIN7;
+    	break;
+    case PortF_8:
+    	GpioValue = TestGPIOF.BSRR.Fields.BS.PIN8;
+    	break;
+    case PortF_9:
+    	GpioValue = TestGPIOF.BSRR.Fields.BS.PIN9;
+    	break;
+    case PortF_10:
+    	GpioValue = TestGPIOF.BSRR.Fields.BS.PIN10;
+    	break;
+    case PortF_11:
+    	GpioValue = TestGPIOF.BSRR.Fields.BS.PIN11;
+    	break;
+    case PortF_12:
+    	GpioValue = TestGPIOF.BSRR.Fields.BS.PIN12;
+    	break;
+    case PortF_13:
+    	GpioValue = TestGPIOF.BSRR.Fields.BS.PIN13;
+    	break;
+    case PortF_14:
+    	GpioValue = TestGPIOF.BSRR.Fields.BS.PIN14;
+    	break;
+    case PortF_15:
+    	GpioValue = TestGPIOF.BSRR.Fields.BS.PIN15;
+    	break;
+    }
+    return GpioValue;
+}
+
+int GetGpioBRBit(dtGPIOs value)
+{
+	int GpioValue = 0;
+    switch(value)
+    {
+    case PortA_0:
+    	GpioValue = TestGPIOA.BSRR.Fields.BR.PIN0;
+    	break;
+    case PortA_1:
+    	GpioValue = TestGPIOA.BSRR.Fields.BR.PIN1;
+    	break;
+    case PortA_2:
+    	GpioValue = TestGPIOA.BSRR.Fields.BR.PIN2;
+    	break;
+    case PortA_3:
+    	GpioValue = TestGPIOA.BSRR.Fields.BR.PIN3;
+    	break;
+    case PortA_4:
+    	GpioValue = TestGPIOA.BSRR.Fields.BR.PIN4;
+    	break;
+    case PortA_5:
+    	GpioValue = TestGPIOA.BSRR.Fields.BR.PIN5;
+    	break;
+    case PortA_6:
+    	GpioValue = TestGPIOA.BSRR.Fields.BR.PIN6;
+    	break;
+    case PortA_7:
+    	GpioValue = TestGPIOA.BSRR.Fields.BR.PIN7;
+    	break;
+    case PortA_8:
+    	GpioValue = TestGPIOA.BSRR.Fields.BR.PIN8;
+    	break;
+    case PortA_9:
+    	GpioValue = TestGPIOA.BSRR.Fields.BR.PIN9;
+    	break;
+    case PortA_10:
+    	GpioValue = TestGPIOA.BSRR.Fields.BR.PIN10;
+    	break;
+    case PortA_11:
+    	GpioValue = TestGPIOA.BSRR.Fields.BR.PIN11;
+    	break;
+    case PortA_12:
+    	GpioValue = TestGPIOA.BSRR.Fields.BR.PIN12;
+    	break;
+    case PortA_13:
+    	GpioValue = TestGPIOA.BSRR.Fields.BR.PIN13;
+    	break;
+    case PortA_14:
+    	GpioValue = TestGPIOA.BSRR.Fields.BR.PIN14;
+    	break;
+    case PortA_15:
+    	GpioValue = TestGPIOA.BSRR.Fields.BR.PIN15;
+    	break;
+    case PortB_0:
+    	GpioValue = TestGPIOB.BSRR.Fields.BR.PIN0;
+    	break;
+    case PortB_1:
+    	GpioValue = TestGPIOB.BSRR.Fields.BR.PIN1;
+    	break;
+    case PortB_2:
+    	GpioValue = TestGPIOB.BSRR.Fields.BR.PIN2;
+    	break;
+    case PortB_3:
+    	GpioValue = TestGPIOB.BSRR.Fields.BR.PIN3;
+    	break;
+    case PortB_4:
+    	GpioValue = TestGPIOB.BSRR.Fields.BR.PIN4;
+    	break;
+    case PortB_5:
+    	GpioValue = TestGPIOB.BSRR.Fields.BR.PIN5;
+    	break;
+    case PortB_6:
+    	GpioValue = TestGPIOB.BSRR.Fields.BR.PIN6;
+    	break;
+    case PortB_7:
+    	GpioValue = TestGPIOB.BSRR.Fields.BR.PIN7;
+    	break;
+    case PortB_8:
+    	GpioValue = TestGPIOB.BSRR.Fields.BR.PIN8;
+    	break;
+    case PortB_9:
+    	GpioValue = TestGPIOB.BSRR.Fields.BR.PIN9;
+    	break;
+    case PortB_10:
+    	GpioValue = TestGPIOB.BSRR.Fields.BR.PIN10;
+    	break;
+    case PortB_11:
+    	GpioValue = TestGPIOB.BSRR.Fields.BR.PIN11;
+    	break;
+    case PortB_12:
+    	GpioValue = TestGPIOB.BSRR.Fields.BR.PIN12;
+    	break;
+    case PortB_13:
+    	GpioValue = TestGPIOB.BSRR.Fields.BR.PIN13;
+    	break;
+    case PortB_14:
+    	GpioValue = TestGPIOB.BSRR.Fields.BR.PIN14;
+    	break;
+    case PortB_15:
+    	GpioValue = TestGPIOB.BSRR.Fields.BR.PIN15;
+    	break;
+    case PortC_0:
+    	GpioValue = TestGPIOC.BSRR.Fields.BR.PIN0;
+    	break;
+    case PortC_1:
+    	GpioValue = TestGPIOC.BSRR.Fields.BR.PIN1;
+    	break;
+    case PortC_2:
+    	GpioValue = TestGPIOC.BSRR.Fields.BR.PIN2;
+    	break;
+    case PortC_3:
+    	GpioValue = TestGPIOC.BSRR.Fields.BR.PIN3;
+    	break;
+    case PortC_4:
+    	GpioValue = TestGPIOC.BSRR.Fields.BR.PIN4;
+    	break;
+    case PortC_5:
+    	GpioValue = TestGPIOC.BSRR.Fields.BR.PIN5;
+    	break;
+    case PortC_6:
+    	GpioValue = TestGPIOC.BSRR.Fields.BR.PIN6;
+    	break;
+    case PortC_7:
+    	GpioValue = TestGPIOC.BSRR.Fields.BR.PIN7;
+    	break;
+    case PortC_8:
+    	GpioValue = TestGPIOC.BSRR.Fields.BR.PIN8;
+    	break;
+    case PortC_9:
+    	GpioValue = TestGPIOC.BSRR.Fields.BR.PIN9;
+    	break;
+    case PortC_10:
+    	GpioValue = TestGPIOC.BSRR.Fields.BR.PIN10;
+    	break;
+    case PortC_11:
+    	GpioValue = TestGPIOC.BSRR.Fields.BR.PIN11;
+    	break;
+    case PortC_12:
+    	GpioValue = TestGPIOC.BSRR.Fields.BR.PIN12;
+    	break;
+    case PortC_13:
+    	GpioValue = TestGPIOC.BSRR.Fields.BR.PIN13;
+    	break;
+    case PortC_14:
+    	GpioValue = TestGPIOC.BSRR.Fields.BR.PIN14;
+    	break;
+    case PortC_15:
+    	GpioValue = TestGPIOC.BSRR.Fields.BR.PIN15;
+    	break;
+    case PortD_0:
+    	GpioValue = TestGPIOD.BSRR.Fields.BR.PIN0;
+    	break;
+    case PortD_1:
+    	GpioValue = TestGPIOD.BSRR.Fields.BR.PIN1;
+    	break;
+    case PortD_2:
+    	GpioValue = TestGPIOD.BSRR.Fields.BR.PIN2;
+    	break;
+    case PortD_3:
+    	GpioValue = TestGPIOD.BSRR.Fields.BR.PIN3;
+    	break;
+    case PortD_4:
+    	GpioValue = TestGPIOD.BSRR.Fields.BR.PIN4;
+    	break;
+    case PortD_5:
+    	GpioValue = TestGPIOD.BSRR.Fields.BR.PIN5;
+    	break;
+    case PortD_6:
+    	GpioValue = TestGPIOD.BSRR.Fields.BR.PIN6;
+    	break;
+    case PortD_7:
+    	GpioValue = TestGPIOD.BSRR.Fields.BR.PIN7;
+    	break;
+    case PortD_8:
+    	GpioValue = TestGPIOD.BSRR.Fields.BR.PIN8;
+    	break;
+    case PortD_9:
+    	GpioValue = TestGPIOD.BSRR.Fields.BR.PIN9;
+    	break;
+    case PortD_10:
+    	GpioValue = TestGPIOD.BSRR.Fields.BR.PIN10;
+    	break;
+    case PortD_11:
+    	GpioValue = TestGPIOD.BSRR.Fields.BR.PIN11;
+    	break;
+    case PortD_12:
+    	GpioValue = TestGPIOD.BSRR.Fields.BR.PIN12;
+    	break;
+    case PortD_13:
+    	GpioValue = TestGPIOD.BSRR.Fields.BR.PIN13;
+    	break;
+    case PortD_14:
+    	GpioValue = TestGPIOD.BSRR.Fields.BR.PIN14;
+    	break;
+    case PortD_15:
+    	GpioValue = TestGPIOD.BSRR.Fields.BR.PIN15;
+    	break;
+    case PortF_0:
+    	GpioValue = TestGPIOF.BSRR.Fields.BR.PIN0;
+    	break;
+    case PortF_1:
+    	GpioValue = TestGPIOF.BSRR.Fields.BR.PIN1;
+    	break;
+    case PortF_2:
+    	GpioValue = TestGPIOF.BSRR.Fields.BR.PIN2;
+    	break;
+    case PortF_3:
+    	GpioValue = TestGPIOF.BSRR.Fields.BR.PIN3;
+    	break;
+    case PortF_4:
+    	GpioValue = TestGPIOF.BSRR.Fields.BR.PIN4;
+    	break;
+    case PortF_5:
+    	GpioValue = TestGPIOF.BSRR.Fields.BR.PIN5;
+    	break;
+    case PortF_6:
+    	GpioValue = TestGPIOF.BSRR.Fields.BR.PIN6;
+    	break;
+    case PortF_7:
+    	GpioValue = TestGPIOF.BSRR.Fields.BR.PIN7;
+    	break;
+    case PortF_8:
+    	GpioValue = TestGPIOF.BSRR.Fields.BR.PIN8;
+    	break;
+    case PortF_9:
+    	GpioValue = TestGPIOF.BSRR.Fields.BR.PIN9;
+    	break;
+    case PortF_10:
+    	GpioValue = TestGPIOF.BSRR.Fields.BR.PIN10;
+    	break;
+    case PortF_11:
+    	GpioValue = TestGPIOF.BSRR.Fields.BR.PIN11;
+    	break;
+    case PortF_12:
+    	GpioValue = TestGPIOF.BSRR.Fields.BR.PIN12;
+    	break;
+    case PortF_13:
+    	GpioValue = TestGPIOF.BSRR.Fields.BR.PIN13;
+    	break;
+    case PortF_14:
+    	GpioValue = TestGPIOF.BSRR.Fields.BR.PIN14;
+    	break;
+    case PortF_15:
+    	GpioValue = TestGPIOF.BSRR.Fields.BR.PIN15;
+    	break;
+    }
+    return GpioValue;
 }
 
 int GetGpioModerValue(dtGPIOs value)
