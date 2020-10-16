@@ -43,6 +43,7 @@ INCLUDES += -I$(SRC_DIR)/Pwr
 INCLUDES += -I$(SRC_DIR)/NVIC
 INCLUDES += -I$(SRC_DIR)/BasicTIM
 INCLUDES += -I$(SRC_DIR)/GPIO
+INCLUDES += -I$(SRC_DIR)/I2C
 
 ##############################
 # Modules sources
@@ -53,6 +54,7 @@ MODULES += $(SRC_DIR)/Pwr/Pwr.c
 MODULES += $(SRC_DIR)/NVIC/NVIC.c
 MODULES += $(SRC_DIR)/BasicTIM/BasicTIM.c
 MODULES += $(SRC_DIR)/GPIO/GPIO.c
+MODULES += $(SRC_DIR)/I2C/I2C.c
 
 ##############################
 # Module test folders
