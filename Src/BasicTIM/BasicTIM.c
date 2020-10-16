@@ -44,7 +44,7 @@ void BasicTIM_Set(dtBTimId Id, dtBasicTimConfig Config, void (*IrqPtr)(void))
 	{
 		BTIMs[Id]->DIER.Fields.UIE = 1;
 		IrqPtrs[Id] = IrqPtr;
-#if  defined(MCU_F446)
+#if  defined(MCU_F446) || defined(MCU_F410)
 	NVIC_SetPriority(IRQ_TIM6_DAC,1);
 	NVIC_EnableIRQ(IRQ_TIM6_DAC);
 #elif defined(MCU_G070) || defined(MCU_L433)
