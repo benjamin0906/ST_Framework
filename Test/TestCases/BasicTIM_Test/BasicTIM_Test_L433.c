@@ -5,7 +5,8 @@
  *      Author: BodnarB
  */
 
-#define TEST_CASE
+#define TEST_CASE_NVIC
+#define TEST_CASE_BTIM
 #include "TestEnv.h"
 
 void BasicTIM_Test(void);

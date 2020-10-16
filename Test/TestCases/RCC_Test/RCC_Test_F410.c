@@ -4,7 +4,9 @@
  *  Created on: 2020. okt. 2.
  *      Author: BodnarB
  */
-#define TEST_CASE
+#define TEST_CASE_RCC
+#define TEST_CASE_FLASH
+#define TEST_CASE_PWR
 #include "TestEnv.h"
 
 void RCC_Test(void);

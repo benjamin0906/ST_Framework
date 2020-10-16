@@ -5,7 +5,7 @@
  *      Author: BodnarB
  */
 
-#define TEST_CASE
+#define TEST_CASE_RCC
 #include "TestEnv.h"
 
 void RCC_Test(void);

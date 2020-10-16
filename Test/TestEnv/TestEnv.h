@@ -20,20 +20,20 @@ extern void MemClear(unsigned char *pointer, int size);
 #define ASSERT_LE(a,b) TestAssert_le(a,b,__FILE__, __LINE__, __func__)
 #define ASSERT_GE(a,b) TestAssert_ge(a,b,__FILE__, __LINE__, __func__)
 
-#if defined(RCC_RCC_TYPES_H_) || defined(TEST_CASE)
+#if defined(RCC_RCC_TYPES_H_) || defined(TEST_CASE_RCC)
 #include "RCC_Types.h"
 #include "RCC.h"
 extern dtRCC TestRCC;
 #endif
-#if defined(FLASH_FLASH_TYPES_H_) || defined(TEST_CASE)
+#if defined(FLASH_FLASH_TYPES_H_) || defined(TEST_CASE_FLASH)
 #include "Flash_Types.h"
 extern dtFlash TestFlash;
 #endif
-#if defined(PWR_PWR_TYPES_H_) || defined(TEST_CASE)
+#if defined(PWR_PWR_TYPES_H_) || defined(TEST_CASE_PWR)
 #include "Pwr_Types.h"
 extern dtPwr TestPwr;
 #endif
-#if defined(BASICTIM_BASICTIM_TYPES_H_) || defined(TEST_CASE)
+#if defined(BASICTIM_BASICTIM_TYPES_H_) || defined(TEST_CASE_BTIM)
 #include "BasicTIM_Types.h"
 #include "BasicTIM.h"
 #if defined(MCU_F410)
@@ -55,7 +55,7 @@ extern dtGPIO		TestGPIOF;
 extern dtGPIO		TestGPIOG;
 extern dtGPIO		TestGPIOH;
 #endif
-#if defined(NVIC_NVIC_TYPES_H_) || defined(TEST_CASE)
+#if defined(NVIC_NVIC_TYPES_H_) || defined(TEST_CASE_NVIC)
 #include "NVIC_Types.h"
 extern dtISER		TestISER;
 extern dtICER		TestICER;
