@@ -92,6 +92,11 @@ void GPIO_TestCase_2(void)
 
 	for(looper = Clear; looper <= Toggle; looper++)
 	{
+		MemClear(&TestGPIOA, sizeof(TestGPIOA));
+		MemClear(&TestGPIOB, sizeof(TestGPIOB));
+		MemClear(&TestGPIOC, sizeof(TestGPIOC));
+		MemClear(&TestGPIOD, sizeof(TestGPIOD));
+		MemClear(&TestGPIOF, sizeof(TestGPIOF));
 		for(looper5 = PortA_0; looper5 <= PortH_15; looper5++)
 		{
 			if((looper5 <= PortD_15) || ((looper >= PortF_0) && (looper <= PortF_15)))
@@ -118,11 +123,11 @@ void GPIO_TestCase_2(void)
 		MemClear(&TestGPIOC, sizeof(TestGPIOC));
 		MemClear(&TestGPIOD, sizeof(TestGPIOD));
 		MemClear(&TestGPIOF, sizeof(TestGPIOF));
-		TestGPIOA.IDR.Word = 0xFFFFFFFF;
-		TestGPIOB.IDR.Word = 0xFFFFFFFF;
-		TestGPIOC.IDR.Word = 0xFFFFFFFF;
-		TestGPIOD.IDR.Word = 0xFFFFFFFF;
-		TestGPIOF.IDR.Word = 0xFFFFFFFF;
+		TestGPIOA.ODR.Word = 0xFFFFFFFF;
+		TestGPIOB.ODR.Word = 0xFFFFFFFF;
+		TestGPIOC.ODR.Word = 0xFFFFFFFF;
+		TestGPIOD.ODR.Word = 0xFFFFFFFF;
+		TestGPIOF.ODR.Word = 0xFFFFFFFF;
 		for(looper5 = PortA_0; looper5 <= PortH_15; looper5++)
 		{
 			if((looper5 <= PortD_15) || ((looper >= PortF_0) && (looper <= PortF_15)))

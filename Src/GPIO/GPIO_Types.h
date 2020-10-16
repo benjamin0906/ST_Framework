@@ -32,22 +32,22 @@ typedef struct
 
 typedef struct
 {
-	uint32	PIN0	:1;
-	uint32	PIN1	:1;
-	uint32	PIN2	:1;
-	uint32	PIN3	:1;
-	uint32	PIN4	:1;
-	uint32	PIN5	:1;
-	uint32	PIN6	:1;
-	uint32	PIN7	:1;
-	uint32	PIN8	:1;
-	uint32	PIN9	:1;
-	uint32	PIN10	:1;
-	uint32	PIN11	:1;
-	uint32	PIN12	:1;
-	uint32	PIN13	:1;
-	uint32	PIN14	:1;
-	uint32	PIN15	:1;
+	uint16	PIN0	:1;
+	uint16	PIN1	:1;
+	uint16	PIN2	:1;
+	uint16	PIN3	:1;
+	uint16	PIN4	:1;
+	uint16	PIN5	:1;
+	uint16	PIN6	:1;
+	uint16	PIN7	:1;
+	uint16	PIN8	:1;
+	uint16	PIN9	:1;
+	uint16	PIN10	:1;
+	uint16	PIN11	:1;
+	uint16	PIN12	:1;
+	uint16	PIN13	:1;
+	uint16	PIN14	:1;
+	uint16	PIN15	:1;
 } dtOneBitPins;
 
 typedef union
