@@ -10,20 +10,30 @@
 
 /* ----------Register definition section---------- */
 #ifndef MODULE_TEST
-#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_G070) || defined(MCU_L433)
+#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_G070)
 static dtGPIO *GPIOA = (dtGPIO*) 0x40020000;
+#elif defined(MCU_L433)
+static dtGPIO *GPIOA = (dtGPIO*) 0x48000000;
 #endif
-#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_G070) || defined(MCU_L433)
+#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_G070)
 static dtGPIO *GPIOB = (dtGPIO*) 0x40020400;
+#elif defined(MCU_L433)
+static dtGPIO *GPIOB = (dtGPIO*) 0x48000400;
 #endif
-#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_G070) || defined(MCU_L433)
+#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_G070)
 static dtGPIO *GPIOC = (dtGPIO*) 0x40020800;
+#elif defined(MCU_L433)
+static dtGPIO *GPIOC = (dtGPIO*) 0x48000800;
 #endif
-#if defined(MCU_F446) || defined(MCU_G070) || defined(MCU_L433)
+#if defined(MCU_F446) || defined(MCU_G070)
 static dtGPIO *GPIOD = (dtGPIO*) 0x40020C00;
+#elif defined(MCU_L433)
+static dtGPIO *GPIOD = (dtGPIO*) 0x48000C00;
 #endif
-#if defined(MCU_F446) || defined(MCU_L433)
+#if defined(MCU_F446)
 static dtGPIO *GPIOE = (dtGPIO*) 0x40021000;
+#elif defined(MCU_L433)
+static dtGPIO *GPIOE = (dtGPIO*) 0x48001000;
 #endif
 #if defined(MCU_F446) || defined(MCU_G070)
 static dtGPIO *GPIOF = (dtGPIO*) 0x40021400;
@@ -31,8 +41,10 @@ static dtGPIO *GPIOF = (dtGPIO*) 0x40021400;
 #if defined(MCU_F446)
 static dtGPIO *GPIOG = (dtGPIO*) 0x40021800;
 #endif
-#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_L433)
+#if defined(MCU_F446) || defined(MCU_F410)
 static dtGPIO *GPIOH = (dtGPIO*) 0x40021C00;
+#elif defined(MCU_L433)
+static dtGPIO *GPIOH = (dtGPIO*) 0x48001C00;
 #endif
 #else
 #include "TestEnv.h"
