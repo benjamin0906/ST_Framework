@@ -10,33 +10,43 @@
 
 /* ----------Register definition section---------- */
 #ifndef MODULE_TEST
-#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_G070)
+#if defined(MCU_F446) || defined(MCU_F410)
 static dtGPIO *GPIOA = (dtGPIO*) 0x40020000;
 #elif defined(MCU_L433)
 static dtGPIO *GPIOA = (dtGPIO*) 0x48000000;
+#elif defined(MCU_G070) || defined(MCU_G071)
+static dtGPIO *GPIOA = (dtGPIO*) 0x50000000;
 #endif
-#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_G070)
+#if defined(MCU_F446) || defined(MCU_F410)
 static dtGPIO *GPIOB = (dtGPIO*) 0x40020400;
 #elif defined(MCU_L433)
 static dtGPIO *GPIOB = (dtGPIO*) 0x48000400;
+#elif defined(MCU_G070) || defined(MCU_G071)
+static dtGPIO *GPIOB = (dtGPIO*) 0x50000400;
 #endif
-#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_G070)
+#if defined(MCU_F446) || defined(MCU_F410)
 static dtGPIO *GPIOC = (dtGPIO*) 0x40020800;
 #elif defined(MCU_L433)
 static dtGPIO *GPIOC = (dtGPIO*) 0x48000800;
+#elif defined(MCU_G070) || defined(MCU_G071)
+static dtGPIO *GPIOC = (dtGPIO*) 0x50000800;
 #endif
-#if defined(MCU_F446) || defined(MCU_G070)
+#if defined(MCU_F446)
 static dtGPIO *GPIOD = (dtGPIO*) 0x40020C00;
 #elif defined(MCU_L433)
 static dtGPIO *GPIOD = (dtGPIO*) 0x48000C00;
+#elif defined(MCU_G070) || defined(MCU_G071)
+static dtGPIO *GPIOD = (dtGPIO*) 0x50000C00;
 #endif
 #if defined(MCU_F446)
 static dtGPIO *GPIOE = (dtGPIO*) 0x40021000;
 #elif defined(MCU_L433)
 static dtGPIO *GPIOE = (dtGPIO*) 0x48001000;
 #endif
-#if defined(MCU_F446) || defined(MCU_G070)
+#if defined(MCU_F446)
 static dtGPIO *GPIOF = (dtGPIO*) 0x40021400;
+#elif defined(MCU_G070) || defined(MCU_G071)
+static dtGPIO *GPIOF = (dtGPIO*) 0x50001400;
 #endif
 #if defined(MCU_F446)
 static dtGPIO *GPIOG = (dtGPIO*) 0x40021800;
@@ -48,22 +58,22 @@ static dtGPIO *GPIOH = (dtGPIO*) 0x48001C00;
 #endif
 #else
 #include "TestEnv.h"
-#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_G070) || defined(MCU_L433)
+#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_G070) || defined(MCU_G071) || defined(MCU_L433)
 static dtGPIO *GPIOA = (dtGPIO*) &TestGPIOA;
 #endif
-#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_G070) || defined(MCU_L433)
+#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_G070) || defined(MCU_G071) || defined(MCU_L433)
 static dtGPIO *GPIOB = (dtGPIO*) &TestGPIOB;
 #endif
-#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_G070) || defined(MCU_L433)
+#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_G070) || defined(MCU_G071) || defined(MCU_L433)
 static dtGPIO *GPIOC = (dtGPIO*) &TestGPIOC;
 #endif
-#if defined(MCU_F446) || defined(MCU_G070) || defined(MCU_L433)
+#if defined(MCU_F446) || defined(MCU_G070) || defined(MCU_G071) || defined(MCU_L433)
 static dtGPIO *GPIOD = (dtGPIO*) &TestGPIOD;
 #endif
 #if defined(MCU_F446) || defined(MCU_L433)
 static dtGPIO *GPIOE = (dtGPIO*) &TestGPIOE;
 #endif
-#if defined(MCU_F446) || defined(MCU_G070)
+#if defined(MCU_F446) || defined(MCU_G070) || defined(MCU_G071)
 static dtGPIO *GPIOF = (dtGPIO*) &TestGPIOF;
 #endif
 #if defined(MCU_F446)
@@ -153,7 +163,7 @@ static inline dtGPIO* GetPort(dtGPIOs Gpio)
 	}
 	else if(Gpio >= PortF_0)
 	{
-#if defined(MCU_F446) || defined(MCU_G070)
+#if defined(MCU_F446) || defined(MCU_G070) || defined(MCU_G071)
 		Temp = GPIOF;
 #endif
 	}
@@ -165,25 +175,25 @@ static inline dtGPIO* GetPort(dtGPIOs Gpio)
 	}
 	else if(Gpio >= PortD_0)
 	{
-#if defined(MCU_F446) || defined(MCU_G070) || defined(MCU_L433)
+#if defined(MCU_F446) || defined(MCU_G070) || defined(MCU_G071) || defined(MCU_L433)
 		Temp = GPIOD;
 #endif
 	}
 	else if(Gpio >= PortC_0)
 	{
-#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_G070) || defined(MCU_L433)
+#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_G070) || defined(MCU_G071) || defined(MCU_L433)
 		Temp = GPIOC;
 #endif
 	}
 	else if(Gpio >= PortB_0)
 	{
-#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_G070) || defined(MCU_L433)
+#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_G070) || defined(MCU_G071) || defined(MCU_L433)
 		Temp = GPIOB;
 #endif
 	}
 	else if(Gpio >= PortA_0)
 	{
-#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_G070) || defined(MCU_L433)
+#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_G070) || defined(MCU_G071) || defined(MCU_L433)
 		Temp = GPIOA;
 #endif
 	}
