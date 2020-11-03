@@ -456,7 +456,7 @@ typedef struct
 	uint32 DCKCFGR2;		//0x94
 
 } dtRCC;
-#elif defined(MCU_G070)
+#elif defined(MCU_G070) || defined(MCU_G071)
 typedef union
 {
 	struct
@@ -483,8 +483,8 @@ typedef union
 {
 	struct
 	{
-		uint32 HSICAL	:6;
-		uint32 HSITRIM	:9;
+		uint32 HSICAL	:8;
+		uint32 HSITRIM	:7;
 	} Fields;
 	uint32 Word;
 } dtICSCR;
@@ -518,7 +518,13 @@ typedef union
 		uint32 			:1;
 		uint32 PLLPEN	:1;
 		uint32 PLLP		:5;
+#if defined(MCU_G070)
 		uint32 			:6;
+#elif defined(MCU_G071)
+		uint32			:2;
+		uint32 PLLQEN	:1;
+		uint32 PLLQ		:3;
+#endif
 		uint32 PLLREN	:1;
 		uint32 PLLR		:3;
 	} Fields;
@@ -596,6 +602,12 @@ typedef union
 		uint32 FLASH		:1;
 		uint32				:3;
 		uint32 CRC			:1;
+#if defined(MCU_G071)
+		uint32 				:3;
+		uint32 AES			:1;
+		uint32				:1;
+		uint32 RNG			:1;
+#endif
 	} Fields;
 	uint32 Word;
 } dtAHB;
@@ -605,7 +617,11 @@ typedef union
 	uint32 Word;
 	struct
 	{
+#if defined(MCU_G070)
 		uint32				:1;
+#elif defined(MCU_G071)
+		uint32 TIM2			:1;
+#endif
 		uint32 TIM3			:1;
 		uint32 				:2;
 		uint32 TIM6			:1;
@@ -616,12 +632,27 @@ typedef union
 		uint32 USART2		:1;
 		uint32 USART3		:1;
 		uint32 USART4		:1;
+#if defined(MCU_G070)
 		uint32 				:1;
+#elif defined(MCU_G071)
+#endif
 		uint32 I2C1			:1;
 		uint32 I2C2			:1;
+#if defined(MCU_G070)
 		uint32 				:4;
+#elif defined(MCU_G071)
+		uint32				:1;
+		uint32 CEC			:1;
+		uint32 UCPD1		:1;
+		uint32 UCPD2		:1;
+#endif
 		uint32 DBG			:1;
 		uint32 PWR			:1;
+#if defined(MCU_G071)
+		uint32 DAC1			:1;
+		uint32 LPTIM2		:1;
+		uint32 LPTIM1		:1;
+#elif
 	} Fields;
 } dtAPB1;
 
@@ -660,10 +691,29 @@ typedef union
 	{
 		uint32 USART1SEL	:2;
 		uint32 USART2SEL	:2;
+#if defined(MCU_G070)
 		uint32 				:8;
+#elif defined(MCU_G071)
+		uint32				:2;
+		uint32 CECSEL		:1;
+		uint32				:3;
+		uint32 LPUART1SEL	:2;
+#endif
 		uint32 I2C1SEL		:2;
 		uint32 I2S1SEL		:2;
+#if defined(MCU_G070)
 		uint32 				:14;
+#elif defined(MCU_G071)
+		uint32				:2;
+		uint32 LPTIM1SEL	:2;
+		uint32 LPTIM2SEL	:2;
+		uint32 TIM1SEL		:1;
+		uint32				:1;
+		uint32 TIM15SEL		:1;
+		uint32				:1;
+		uint32 RNGSEL		:2;
+		uint32 RNGDIV		:2;
+#endif
 		uint32 ADCSEL		:2;
 	} Fields;
 } dtCCIPR;
