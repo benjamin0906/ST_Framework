@@ -12,7 +12,7 @@
 #include "config.h"
 
 #ifndef MODULE_TEST
-#if defined(MCU_L476) || defined(MCU_G070) || defined(MCU_L433)
+#if defined(MCU_L476) || defined(MCU_G070) || defined(MCU_L433) || defined(MCU_G071)
 static dtRCC *const RCC = (dtRCC*) (0x40021000);
 #elif defined(MCU_F446) || defined(MCU_F410)
 static dtRCC *const RCC = (dtRCC*) (0x40023800);
@@ -34,7 +34,7 @@ static dtRCC *const RCC = (dtRCC*)&TestRCC;
 #define PLL_VCO_FREQ_MAX	432000000
 #define INTERNAL_CLOCK_FREQ	16000000
 
-#elif defined(MCU_G070)
+#elif defined(MCU_G070) || defined(MCU_G071)
 #define DIVIDER_M_MIN	1
 #define DIVIDER_M_MAX	8
 #define DIVIDER_R_MIN	2
@@ -74,7 +74,7 @@ void RCC_ClockEnable(dtRCCClock Clock, dtRCCClockSets Value)
 	dtBusGroup *GroupPtr;
 
 	if((Value == Enable) || (Value == Disable)) GroupPtr = &RCC->ENR;
-#if defined(MCU_G070) || defined(MCU_L433)
+#if defined(MCU_G070) || defined(MCU_L433) || defined(MCU_G071)
 	else if((Value == LpEnable) || (Value == LpDisable)) GroupPtr = &RCC->SMENR;
 #elif defined(MCU_F410)
 	else if((Value == LpEnable) || (Value == LpDisable)) GroupPtr = &RCC->LPENR;
@@ -86,7 +86,7 @@ void RCC_ClockEnable(dtRCCClock Clock, dtRCCClockSets Value)
 		SetOrClear = Clear;
 		ClockMask = ~ClockMask;
 	}
-#if defined(MCU_G070)
+#if defined(MCU_G070) || defined(MCU_G071)
 	uint32 *Pointer = &GroupPtr->IOP.Word + BusId;
 #elif defined(MCU_F446) || defined(MCU_F410) || defined(MCU_L433)
 	uint32 *Pointer = &GroupPtr->AHB1.Word + BusId;
@@ -102,7 +102,7 @@ void RCC_ClockSet(dtRccInitConfig Config)
 	uint16 MultiplierN;
 #if defined(MCU_F446) || defined(MCU_F410)
 	uint16 DividerP;
-#elif defined(MCU_G070)
+#elif defined(MCU_G070) || defined(MCU_G071)
 	uint16 DividerR;
 #endif
 	uint32 CalculatedClock;
@@ -125,7 +125,7 @@ void RCC_ClockSet(dtRccInitConfig Config)
 						CalculatedClock = PllClock / ((DividerP+1)*2);
 						if(CalculatedClock == Config.Clock) Result = 1;
 					}
-#elif defined(MCU_G070)
+#elif defined(MCU_G070) || defined(MCU_G071)
 					for(DividerR = DIVIDER_R_MIN; (DividerR <= DIVIDER_R_MAX) && (Result == 0); DividerR++)
 					{
 						CalculatedClock = PllClock / (DividerR+1);
@@ -149,7 +149,7 @@ void RCC_ClockSet(dtRccInitConfig Config)
 			while(RCC->CR.Fields.HSERDY == 0);
 #if defined(MCU_F446) || defined(MCU_F410)
 			RCC->PLLCFGR.Fields.PLLSRC = 1;
-#elif defined(MCU_G070)
+#elif defined(MCU_G070) || defined(MCU_G071)
 			RCC->PLLCFGR.Fields.PLLSRC = 3;
 #endif
 		}
@@ -162,7 +162,7 @@ void RCC_ClockSet(dtRccInitConfig Config)
 			while(RCC->CR.Fields.HSIRDY == 0);
 #if defined(MCU_F446) || defined(MCU_F410)
 			RCC->PLLCFGR.Fields.PLLSRC = 0;
-#elif defined(MCU_G070)
+#elif defined(MCU_G070) || defined(MCU_G071)
 			RCC->PLLCFGR.Fields.PLLSRC = 2;
 #endif
 		}
@@ -170,7 +170,7 @@ void RCC_ClockSet(dtRccInitConfig Config)
 #if defined(MCU_F446) || defined(MCU_F410)
 		/* We use the MSI clock, being by default 4MHz, for the PLL so it not need to divide. */
 		RCC->PLLCFGR.Fields.PLLM = DividerM-1;
-#elif defined(MCU_G070)
+#elif defined(MCU_G070) || defined(MCU_G071)
 		RCC->PLLCFGR.Fields.PLLM = DividerM-2;
 #endif
 
@@ -178,7 +178,7 @@ void RCC_ClockSet(dtRccInitConfig Config)
 		RCC->PLLCFGR.Fields.PLLN = MultiplierN-1;
 #if defined(MCU_F446) || defined(MCU_F410)
 		RCC->PLLCFGR.Fields.PLLP = DividerP-1;
-#elif defined(MCU_G070)
+#elif defined(MCU_G070) || defined(MCU_G071)
 		RCC->PLLCFGR.Fields.PLLR = DividerR-1;
 #endif
 		RCC->CR.Fields.PLLON = 1;
@@ -187,7 +187,7 @@ void RCC_ClockSet(dtRccInitConfig Config)
 #endif
 		while(RCC->CR.Fields.PLLRDY == 0);
 
-#if defined(MCU_G070)
+#if defined(MCU_G070) || defined(MCU_G071)
 		if(ClockFreq <= 16000000) Pwr_SetVos(2);
 		else Pwr_SetVos(1);
 		Flash_SetLatency(ClockFreq);
@@ -204,14 +204,14 @@ void RCC_ClockSet(dtRccInitConfig Config)
 
 		if(Config.APB1_Presc == APB_Presc1) RCC->CFGR.Fields.PPRE1 = 0;
 		else RCC->CFGR.Fields.PPRE1 = 0x4 | (Config.APB1_Presc-1);
-#elif defined(MCU_G070)
+#elif defined(MCU_G070) || defined(MCU_G071)
 		if(Config.APB1_Presc == APB_Presc1) RCC->CFGR.Fields.PPRE = 0;
 		else RCC->CFGR.Fields.PPRE = 0x4 | (Config.APB1_Presc-1);
 #endif
 		if(Config.AHB_Presc == AHB_Presc1) RCC->CFGR.Fields.HPRE = 0;
 		else RCC->CFGR.Fields.HPRE = 0x8 | (Config.AHB_Presc-1);
 
-#if defined(MCU_G070)
+#if defined(MCU_G070) || defined(MCU_G071)
 		RCC->PLLCFGR.Fields.PLLREN = 1;
 #endif
 
@@ -245,7 +245,7 @@ uint32 RCC_GetClock(dtBus Bus)
 #if defined(MCU_F446) || defined(MCU_F410)
 	if(RCC->CFGR.Fields.PPRE2 >= 0x4) APB2Presc = 1 << ((RCC->CFGR.Fields.PPRE2 & 0x3) + 1);
 	if(RCC->CFGR.Fields.PPRE1 >= 0x4) APB1Presc = 1 << ((RCC->CFGR.Fields.PPRE1 & 0x3) + 1);
-#elif defined(MCU_G070)
+#elif defined(MCU_G070) || defined(MCU_G071)
 	if(RCC->CFGR.Fields.PPRE >= 0x4) APB1Presc = 1 << ((RCC->CFGR.Fields.PPRE & 0x3) + 1);
 #endif
 	AHBClock = ClockFreq/AHBPresc;
