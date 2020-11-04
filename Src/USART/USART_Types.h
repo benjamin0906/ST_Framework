@@ -10,7 +10,7 @@
 
 #include "types.h"
 
-#if defined(MCU_G070)
+#if defined(MCU_G070) || defined(MCU_G071)
 typedef union
 {
 	uint32 Word;
@@ -44,7 +44,7 @@ typedef union
 } dtCR1;
 #endif
 
-#if defined(MCU_G070)
+#if defined(MCU_G070) || defined(MCU_G071)
 typedef union
 {
 	uint32 Word;
@@ -76,7 +76,7 @@ typedef union
 } dtCR2;
 #endif
 
-#if defined(MCU_G070)
+#if defined(MCU_G070) || defined(MCU_G071)
 typedef union
 {
 	uint32 Word;
@@ -111,7 +111,7 @@ typedef union
 } dtCR3;
 #endif
 
-#if defined(MCU_G070)
+#if defined(MCU_G070) || defined(MCU_G071)
 typedef union
 {
 	uint32 Word;
@@ -122,7 +122,7 @@ typedef union
 } dtBRR;
 #endif
 
-#if defined(MCU_G070)
+#if defined(MCU_G070) || defined(MCU_G071)
 typedef union
 {
 	uint32 Word;
@@ -134,7 +134,7 @@ typedef union
 } dtGTPR;
 #endif
 
-#if defined(MCU_G070)
+#if defined(MCU_G070) || defined(MCU_G071)
 typedef union
 {
 	uint32 Word;
@@ -146,7 +146,7 @@ typedef union
 } dtRTOR;
 #endif
 
-#if defined(MCU_G070)
+#if defined(MCU_G070) || defined(MCU_G071)
 typedef union
 {
 	uint32 Word;
@@ -161,7 +161,7 @@ typedef union
 } dtRQR;
 #endif
 
-#if defined(MCU_G070)
+#if defined(MCU_G070) || defined(MCU_G071)
 typedef union
 {
 	uint32 Word;
@@ -199,7 +199,7 @@ typedef union
 } dtISR;
 #endif
 
-#if defined(MCU_G070)
+#if defined(MCU_G070) || defined(MCU_G071)
 typedef union
 {
 	uint32 Word;
@@ -227,7 +227,7 @@ typedef union
 } dtICR;
 #endif
 
-#if defined(MCU_G070)
+#if defined(MCU_G070) || defined(MCU_G071)
 typedef union
 {
 	uint32 Word;
@@ -238,7 +238,7 @@ typedef union
 } dtRDR;
 #endif
 
-#if defined(MCU_G070)
+#if defined(MCU_G070) || defined(MCU_G071)
 typedef union
 {
 	uint32 Word;
@@ -249,7 +249,7 @@ typedef union
 } dtTDR;
 #endif
 
-#if defined(MCU_G070)
+#if defined(MCU_G070) || defined(MCU_G071)
 typedef union
 {
 	uint32 Word;
@@ -262,7 +262,7 @@ typedef union
 
 typedef struct
 {
-#if defined(MCU_G070)
+#if defined(MCU_G070) || defined(MCU_G071)
 	dtCR1 CR1;
 	dtCR2 CR2;
 	dtCR3 CR3;
