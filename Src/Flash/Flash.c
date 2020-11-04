@@ -12,7 +12,7 @@
 #ifndef MODULE_TEST
 #if defined(MCU_F446) || defined(MCU_F410)
 static dtFlash *const Flash = (dtFlash*)(0x40023C00);
-#elif defined(MCU_G070)
+#elif defined(MCU_G070) || defined(MCU_G071)
 static dtFlash *const Flash = (dtFlash*)(0x40022000);
 #endif
 #else
@@ -22,7 +22,7 @@ static dtFlash *const Flash = (dtFlash*)&TestFlash;
 
 #if defined(MCU_F410) || defined(MCU_F446)
 dtSetLatRet Flash_SetLatency(uint32 clock, uint8 VoltageRange);
-#elif defined(MCU_G070)
+#elif defined(MCU_G070) || defined(MCU_G071)
 dtSetLatRet Flash_SetLatency(uint32 clock);
 #endif
 
@@ -113,7 +113,7 @@ dtSetLatRet Flash_SetLatency(uint32 clock, uint8 VoltageRange)
 	if(Flash->ACR.Fields.LATENCY != Latency) ret = LatFailed;
 	return ret;
 }
-#elif defined(MCU_G070)
+#elif defined(MCU_G070) || defined(MCU_G071)
 dtSetLatRet Flash_SetLatency(uint32 clock)
 {
 	uint8 Latency = 2;

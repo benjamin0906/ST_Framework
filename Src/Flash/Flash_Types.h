@@ -196,7 +196,7 @@ typedef union
 	}Fields;
 	uint32 Word;
 } dtOPTCR;
-#elif defined(MCU_G070)
+#elif defined(MCU_G070) || defined(MCU_G071)
 typedef union
 {
 	struct
@@ -209,6 +209,10 @@ typedef union
 		uint32 ICRST		:1;
 		uint32				:4;
 		uint32 EMPTY		:1;
+#if defined(MCU_G071)
+		uint32				:1;
+		uint32 DBG_SWEN		:1;
+#endif
 	} Fields;
 	uint32 Word;
 } dtACR;
@@ -245,7 +249,12 @@ typedef union
 		uint32 PGSERR		:1;
 		uint32 MISERR		:1;
 		uint32 FASTERR		:1;
+#if defined(MCU_G070)
 		uint32 				:5;
+#elif defined(MCU_G071)
+		uint32				:4;
+		uint32 RDERR		:1;
+#endif
 		uint32 OPTVERR		:1;
 		uint32 BSY1			:1;
 		uint32 				:1;
@@ -269,9 +278,18 @@ typedef union
 		uint32 				:5;
 		uint32 EOPIE		:1;
 		uint32 ERRIE		:1;
+#if defined(MCU_G070)
 		uint32 				:1;
+#elif defined(MCU_G071)
+		uint32 RDERRIE		:1;
+#endif
 		uint32 OBL_LAUNCH	:1;
+#if defined(MCU_G070)
 		uint32 				:2;
+#elif defined(MCU_G071)
+		uint32 SEC_PROT		:1;
+		uint32				:1;
+#endif
 		uint32 OPTLOCK		:1;
 		uint32 LOCK			:1;
 	} Fields;
@@ -299,10 +317,20 @@ typedef union
 	struct
 	{
 		uint32 RDP			:8;
+#if defined(MCU_G070)
 		uint32 				:5;
+#elif defined(MCU_G071)
+		uint32 BOR_EN		:1;
+		uint32 BORR_LEV		:2;
+		uint32 BORF_LEV		:2;
+#endif
 		uint32 nRST_STOP	:1;
 		uint32 nRST_STDBY	:1;
+#if defined(MCU_G070)
 		uint32 				:1;
+#elif defined(MCU_G071)
+		uint32 nRST_SHDW	:1;
+#endif
 		uint32 IWDG_SW		:1;
 		uint32 IWDG_STOP	:1;
 		uint32 IWDG_STBY	:1;
@@ -313,9 +341,34 @@ typedef union
 		uint32 nBOOT_SEL	:1;
 		uint32 nBOOT1		:1;
 		uint32 nBOOT0		:1;
+#if defined(MCU_G071)
+		uint32 NRST_MODE	:2;
+		uint32 IRHEN		:1;
+#endif
 	} Fields;
 	uint32 Word;
 } dtOPTR;
+
+#if defined(MCU_G071)
+typedef union
+{
+	struct
+	{
+		uint32 PCROP1A_STRT	:8;
+	} Fields;
+	uint32 Word;
+} dtPCROP1ASR;
+
+typedef union
+{
+	struct
+	{
+		uint32 PCROP1A_END	:8;
+	} Fields;
+	uint32 Word;
+} dtPCROP1AER;
+
+#endif
 
 typedef union
 {
@@ -338,40 +391,99 @@ typedef union
 	} Fields;
 	uint32 Word;
 } dtWRP1BR;
+
+#if defined(MCU_G071)
+typedef union
+{
+	struct
+	{
+		uint32 PCROP1B_STRT	:8;
+	} Fields;
+	uint32 Word;
+} dtPCROP1BSR;
+
+typedef union
+{
+	struct
+	{
+		uint32 PCROP1B_END	:8;
+	} Fields;
+	uint32 Word;
+} dtPCROP1BER;
+
+typedef union
+{
+	struct
+	{
+		uint32 SEC_SIZE		:7;
+		uint32				:9;
+		uint32 BOOT_LOCK	:1;
+	} Fields;
+	uint32 Word;
+} dtSECR;
+
+#endif
 #endif
 typedef struct
 {
-#if defined(MCU_F410) || defined(MCU_G070)
+#if defined(MCU_F410) || defined(MCU_G070) || defined(MCU_G071)
 	dtACR 		ACR;
 #endif
-#if defined(MCU_G070)
+#if defined(MCU_G070) || defined(MCU_G071)
 	uint32		:32;
 #endif
-#if defined(MCU_F410) || defined(MCU_G070)
+#if defined(MCU_F410) || defined(MCU_G070) || defined(MCU_G071)
 	dtKEYR 		KEY;
 #endif
-#if defined(MCU_F410) || defined(MCU_G070)
+#if defined(MCU_F410) || defined(MCU_G070) || defined(MCU_G071)
 	dtOPTKEYR 	OPTKEYR;
 #endif
-#if defined(MCU_F410) || defined(MCU_G070)
+#if defined(MCU_F410) || defined(MCU_G070) || defined(MCU_G071)
 	dtSR 		SR;
 #endif
-#if defined(MCU_F410) || defined(MCU_G070)
+#if defined(MCU_F410) || defined(MCU_G070) || defined(MCU_G071)
 	dtFlashCR 		CR;
 #endif
-#if defined(MCU_G070)
+#if defined(MCU_G070) || defined(MCU_G071)
 	dtECCR		ECCR;
 #endif
-#if defined(MCU_G070)
+#if defined(MCU_G070) || defined(MCU_G071)
 	dtOPTR		OPTR;
-	uint32		:32;
-	uint32		:32;
 #endif
 #if defined(MCU_G070)
+	uint32		:32;
+	uint32		:32;
+#elif defined(MCU_G071)
+	dtPCROP1ASR	PCROP1ASR;
+	dtPCROP1AER	PCROP1AER;
+#endif
+#if defined(MCU_G070) || defined(MCU_G071)
 	dtWRP1AR	WRP1AR;
 #endif
-#if defined(MCU_G070)
+#if defined(MCU_G070) || defined(MCU_G071)
 	dtWRP1BR	WRP1BR;
+#endif
+#if defined(MCU_G071)
+	dtPCROP1BSR	PCROP1BSR;
+	dtPCROP1BER PCROP1BER;
+	uint32		:32;
+	uint32		:32;
+	uint32		:32;
+	uint32		:32;
+	uint32		:32;
+	uint32		:32;
+	uint32		:32;
+	uint32		:32;
+	uint32		:32;
+	uint32		:32;
+	uint32		:32;
+	uint32		:32;
+	uint32		:32;
+	uint32		:32;
+	uint32		:32;
+	uint32		:32;
+	uint32		:32;
+	dtSECR		SECR;
 #endif
 #if defined(MCU_F410)
 	dtOPTCR 	OPTCR;
