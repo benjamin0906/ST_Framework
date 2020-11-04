@@ -7,11 +7,11 @@
 
 #include "SPI_Types.h"
 
-#if defined(MCU_F410) || defined(MCU_F446) || defined(MCU_L433) || defined(MCU_G070)
+#if defined(MCU_F410) || defined(MCU_F446) || defined(MCU_L433) || defined(MCU_G070) || defined(MCU_G071)
 static dtSPI_I2S *const SPI1 = (dtSPI_I2S*)(0x40013000);
 static dtSpiData SPI1Data;
 #endif
-#if defined(MCU_F410) || defined(MCU_F446) || defined(MCU_L433) || defined(MCU_G070)
+#if defined(MCU_F410) || defined(MCU_F446) || defined(MCU_L433) || defined(MCU_G070) || defined(MCU_G071)
 static dtSPI_I2S *const SPI2 = (dtSPI_I2S*)(0x40003800);
 static dtSpiData SPI2Data;
 #endif
@@ -38,12 +38,12 @@ dtSpiData* GetDataOfInstance(uint8 instance)
 	dtSpiData *ret = 0;
 	switch(instance)
 	{
-#if defined(MCU_F410) || defined(MCU_F446) || defined(MCU_L433) || defined(MCU_G070)
+#if defined(MCU_F410) || defined(MCU_F446) || defined(MCU_L433) || defined(MCU_G070) || defined(MCU_G071)
 	case 1:
 		ret = &SPI1Data;
 		break;
 #endif
-#if defined(MCU_F410) || defined(MCU_F446) || defined(MCU_L433) || defined(MCU_G070)
+#if defined(MCU_F410) || defined(MCU_F446) || defined(MCU_L433) || defined(MCU_G070) || defined(MCU_G071)
 	case 2:
 		ret = &SPI2Data;
 		break;

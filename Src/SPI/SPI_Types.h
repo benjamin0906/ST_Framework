@@ -33,7 +33,7 @@ typedef union
 	} Fields;
 	uint32 Word;
 } dtCR1;
-#elif defined(MCU_G070) || defined(MCU_L433)
+#elif defined(MCU_G070) || defined(MCU_L433) || defined(MCU_G071)
 typedef union
 {
 	struct
@@ -73,7 +73,7 @@ typedef union
 	} Fields;
 	uint32 Word;
 } dtCR2;
-#elif defined(MCU_G070) || defined(MCU_L433)
+#elif defined(MCU_G070) || defined(MCU_L433) || defined(MCU_G071)
 typedef union
 {
 	struct
@@ -112,7 +112,7 @@ typedef union
 	} Fields;
 	uint32 Word;
 } dtSR;
-#elif defined(MCU_G070)
+#elif defined(MCU_G070) || defined(MCU_G071)
 typedef union
 {
 	struct
@@ -169,7 +169,7 @@ typedef union
 	} Fields;
 	uint32 Word;
 } dtI2SCFGR;
-#elif defined(MCU_G070)
+#elif defined(MCU_G070) || defined(MCU_G071)
 typedef union
 {
 	struct
@@ -189,7 +189,7 @@ typedef union
 } dtI2SCFGR;
 #endif
 
-#if defined(MCU_F446) || defined(MCU_G070) || defined(MCU_F410)
+#if defined(MCU_F446) || defined(MCU_G070) || defined(MCU_F410) || defined(MCU_G071)
 typedef union
 {
 	struct
