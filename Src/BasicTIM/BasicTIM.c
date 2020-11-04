@@ -17,7 +17,7 @@ static dtBasicTIM *const BTIMs[1] = {	(dtBasicTIM*)(0x40001000)};//TIM6
 static dtBasicTIM *const BTIMs[1] = {	(dtBasicTIM*)(&TestBasicTIM6)};//TIM6
 #endif
 static void (*IrqPtrs[1])(void);
-#elif defined(MCU_G070) || defined(MCU_L433)
+#elif defined(MCU_G070) || defined(MCU_L433) || defined(MCU_G071)
 #ifndef MODULE_TEST
 static dtBasicTIM *const BTIMs[2] = {	(dtBasicTIM*)(0x40001000),//TIM6
 									(dtBasicTIM*)(0x40001400),//TIM7
@@ -47,7 +47,7 @@ void BasicTIM_Set(dtBTimId Id, dtBasicTimConfig Config, void (*IrqPtr)(void))
 #if  defined(MCU_F446) || defined(MCU_F410)
 	NVIC_SetPriority(IRQ_TIM6_DAC,1);
 	NVIC_EnableIRQ(IRQ_TIM6_DAC);
-#elif defined(MCU_G070) || defined(MCU_L433)
+#elif defined(MCU_G070) || defined(MCU_L433) || defined(MCU_G071)
 	if(Id == TIM6)
 	{
 #if defined(MCU_L433)
@@ -75,7 +75,7 @@ void BasicTIM_Set(dtBTimId Id, dtBasicTimConfig Config, void (*IrqPtr)(void))
 void TIM6_DAC_IRQHandler(void)
 #elif defined(MCU_F410)
 void TIM6_DAC1_IRQHandler(void)
-#elif defined(MCU_G070)
+#elif defined(MCU_G070) || defined(MCU_G071)
 void TIM6_DAC_LPTIM1_IRQHandler(void)
 #else
 #error undefined BasicTIM interrupt;

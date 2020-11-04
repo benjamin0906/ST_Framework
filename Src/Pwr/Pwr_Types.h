@@ -206,6 +206,9 @@ typedef union
 		uint32 REGLPS		:1;
 		uint32 REGLPF		:1;
 		uint32 VOSF			:1;
+#if defined(MCU_G071)
+		uint32 PVDO			:1;
+#endif
 	} Fields;
 } dtSR2;
 
@@ -238,25 +241,27 @@ typedef union
 
 typedef struct
 {
-#if defined(MCU_F410) || defined(MCU_F446) || defined(MCU_G070)
+#if defined(MCU_F410) || defined(MCU_F446) || defined(MCU_G070) || defined(MCU_G071)
 	dtPwrCR 	CR;
 #endif
 #if defined(MCU_G070)
 	uint32	:32;
+#elif defined(MCU_G071)
+	dtCR2	CR2;
 #endif
-#if defined(MCU_G070)
+#if defined(MCU_G070) || defined(MCU_G071)
 	dtCR3	CR3;
 #endif
-#if defined(MCU_G070)
+#if defined(MCU_G070) || defined(MCU_G071)
 	dtCR4	CR4;
 #endif
-#if defined(MCU_G070)
+#if defined(MCU_G070) || defined(MCU_G071)
 	dtSR1	SR1;
 #endif
-#if defined(MCU_G070)
+#if defined(MCU_G070) || defined(MCU_G071)
 	dtSR2	SR2;
 #endif
-#if defined(MCU_G070)
+#if defined(MCU_G070) || defined(MCU_G071)
 	dtSCR	SCR;
 #endif
 #if defined(MCU_F410) || defined(MCU_F446)
