@@ -635,6 +635,7 @@ typedef union
 #if defined(MCU_G070)
 		uint32 				:1;
 #elif defined(MCU_G071)
+		uint32 LPUART1		:1;
 #endif
 		uint32 I2C1			:1;
 		uint32 I2C2			:1;
@@ -652,7 +653,7 @@ typedef union
 		uint32 DAC1			:1;
 		uint32 LPTIM2		:1;
 		uint32 LPTIM1		:1;
-#elif
+#endif
 	} Fields;
 } dtAPB1;
 
