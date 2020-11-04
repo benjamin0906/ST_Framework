@@ -106,7 +106,7 @@ typedef union
 	uint32 Word;
 } dtCSR;
 #endif
-#if defined(MCU_G070)
+#if defined(MCU_G070) || defined(MCU_G071)
 typedef union
 {
 	uint32 Word;
@@ -124,6 +124,19 @@ typedef union
 	} Fields;
 } dtPwrCR;
 
+#if defined(MCU_G071)
+typedef union
+{
+	uint32 Word;
+	struct
+	{
+		uint32 PVDE			:1;
+		uint32 PVDFT		:3;
+		uint32 PVDRT		:3;
+	} Fields;
+} dtCR2;
+#endif
+
 typedef union
 {
 	uint32 Word;
@@ -135,7 +148,13 @@ typedef union
 		uint32 EWUP4		:1;
 		uint32 EWUP5		:1;
 		uint32 EWUP6		:1;
+#if defined(MCU_G070)
 		uint32 				:4;
+#elif defined(MCU_G071)
+		uint32				:2;
+		uint32 RRS			:1;
+		uint32 ULPEN		:1;
+#endif
 		uint32 APC			:1;
 		uint32 				:4;
 		uint32 EIWUL		:1;
