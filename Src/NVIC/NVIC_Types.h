@@ -12,27 +12,27 @@
 
 typedef struct
 {
-	uint8 ISER[32];
+	uint32 ISER[8];
 } dtISER;
 
 typedef struct
 {
-	uint8 ICER[32];
+	uint32 ICER[8];
 } dtICER;
 
 typedef struct
 {
-	uint8 ISPR[32];
+	uint32 ISPR[8];
 } dtISPR;
 
 typedef struct
 {
-	uint8 ICPR[32];
+	uint32 ICPR[8];
 } dtICPR;
 
 typedef struct
 {
-	uint8 IABR[32];
+	uint32 IABR[8];
 } dtIABR;
 
 typedef struct

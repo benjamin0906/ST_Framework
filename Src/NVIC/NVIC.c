@@ -30,8 +30,8 @@ void NVIC_SetPriority(dtIRQs IRQ, uint8 IrqLevel);
 
 void NVIC_EnableIRQ(dtIRQs IRQ)
 {
-	uint8 IserIndex = IRQ>>3;
-	uint32 IserBit = IRQ - (IserIndex << 3);
+	uint8 IserIndex = IRQ >> 5;
+	uint32 IserBit = IRQ - (IserIndex << 5);
 	ISER->ISER[IserIndex] |= 1<<IserBit;
 }
 
