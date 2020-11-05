@@ -8,13 +8,28 @@
 #include "USART_Types.h"
 #include "USART.h"
 #include "RCC.h"
+#include "NVIC.h"
 
+/* Not every USART instances has the same features. USART1 and 2 have full functionality but USART 3 and 4 have only basic functionality */
 static dtUSART *USART[4] = {(dtUSART*)0x40013800,
 							(dtUSART*)0x40004400,
 							(dtUSART*)0x40004800,
 							(dtUSART*)0x40004C00};
+#if defined(USART1_TX_FIFO_SIZE) && defined(USART3_RX_FIFO_SIZE)
+static dtUSART1Data USART1Data;
+#endif
+#if defined(USART2_TX_FIFO_SIZE) && defined(USART3_RX_FIFO_SIZE)
+static dtUSART2Data USART2Data;
+#endif
+#if defined(USART3_TX_FIFO_SIZE) && defined(USART3_RX_FIFO_SIZE)
+static dtUSART3Data USART3Data;
+#endif
+#if defined(USART4_TX_FIFO_SIZE) && defined(USART3_RX_FIFO_SIZE)
+static dtUSART4Data USART4Data;
+#endif
 
-
+void USART_Init(dtUSARTInstance Instance, dtUSARTConfig Config);
+void USART_Send(dtUSARTInstance Instance, uint8 *Data, uint8 DataSize);
 
 void USART_Init(dtUSARTInstance Instance, dtUSARTConfig Config)
 {
@@ -87,15 +102,47 @@ void USART_Init(dtUSARTInstance Instance, dtUSARTConfig Config)
 	/* Enable USART */
 	TempCR1.Fields.UE = 1;
 
+	TempCR1.Fields.TXFNFIE = 0;
+
 	USART[Instance]->CR1 = TempCR1;
 
-	uint8 asd = 0;
-	while(1)
-	{
-		while(USART[Instance]->ISR.TXFNF == 0);
-		uint16 i;
-		for(i = 0; i< 10000; i++);
-		USART[Instance]->TDR.TDR = asd++;
-	}
+	NVIC_SetPriority(IRQ_USART3_4,0);
+	NVIC_EnableIRQ(IRQ_USART3_4);
+}
 
+void USART_Send(dtUSARTInstance Instance, uint8 *Data, uint8 DataSize)
+{
+	switch(Instance)
+	{
+	case USART1:
+		break;
+	case USART2:
+		break;
+	case USART3:
+	{
+		/* Calculate the end of index of the TxClearIndex */
+		uint8 EndIndex = USART3Data.TxClearIndex + DataSize;
+
+		/* Fill the buffer with the data */
+		while(USART3Data.TxClearIndex != EndIndex)
+		{
+			USART3Data.TxFiFo[USART3Data.TxClearIndex++] = *Data++;
+			USART3Data.TxClearIndex &= USART3_TX_FIFO_SIZE-1;
+		}
+
+		USART[Instance]->CR1.Fields.TXFNFIE = 1;
+	}
+		break;
+	case USART4:
+		break;
+	}
+}
+
+void USART3_USART4_LPUART1_IRQHandler(void)
+{
+	if(USART3Data.TxSetIndex != USART3Data.TxClearIndex)
+	{
+		USART[2]->TDR.TDR = USART3Data.TxFiFo[USART3Data.TxSetIndex++];
+		USART3Data.TxSetIndex &= USART3_TX_FIFO_SIZE-1;
+	}
 }

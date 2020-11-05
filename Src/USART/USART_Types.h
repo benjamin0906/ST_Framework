@@ -9,6 +9,7 @@
 #define USART_USART_TYPES_H_
 
 #include "types.h"
+#include "config.h"
 
 #if defined(MCU_G070) || defined(MCU_G071)
 typedef union
@@ -277,5 +278,46 @@ typedef struct
 	dtPRESC PRESC;
 #endif
 } dtUSART;
+
+#if defined(USART1_TX_FIFO_SIZE) && defined(USART1_RX_FIFO_SIZE)
+typedef struct
+{
+	uint8 TxFiFo[USART1_TX_FIFO_SIZE];
+	uint8 TxIndex;
+	uint8 RxFiFo[USART1_RX_FIFO_SIZE];
+	uint8 RxIndex;
+} dtUSART1Data;
+#endif
+
+#if defined(USART2_TX_FIFO_SIZE) && defined(USART2_RX_FIFO_SIZE)
+typedef struct
+{
+	uint8 TxFiFo[USART2_TX_FIFO_SIZE];
+	uint8 TxIndex;
+	uint8 RxFiFo[USART2_RX_FIFO_SIZE];
+	uint8 RxIndex;
+} dtUSART2Data;
+#endif
+
+#if defined(USART3_TX_FIFO_SIZE) && defined(USART3_RX_FIFO_SIZE)
+typedef struct
+{
+	uint8 TxFiFo[USART3_TX_FIFO_SIZE];
+	uint8 TxSetIndex;
+	uint8 TxClearIndex;
+	uint8 RxFiFo[USART3_RX_FIFO_SIZE];
+	uint8 RxIndex;
+} dtUSART3Data;
+#endif
+
+#if defined(USART4_TX_FIFO_SIZE) && defined(USART4_RX_FIFO_SIZE)
+typedef struct
+{
+	uint8 TxFiFo[USART4_TX_FIFO_SIZE];
+	uint8 TxIndex;
+	uint8 RxFiFo[USART4_RX_FIFO_SIZE];
+	uint8 RxIndex;
+} dtUSART4Data;
+#endif
 
 #endif /* USART_USART_TYPES_H_ */

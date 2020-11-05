@@ -41,5 +41,6 @@ typedef struct
 } dtUSARTConfig;
 
 extern void USART_Init(dtUSARTInstance Instance, dtUSARTConfig Config);
+extern void USART_Send(dtUSARTInstance Instance, uint8 *Data, uint8 DataSize);
 
 #endif /* INC_USART_H_ */
