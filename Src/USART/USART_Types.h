@@ -72,7 +72,7 @@ typedef union
 		uint32 ABRMOD	:2;
 		uint32 RTOEN	:1;
 		uint32 ADD		:8;
-	};
+	} Fields;
 } dtCR2;
 #endif
 
