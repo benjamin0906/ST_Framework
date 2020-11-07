@@ -30,7 +30,8 @@ static dtUSART4Data USART4Data;
 
 void USART_Init(dtUSARTInstance Instance, dtUSARTConfig Config);
 void USART_Send(dtUSARTInstance Instance, uint8 *Data, uint8 DataSize);
-uint8 USART_GetFreeFifoSize(dtUSARTInstance Instance);
+uint8 USART_GetTxFifoFreeSize(dtUSARTInstance Instance);
+uint8 USART_GetRxData(dtUSARTInstance Instance);
 
 void USART_Init(dtUSARTInstance Instance, dtUSARTConfig Config)
 {
@@ -104,8 +105,11 @@ void USART_Init(dtUSARTInstance Instance, dtUSARTConfig Config)
 	TempCR1.Fields.UE = 1;
 
 	TempCR1.Fields.TXFNFIE = 0;
+	TempCR1.Fields.RXFNEIE = 1;
 
 	USART[Instance]->CR1 = TempCR1;
+
+	volatile uint8 asd = USART[2]->RDR.Fields.RDR;
 
 	NVIC_SetPriority(IRQ_USART3_4,0);
 	NVIC_EnableIRQ(IRQ_USART3_4);
@@ -115,7 +119,6 @@ void USART_Send(dtUSARTInstance Instance, uint8 *Data, uint8 DataSize)
 {
 	if(DataSize > 0)
 	{
-
 		switch(Instance)
 		{
 		case USART1:
@@ -133,7 +136,6 @@ void USART_Send(dtUSARTInstance Instance, uint8 *Data, uint8 DataSize)
 				USART3Data.TxFiFo[USART3Data.TxWriteIndex++] = *Data++;
 				USART3Data.TxWriteIndex &= USART3_TX_FIFO_SIZE;
 			}
-
 			USART[Instance]->CR1.Fields.TXFNFIE = 1;
 		}
 			break;
@@ -143,7 +145,18 @@ void USART_Send(dtUSARTInstance Instance, uint8 *Data, uint8 DataSize)
 	}
 }
 
-uint8 USART_GetFreeFifoSize(dtUSARTInstance Instance)
+uint8 USART_GetRxData(dtUSARTInstance Instance)
+{
+	uint8 ret = 0;
+	if(USART3Data.RxReadIndex != USART3Data.RxWriteIndex)
+	{
+		ret = USART3Data.RxFiFo[USART3Data.RxReadIndex++];
+		USART3Data.RxReadIndex &= USART3_RX_FIFO_SIZE;
+	}
+	return ret;
+}
+
+uint8 USART_GetTxFifoFreeSize(dtUSARTInstance Instance)
 {
 	uint8 ret = 0;
 	switch(Instance)
@@ -159,11 +172,6 @@ uint8 USART_GetFreeFifoSize(dtUSARTInstance Instance)
 		{
 			ret += USART3_TX_FIFO_SIZE - (USART3Data.TxWriteIndex - USART3Data.TxReadIndex);
 		}
-		if(ret == 6)
-		{
-			uint8 asd = 0;
-			asd ++;
-		}
 	}
 		break;
 	case USART4:
@@ -172,16 +180,31 @@ uint8 USART_GetFreeFifoSize(dtUSARTInstance Instance)
 	return ret;
 }
 
+uint8 USART_GetRxFifoFilledSize(dtUSARTInstance Instance)
+{
+	uint8 ret;
+	if(USART3Data.RxReadIndex > USART3Data.RxWriteIndex) ret += USART3Data.RxReadIndex - USART3Data.RxWriteIndex-1;
+	else
+	{
+		ret += USART3_RX_FIFO_SIZE - (USART3Data.RxWriteIndex - USART3Data.RxReadIndex);
+	}
+	return ret;
+}
+
 
 void USART3_USART4_LPUART1_IRQHandler(void)
 {
-	if(USART3Data.TxReadIndex != USART3Data.TxWriteIndex)
+	if(USART[2]->ISR.Fields.TXFNF != 0)
 	{
 		USART[2]->TDR.TDR = USART3Data.TxFiFo[USART3Data.TxReadIndex++];
 		USART3Data.TxReadIndex &= USART3_TX_FIFO_SIZE;
+
+		/* If there is no more data to send disable the tx-empty interrupt */
+		if(USART3Data.TxReadIndex == USART3Data.TxWriteIndex) USART[2]->CR1.Fields.TXFNFIE = 0;
 	}
-	else
+	if(USART[2]->ISR.Fields.RXFNE != 0)
 	{
-		USART[2]->CR1.Fields.TXFNFIE = 0;
+		USART3Data.RxFiFo[USART3Data.RxWriteIndex++] = USART[2]->RDR.Fields.RDR;
+		USART3Data.RxWriteIndex &= USART3_RX_FIFO_SIZE;
 	}
 }

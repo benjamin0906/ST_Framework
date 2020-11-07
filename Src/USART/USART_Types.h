@@ -196,7 +196,7 @@ typedef union
 		uint32 TCBGT	:1;
 		uint32 RXFT		:1;
 		uint32 TXFT		:1;
-	};
+	} Fields;
 } dtISR;
 #endif
 
@@ -235,7 +235,7 @@ typedef union
 	struct
 	{
 		uint32 RDR:9;
-	};
+	} Fields;
 } dtRDR;
 #endif
 
@@ -306,7 +306,8 @@ typedef struct
 	uint8 TxReadIndex;
 	uint8 TxWriteIndex;
 	uint8 RxFiFo[USART3_RX_FIFO_SIZE+1];
-	uint8 RxIndex;
+	uint8 RxWriteIndex;
+	uint8 RxReadIndex;
 } dtUSART3Data;
 #endif
 
