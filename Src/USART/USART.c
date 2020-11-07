@@ -110,12 +110,7 @@ void USART_Init(dtUSARTInstance Instance, dtUSARTConfig Config)
 	NVIC_SetPriority(IRQ_USART3_4,0);
 	NVIC_EnableIRQ(IRQ_USART3_4);
 }
-uint8 sizes[10];
-uint8 cntr = 0;
-uint8 indexesrd[50];
-uint8 indexeswr[50];
-uint8 indexesrdindex = 0;
-uint8 indexeswrindex = 0;
+
 void USART_Send(dtUSARTInstance Instance, uint8 *Data, uint8 DataSize)
 {
 	if(DataSize > 0)
@@ -145,9 +140,6 @@ void USART_Send(dtUSARTInstance Instance, uint8 *Data, uint8 DataSize)
 		case USART4:
 			break;
 		}
-		sizes[cntr++] = DataSize;
-				indexesrd[indexesrdindex++] = USART3Data.TxReadIndex;
-				indexeswr[indexeswrindex++] = USART3Data.TxWriteIndex;
 	}
 }
 
@@ -162,7 +154,7 @@ uint8 USART_GetFreeFifoSize(dtUSARTInstance Instance)
 		break;
 	case USART3:
 	{
-		if(USART3Data.TxReadIndex > USART3Data.TxWriteIndex) ret += USART3Data.TxReadIndex - USART3Data.TxWriteIndex;
+		if(USART3Data.TxReadIndex > USART3Data.TxWriteIndex) ret += USART3Data.TxReadIndex - USART3Data.TxWriteIndex-1;
 		else
 		{
 			ret += USART3_TX_FIFO_SIZE - (USART3Data.TxWriteIndex - USART3Data.TxReadIndex);
