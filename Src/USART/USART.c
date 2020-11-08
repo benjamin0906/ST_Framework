@@ -182,11 +182,11 @@ uint8 USART_GetTxFifoFreeSize(dtUSARTInstance Instance)
 
 uint8 USART_GetRxFifoFilledSize(dtUSARTInstance Instance)
 {
-	uint8 ret;
-	if(USART3Data.RxReadIndex > USART3Data.RxWriteIndex) ret += USART3Data.RxReadIndex - USART3Data.RxWriteIndex-1;
+	uint8 ret = 0;
+	if(USART3Data.RxWriteIndex >= USART3Data.RxReadIndex) ret = USART3Data.RxWriteIndex - USART3Data.RxReadIndex;
 	else
 	{
-		ret += USART3_RX_FIFO_SIZE - (USART3Data.RxWriteIndex - USART3Data.RxReadIndex);
+		ret = USART3Data.RxReadIndex - USART3Data.RxWriteIndex;
 	}
 	return ret;
 }
@@ -194,7 +194,7 @@ uint8 USART_GetRxFifoFilledSize(dtUSARTInstance Instance)
 
 void USART3_USART4_LPUART1_IRQHandler(void)
 {
-	if(USART[2]->ISR.Fields.TXFNF != 0)
+	if((USART[2]->CR1.Fields.TXFNFIE != 0) && (USART[2]->ISR.Fields.TXFNF != 0))
 	{
 		USART[2]->TDR.TDR = USART3Data.TxFiFo[USART3Data.TxReadIndex++];
 		USART3Data.TxReadIndex &= USART3_TX_FIFO_SIZE;
