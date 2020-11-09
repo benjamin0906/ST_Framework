@@ -109,27 +109,45 @@ void USART_Init(dtUSARTInstance Instance, dtUSARTConfig Config)
 
 	USART[Instance]->CR1 = TempCR1;
 
-	volatile uint8 asd = USART[2]->RDR.Fields.RDR;
+	uint8 dummy = USART[Instance]->RDR.Fields.RDR;
 
-	NVIC_SetPriority(IRQ_USART3_4,0);
-	NVIC_EnableIRQ(IRQ_USART3_4);
+	switch(Instance)
+	{
+	case USART1:
+#if defined(USART1_TX_FIFO_SIZE) && defined(USART1_RX_FIFO_SIZE)
+		NVIC_SetPriority(IRQ_USART1,0);
+		NVIC_EnableIRQ(IRQ_USART1);
+#endif
+		break;
+	case USART2:
+#if defined(USART2_TX_FIFO_SIZE) && defined(USART2_RX_FIFO_SIZE)
+		NVIC_SetPriority(IRQ_USART2,0);
+		NVIC_EnableIRQ(IRQ_USART2);
+#endif
+		break;
+	case USART3:
+	case USART4:
+#if defined(USART3_TX_FIFO_SIZE) && defined(USART3_RX_FIFO_SIZE)
+		NVIC_SetPriority(IRQ_USART3_4,0);
+		NVIC_EnableIRQ(IRQ_USART3_4);
+#endif
+		break;
+	}
+
 }
 
 void USART_Send(dtUSARTInstance Instance, uint8 *Data, uint8 DataSize)
 {
 	if(DataSize > 0)
 	{
+		/* Calculate the end of index of the TxClearIndex */
+		uint8 *EndIndex = Data + DataSize;
+
 		switch(Instance)
 		{
 		case USART1:
-			break;
-		case USART2:
-			break;
-		case USART3:
+#if defined(USART1_TX_FIFO_SIZE) && defined(USART1_RX_FIFO_SIZE)
 		{
-			/* Calculate the end of index of the TxClearIndex */
-			uint8 *EndIndex = Data + DataSize;
-
 			/* Fill the buffer with the data */
 			while(Data < EndIndex)
 			{
@@ -138,8 +156,46 @@ void USART_Send(dtUSARTInstance Instance, uint8 *Data, uint8 DataSize)
 			}
 			USART[Instance]->CR1.Fields.TXFNFIE = 1;
 		}
+#endif
+			break;
+		case USART2:
+#if defined(USART2_TX_FIFO_SIZE) && defined(USART2_RX_FIFO_SIZE)
+		{
+			/* Fill the buffer with the data */
+			while(Data < EndIndex)
+			{
+				USART3Data.TxFiFo[USART3Data.TxWriteIndex++] = *Data++;
+				USART3Data.TxWriteIndex &= USART3_TX_FIFO_SIZE;
+			}
+			USART[Instance]->CR1.Fields.TXFNFIE = 1;
+		}
+#endif
+			break;
+		case USART3:
+#if defined(USART3_TX_FIFO_SIZE) && defined(USART3_RX_FIFO_SIZE)
+		{
+			/* Fill the buffer with the data */
+			while(Data < EndIndex)
+			{
+				USART3Data.TxFiFo[USART3Data.TxWriteIndex++] = *Data++;
+				USART3Data.TxWriteIndex &= USART3_TX_FIFO_SIZE;
+			}
+			USART[Instance]->CR1.Fields.TXFNFIE = 1;
+		}
+#endif
 			break;
 		case USART4:
+#if defined(USART4_TX_FIFO_SIZE) && defined(USART4_RX_FIFO_SIZE)
+		{
+			/* Fill the buffer with the data */
+			while(Data < EndIndex)
+			{
+				USART3Data.TxFiFo[USART3Data.TxWriteIndex++] = *Data++;
+				USART3Data.TxWriteIndex &= USART3_TX_FIFO_SIZE;
+			}
+			USART[Instance]->CR1.Fields.TXFNFIE = 1;
+		}
+#endif
 			break;
 		}
 	}
@@ -148,11 +204,46 @@ void USART_Send(dtUSARTInstance Instance, uint8 *Data, uint8 DataSize)
 uint8 USART_GetRxData(dtUSARTInstance Instance)
 {
 	uint8 ret = 0;
-	if(USART3Data.RxReadIndex != USART3Data.RxWriteIndex)
+	switch(Instance)
 	{
-		ret = USART3Data.RxFiFo[USART3Data.RxReadIndex++];
-		USART3Data.RxReadIndex &= USART3_RX_FIFO_SIZE;
+	case USART1:
+#if defined(USART1_TX_FIFO_SIZE) && defined(USART1_RX_FIFO_SIZE)
+		if(USART1Data.RxReadIndex != USART1Data.RxWriteIndex)
+		{
+			ret = USART1Data.RxFiFo[USART1Data.RxReadIndex++];
+			USART1Data.RxReadIndex &= USART1_RX_FIFO_SIZE;
+		}
+#endif
+		break;
+	case USART2:
+#if defined(USART2_TX_FIFO_SIZE) && defined(USART2_RX_FIFO_SIZE)
+		if(USART2Data.RxReadIndex != USART2Data.RxWriteIndex)
+		{
+			ret = USART2Data.RxFiFo[USART2Data.RxReadIndex++];
+			USART2Data.RxReadIndex &= USART2_RX_FIFO_SIZE;
+		}
+#endif
+		break;
+	case USART3:
+#if defined(USART3_TX_FIFO_SIZE) && defined(USART3_RX_FIFO_SIZE)
+		if(USART3Data.RxReadIndex != USART3Data.RxWriteIndex)
+		{
+			ret = USART3Data.RxFiFo[USART3Data.RxReadIndex++];
+			USART3Data.RxReadIndex &= USART3_RX_FIFO_SIZE;
+		}
+#endif
+		break;
+	case USART4:
+#if defined(USART4_TX_FIFO_SIZE) && defined(USART4_RX_FIFO_SIZE)
+		if(USART4Data.RxReadIndex != USART4Data.RxWriteIndex)
+		{
+			ret = USART4Data.RxFiFo[USART4Data.RxReadIndex++];
+			USART4Data.RxReadIndex &= USART4_RX_FIFO_SIZE;
+		}
+#endif
+		break;
 	}
+
 	return ret;
 }
 
@@ -162,19 +253,28 @@ uint8 USART_GetTxFifoFreeSize(dtUSARTInstance Instance)
 	switch(Instance)
 	{
 	case USART1:
+#if defined(USART1_TX_FIFO_SIZE) && defined(USART1_RX_FIFO_SIZE)
+		if(USART1Data.TxReadIndex > USART1Data.TxWriteIndex) ret += USART1Data.TxReadIndex - USART1Data.TxWriteIndex-1;
+		else ret += USART1_TX_FIFO_SIZE - (USART1Data.TxWriteIndex - USART1Data.TxReadIndex);
+#endif
 		break;
 	case USART2:
+#if defined(USART2_TX_FIFO_SIZE) && defined(USART2_RX_FIFO_SIZE)
+		if(USART2Data.TxReadIndex > USART2Data.TxWriteIndex) ret += USART2Data.TxReadIndex - USART2Data.TxWriteIndex-1;
+		else ret += USART2_TX_FIFO_SIZE - (USART2Data.TxWriteIndex - USART2Data.TxReadIndex);
+#endif
 		break;
 	case USART3:
-	{
+#if defined(USART3_TX_FIFO_SIZE) && defined(USART3_RX_FIFO_SIZE)
 		if(USART3Data.TxReadIndex > USART3Data.TxWriteIndex) ret += USART3Data.TxReadIndex - USART3Data.TxWriteIndex-1;
-		else
-		{
-			ret += USART3_TX_FIFO_SIZE - (USART3Data.TxWriteIndex - USART3Data.TxReadIndex);
-		}
-	}
+		else ret += USART3_TX_FIFO_SIZE - (USART3Data.TxWriteIndex - USART3Data.TxReadIndex);
+#endif
 		break;
 	case USART4:
+#if defined(USART4_TX_FIFO_SIZE) && defined(USART4_RX_FIFO_SIZE)
+		if(USART4Data.TxReadIndex > USART4Data.TxWriteIndex) ret += USART4Data.TxReadIndex - USART4Data.TxWriteIndex-1;
+		else ret += USART4_TX_FIFO_SIZE - (USART4Data.TxWriteIndex - USART4Data.TxReadIndex);
+#endif
 		break;
 	}
 	return ret;
@@ -183,11 +283,34 @@ uint8 USART_GetTxFifoFreeSize(dtUSARTInstance Instance)
 uint8 USART_GetRxFifoFilledSize(dtUSARTInstance Instance)
 {
 	uint8 ret = 0;
-	if(USART3Data.RxWriteIndex >= USART3Data.RxReadIndex) ret = USART3Data.RxWriteIndex - USART3Data.RxReadIndex;
-	else
+	switch(Instance)
 	{
-		ret = USART3Data.RxReadIndex - USART3Data.RxWriteIndex;
+	case USART1:
+#if defined(USART1_TX_FIFO_SIZE) && defined(USART1_RX_FIFO_SIZE)
+		if(USART1Data.RxWriteIndex >= USART1Data.RxReadIndex) ret = USART1Data.RxWriteIndex - USART1Data.RxReadIndex;
+		else ret = USART1Data.RxReadIndex - USART1Data.RxWriteIndex;
+#endif
+		break;
+	case USART2:
+#if defined(USART2_TX_FIFO_SIZE) && defined(USART2_RX_FIFO_SIZE)
+		if(USART2Data.RxWriteIndex >= USART2Data.RxReadIndex) ret = USART2Data.RxWriteIndex - USART2Data.RxReadIndex;
+		else ret = USART2Data.RxReadIndex - USART2Data.RxWriteIndex;
+#endif
+		break;
+	case USART3:
+#if defined(USART3_TX_FIFO_SIZE) && defined(USART3_RX_FIFO_SIZE)
+		if(USART3Data.RxWriteIndex >= USART3Data.RxReadIndex) ret = USART3Data.RxWriteIndex - USART3Data.RxReadIndex;
+		else ret = USART3Data.RxReadIndex - USART3Data.RxWriteIndex;
+#endif
+		break;
+	case USART4:
+#if defined(USART4_TX_FIFO_SIZE) && defined(USART4_RX_FIFO_SIZE)
+		if(USART4Data.RxWriteIndex >= USART4Data.RxReadIndex) ret = USART4Data.RxWriteIndex - USART4Data.RxReadIndex;
+		else ret = USART4Data.RxReadIndex - USART4Data.RxWriteIndex;
+#endif
+		break;
 	}
+
 	return ret;
 }
 

@@ -283,9 +283,11 @@ typedef struct
 typedef struct
 {
 	uint8 TxFiFo[USART1_TX_FIFO_SIZE];
-	uint8 TxIndex;
+	uint8 TxReadIndex;
+	uint8 TxWriteIndex;
 	uint8 RxFiFo[USART1_RX_FIFO_SIZE];
-	uint8 RxIndex;
+	uint8 RxWriteIndex;
+	uint8 RxReadIndex;
 } dtUSART1Data;
 #endif
 
@@ -293,9 +295,11 @@ typedef struct
 typedef struct
 {
 	uint8 TxFiFo[USART2_TX_FIFO_SIZE];
-	uint8 TxIndex;
+	uint8 TxReadIndex;
+	uint8 TxWriteIndex;
 	uint8 RxFiFo[USART2_RX_FIFO_SIZE];
-	uint8 RxIndex;
+	uint8 RxWriteIndex;
+	uint8 RxReadIndex;
 } dtUSART2Data;
 #endif
 
@@ -315,9 +319,11 @@ typedef struct
 typedef struct
 {
 	uint8 TxFiFo[USART4_TX_FIFO_SIZE];
-	uint8 TxIndex;
+	uint8 TxReadIndex;
+	uint8 TxWriteIndex;
 	uint8 RxFiFo[USART4_RX_FIFO_SIZE];
-	uint8 RxIndex;
+	uint8 RxWriteIndex;
+	uint8 RxReadIndex;
 } dtUSART4Data;
 #endif
 
