@@ -60,7 +60,51 @@ typedef union
 		uint32 LBD		:1;
 		uint32 CTS		:1;
 	} Fields;
+} dtSR;
+
+typedef union
+{
+	uint32 Word;
+	struct
+	{
+		uint32 DR		:9;
+	} Fields;
+} dtDR;
+
+typedef union
+{
+	uint32 Word;
+	struct
+	{
+		uint32 DIV_Fraction		:4;
+		uint32 DIV_Mantissa		:12;
+	} Fields;
+} dtBRR;
+
+typedef union
+{
+	uint32 Word;
+	struct
+	{
+		uint32 SBK		:1;
+		uint32 RWU		:1;
+		uint32 RE		:1;
+		uint32 TE		:1;
+		uint32 IDLEIE	:1;
+		uint32 RXNEIE	:1;
+		uint32 TCIE		:1;
+		uint32 TXEIE	:1;
+		uint32 PEIE		:1;
+		uint32 PS		:1;
+		uint32 PCE		:1;
+		uint32 WAKE		:1;
+		uint32 M		:1;
+		uint32 UE		:1;
+		uint32 			:1;
+		uint32 OVER8	:1;
+	} Fields;
 } dtCR1;
+
 #endif
 
 #if defined(MCU_G070) || defined(MCU_G071)
@@ -294,6 +338,11 @@ typedef struct
 	dtRDR RDR;
 	dtTDR TDR;
 	dtPRESC PRESC;
+#elif defined(MCU_F446)
+	dtSR	SR;
+	dtDR	DR;
+	dtBRR	BRR;
+	dtCR1	CR1;
 #endif
 } dtUSART;
 
