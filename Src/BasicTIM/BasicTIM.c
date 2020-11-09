@@ -17,7 +17,7 @@ static dtBasicTIM *const BTIMs[1] = {	(dtBasicTIM*)(0x40001000)};//TIM6
 static dtBasicTIM *const BTIMs[1] = {	(dtBasicTIM*)(&TestBasicTIM6)};//TIM6
 #endif
 static void (*IrqPtrs[1])(void);
-#elif defined(MCU_G070) || defined(MCU_L433) || defined(MCU_G071)
+#elif defined(MCU_G070) || defined(MCU_L433) || defined(MCU_G071) || defined(MCU_F446)
 #ifndef MODULE_TEST
 static dtBasicTIM *const BTIMs[2] = {	(dtBasicTIM*)(0x40001000),//TIM6
 									(dtBasicTIM*)(0x40001400),//TIM7

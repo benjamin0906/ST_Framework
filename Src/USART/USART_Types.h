@@ -43,6 +43,24 @@ typedef union
 		uint32 RXFFIE	:1;
 	} Fields;
 } dtCR1;
+#elif defined(MCU_F446)
+typedef union
+{
+	uint32 Word;
+	struct
+	{
+		uint32 PE		:1;
+		uint32 FE		:1;
+		uint32 NF		:1;
+		uint32 ORE		:1;
+		uint32 IDLE		:1;
+		uint32 RXNE		:1;
+		uint32 TC		:1;
+		uint32 TXE		:1;
+		uint32 LBD		:1;
+		uint32 CTS		:1;
+	} Fields;
+} dtCR1;
 #endif
 
 #if defined(MCU_G070) || defined(MCU_G071)

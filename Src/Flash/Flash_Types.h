@@ -176,7 +176,7 @@ typedef union
 		uint32 LOCK			:1;
 	} Fields;
 	uint32 Word;
-} dtCR;
+} dtFlashCR;
 
 typedef union
 {
@@ -426,23 +426,26 @@ typedef union
 #endif
 typedef struct
 {
-#if defined(MCU_F410) || defined(MCU_G070) || defined(MCU_G071)
+#if defined(MCU_F410) || defined(MCU_G070) || defined(MCU_G071) || defined(MCU_F446)
 	dtACR 		ACR;
 #endif
 #if defined(MCU_G070) || defined(MCU_G071)
 	uint32		:32;
 #endif
-#if defined(MCU_F410) || defined(MCU_G070) || defined(MCU_G071)
+#if defined(MCU_F410) || defined(MCU_G070) || defined(MCU_G071) || defined(MCU_F446)
 	dtKEYR 		KEY;
 #endif
-#if defined(MCU_F410) || defined(MCU_G070) || defined(MCU_G071)
+#if defined(MCU_F410) || defined(MCU_G070) || defined(MCU_G071) || defined(MCU_F446)
 	dtOPTKEYR 	OPTKEYR;
 #endif
-#if defined(MCU_F410) || defined(MCU_G070) || defined(MCU_G071)
+#if defined(MCU_F410) || defined(MCU_G070) || defined(MCU_G071) || defined(MCU_F446)
 	dtSR 		SR;
 #endif
-#if defined(MCU_F410) || defined(MCU_G070) || defined(MCU_G071)
-	dtFlashCR 		CR;
+#if defined(MCU_F410) || defined(MCU_G070) || defined(MCU_G071) || defined(MCU_F446)
+	dtFlashCR 	CR;
+#endif
+#if defined(MCU_F446)
+	dtOPTCR		OPTCR;
 #endif
 #if defined(MCU_G070) || defined(MCU_G071)
 	dtECCR		ECCR;
