@@ -61,7 +61,7 @@ typedef union
 		uint32 			:10;
 	} Fields;
 	uint32 Word;
-} dtCR;
+} dtPwrCR;
 #endif
 
 #ifdef MCU_F410

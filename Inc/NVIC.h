@@ -408,10 +408,10 @@ typedef enum
 	IRQ_QuadSPI				= 92,
 #endif
 #if defined(MCU_F446)
-	IRQ_HDMI-CEC			= 93,
+	IRQ_HDMI_CEC			= 93,
 #endif
 #if defined(MCU_F446)
-	IRQ_SPDIF-Rx			= 94,
+	IRQ_SPDIF_Rx			= 94,
 #endif
 #if defined(MCU_F446)
 	IRQ_FMPI2C1				= 95,
