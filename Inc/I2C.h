@@ -12,13 +12,23 @@
 
 typedef enum
 {
+	I2C1,
+	I2C2,
+} dtI2CInstance;
+
+typedef enum
+{
 	I2C_Write,
 	I2C_Read,
 } dtI2cSessionType;
 
 typedef struct
 {
-
+	uint32	TimingReg;
+	uint8	AnalogFilter	:1;
 } dtI2cConfig;
+
+extern void I2C_Init(dtI2CInstance Instance, dtI2cConfig config);
+extern void I2C_Start(dtI2cSessionType SessionType, uint8 SlaveAdd, uint8* RegisterAddress, uint8 RegisterLength, uint8* Data, uint8 DataLength);
 
 #endif /* INC_I2C_H_ */

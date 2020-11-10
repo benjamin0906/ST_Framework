@@ -194,3 +194,5 @@ typedef struct
 	dtRXDR		RXDR;
 	dtTXDR		TXDR;
 } dtI2C;
+
+#define SET_SLAVE_ADDRESS(x)	I2C[1]->CR2.Fields.SADD = x
