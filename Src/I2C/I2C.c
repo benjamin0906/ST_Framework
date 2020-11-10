@@ -17,9 +17,23 @@ static uint8 *RegisterAdd;
 static uint8 RegLen;
 static uint8 *Data;
 static uint8 DataLen;
+dtI2cSessionType Session;
 
 void I2C_Init(dtI2CInstance Instance, dtI2cConfig config);
 void I2C_Start(dtI2cSessionType SessionType, uint8 SlaveAdd, uint8* RegisterAddress, uint8 RegisterLength, uint8* Data, uint8 DataLength);
+void SetCR2(void)
+{
+	dtCR2 temp = {.Word = 0};
+	temp.Fields.SADD = SlaveAddress;
+	temp.Fields.RD_WRN = 0;
+	temp.Fields.AUTOEND = 0;
+	temp.Fields.HEAD10R = 1;
+	if(Session == I2C_Read) I2C[1]->CR2.Fields.RELOAD = 0;
+	else I2C[1]->CR2.Fields.RELOAD = 1;
+	temp.Fields.NBYTES = RegLen;
+	temp.Fields.START = 1;
+	I2C[1]->CR2 = temp;
+}
 
 void I2C_Init(dtI2CInstance Instance, dtI2cConfig config)
 {
@@ -41,15 +55,9 @@ void I2C_Start(dtI2cSessionType SessionType, uint8 SlaveAdd, uint8* RegisterAddr
 	RegLen = RegisterLength;
 	Data = Data;
 	DataLen = DataLength;
+	Session = SessionType;
 
-	SET_SLAVE_ADDRESS(SlaveAdd);
-	I2C[1]->CR2.Fields.RD_WRN = 0;
-	I2C[1]->CR2.Fields.AUTOEND = 0;
-	I2C[1]->CR2.Fields.HEAD10R = 1;
-	if(SessionType == I2C_Read) I2C[1]->CR2.Fields.RELOAD = 0;
-	else I2C[1]->CR2.Fields.RELOAD = 1;
-	I2C[1]->CR2.Fields.NBYTES = RegLen;
-	I2C[1]->CR2.Fields.START = 1;
+	SetCR2();
 }
 
 void I2C2_IRQHandler(void)
