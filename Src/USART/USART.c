@@ -10,11 +10,13 @@
 #include "RCC.h"
 #include "NVIC.h"
 
+#if defined(MCU_G070) || defined(MCU_G071)
 /* Not every USART instances has the same features. USART1 and 2 have full functionality but USART 3 and 4 have only basic functionality */
 static dtUSART *USART[4] = {(dtUSART*)0x40013800,
 							(dtUSART*)0x40004400,
 							(dtUSART*)0x40004800,
 							(dtUSART*)0x40004C00};
+#endif
 #if defined(USART1_TX_FIFO_SIZE) && defined(USART3_RX_FIFO_SIZE)
 static dtUSART1Data USART1Data;
 #endif
@@ -35,6 +37,7 @@ uint8 USART_GetRxData(dtUSARTInstance Instance);
 
 void USART_Init(dtUSARTInstance Instance, dtUSARTConfig Config)
 {
+#if defined(MCU_G070) || defined(MCU_G071)
 	dtCR1 TempCR1 = {.Word = 0};
 
 	/* Set 8 databits */
@@ -133,11 +136,12 @@ void USART_Init(dtUSARTInstance Instance, dtUSARTConfig Config)
 #endif
 		break;
 	}
-
+#endif
 }
 
 void USART_Send(dtUSARTInstance Instance, uint8 *Data, uint8 DataSize)
 {
+#if defined(MCU_G070) || defined(MCU_G071)
 	if(DataSize > 0)
 	{
 		/* Calculate the end of index of the TxClearIndex */
@@ -199,11 +203,13 @@ void USART_Send(dtUSARTInstance Instance, uint8 *Data, uint8 DataSize)
 			break;
 		}
 	}
+#endif
 }
 
 uint8 USART_GetRxData(dtUSARTInstance Instance)
 {
 	uint8 ret = 0;
+#if defined(MCU_G070) || defined(MCU_G071)
 	switch(Instance)
 	{
 	case USART1:
@@ -243,13 +249,14 @@ uint8 USART_GetRxData(dtUSARTInstance Instance)
 #endif
 		break;
 	}
-
+#endif
 	return ret;
 }
 
 uint8 USART_GetTxFifoFreeSize(dtUSARTInstance Instance)
 {
 	uint8 ret = 0;
+#if defined(MCU_G070) || defined(MCU_G071)
 	switch(Instance)
 	{
 	case USART1:
@@ -277,12 +284,14 @@ uint8 USART_GetTxFifoFreeSize(dtUSARTInstance Instance)
 #endif
 		break;
 	}
+#endif
 	return ret;
 }
 
 uint8 USART_GetRxFifoFilledSize(dtUSARTInstance Instance)
 {
 	uint8 ret = 0;
+#if defined(MCU_G070) || defined(MCU_G071)
 	switch(Instance)
 	{
 	case USART1:
@@ -310,11 +319,11 @@ uint8 USART_GetRxFifoFilledSize(dtUSARTInstance Instance)
 #endif
 		break;
 	}
-
+#endif
 	return ret;
 }
 
-
+#if defined(MCU_G070) || defined(MCU_G071)
 void USART3_USART4_LPUART1_IRQHandler(void)
 {
 	if((USART[2]->CR1.Fields.TXFNFIE != 0) && (USART[2]->ISR.Fields.TXFNF != 0))
@@ -331,3 +340,4 @@ void USART3_USART4_LPUART1_IRQHandler(void)
 		USART3Data.RxWriteIndex &= USART3_RX_FIFO_SIZE;
 	}
 }
+#endif

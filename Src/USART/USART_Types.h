@@ -105,6 +105,55 @@ typedef union
 	} Fields;
 } dtCR1;
 
+typedef union
+{
+	uint32 Word;
+	struct
+	{
+		uint32 ADD		:4;
+		uint32 			:1;
+		uint32 LBDL		:1;
+		uint32 LBDIE	:1;
+		uint32 			:1;
+		uint32 LBCL		:1;
+		uint32 CPHA		:1;
+		uint32 CPOL		:1;
+		uint32 CLKEN	:1;
+		uint32 STOP		:2;
+		uint32 LINEN	:1;
+	} Fields;
+} dtCR2;
+
+typedef union
+{
+	uint32 Word;
+	struct
+	{
+		uint32 EIE		:1;
+		uint32 IREN		:1;
+		uint32 IRLP		:1;
+		uint32 HDSEL	:1;
+		uint32 NACK		:1;
+		uint32 SCEN		:1;
+		uint32 DMAR		:1;
+		uint32 DMAT		:1;
+		uint32 RTSE		:1;
+		uint32 CTSE		:1;
+		uint32 CTSIE	:1;
+		uint32 ONEBIT	:1;
+	} Fields;
+} dtCR3;
+
+typedef union
+{
+	uint32 Word;
+	struct
+	{
+		uint32 PSC		:8;
+		uint32 GT		:8;
+	} Fields;
+} dtGTPR;
+
 #endif
 
 #if defined(MCU_G070) || defined(MCU_G071)
@@ -343,6 +392,9 @@ typedef struct
 	dtDR	DR;
 	dtBRR	BRR;
 	dtCR1	CR1;
+	dtCR2	CR2;
+	dtCR3	CR3;
+	dtGTPR	GTPR;
 #endif
 } dtUSART;
 
