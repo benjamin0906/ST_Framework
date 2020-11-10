@@ -23,9 +23,14 @@ void I2C_Start(dtI2cSessionType SessionType, uint8 SlaveAdd, uint8* RegisterAddr
 
 void I2C_Init(dtI2CInstance Instance, dtI2cConfig config)
 {
+	dtCR1 temp = {.Word = 0};
 	I2C[Instance]->CR1.Fields.PE = 0;
-	I2C[Instance]->CR1.Fields.ANFOFF = config.AnalogFilter;
+	temp.Fields.ANFOFF = !config.AnalogFilter;
+	temp.Fields.PE = 1;
 	I2C[Instance]->TIMINGR.Word = config.TimingReg;
+
+	I2C[Instance]->CR1 = temp;
+
 	NVIC_EnableIRQ(IRQ_I2C2);
 }
 
@@ -49,7 +54,7 @@ void I2C_Start(dtI2cSessionType SessionType, uint8 SlaveAdd, uint8* RegisterAddr
 
 void I2C2_IRQHandler(void)
 {
-	if(I2C[1]->ISR.Fields.TXIS != 0)
+
 	{
 		I2C[1]->TXDR.Fields.TXDATA = *RegisterAdd++;
 	}
