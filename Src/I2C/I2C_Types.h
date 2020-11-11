@@ -195,7 +195,6 @@ typedef struct
 	dtTXDR		TXDR;
 } dtI2C;
 
-#define SET_SLAVE_ADDRESS(x)	I2C[1]->CR2.Fields.SADD = x
 #define SET_TRANSFER_SIZE(Instance, Size)	\
 {\
 	dtCR2 temp = I2C[Instance]->CR2;\

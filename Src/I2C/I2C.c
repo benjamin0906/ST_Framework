@@ -12,7 +12,6 @@
 static dtI2C *I2C[2] = {(dtI2C*)0x40005400,
 						(dtI2C*)0x40005800};
 
-static uint8 SlaveAddress;
 static uint8 *RegisterAdd;
 static uint8 RegLen;
 static uint8 *Data;
@@ -36,22 +35,39 @@ void I2C_Init(dtI2CInstance Instance, dtI2cConfig config)
 	temp.Fields.STOPIE = 1;
 	temp.Fields.TCIE = 1;
 	I2C[Instance]->TIMINGR.Word = config.TimingReg;
-
 	I2C[Instance]->CR1 = temp;
-
-	//NVIC_EnableIRQ(IRQ_I2C2);
-	NVIC_EnableIRQ(IRQ_I2C1_EV);
+	if(Instance == I2C1)
+	{
+#if defined(MCU_G071) || defined(MCU_G070)
+		NVIC_EnableIRQ(IRQ_I2C1);
+#elif defined(MCU_L433)
+		NVIC_EnableIRQ(IRQ_I2C1_EV);
+#endif
+	}
+	else if(Instance == I2C2)
+	{
+#if defined(MCU_G071) || defined(MCU_G070)
+		NVIC_EnableIRQ(IRQ_I2C2);
+#elif defined(MCU_L433)
+		NVIC_EnableIRQ(IRQ_I2C2_EV);
+#endif
+	}
 }
 
 void I2C_Start(dtI2cSessionType SessionType, uint8 SlaveAdd, uint8* RegisterAddress, uint8 RegisterLength, uint8* DataPointer, uint8 DataLength)
 {
-	SlaveAddress = SlaveAdd;
+	/* Copy the necessary infos into the own variables of the module */
 	RegisterAdd = RegisterAddress;
 	RegLen = RegisterLength;
 	Data = DataPointer;
 	DataLen = DataLength;
 	Session = SessionType;
+
+	/* Set the status sign variable to busy */
 	Result = Busy;
+	SecondStart = 0;
+
+	/* Initiate the communication session */
 	SET_WRITE_TRANSFER_REQ(I2C1);
 	CLEAR_AUTO_ENABLE(I2C1);
 	SET_7BIT_ADDRESS_MODE(I2C1);
@@ -60,7 +76,7 @@ void I2C_Start(dtI2cSessionType SessionType, uint8 SlaveAdd, uint8* RegisterAddr
 		DISABLE_RELOAD(I2C1);
 	}
 	else ENABLE_RELOAD(I2C1);
-	SET_SLAVE_ADDRESS(I2C1,SlaveAddress);
+	SET_SLAVE_ADDRESS(I2C1,SlaveAdd);
 	SET_TRANSFER_SIZE(I2C1, RegLen);
 	GENERATE_START(I2C1);
 
@@ -71,7 +87,10 @@ dtI2cSessionResult I2C_Result(void)
 	return Result;
 }
 
+#if defined(MCU_G071) || defined(MCU_G070)
+#elif defined(MCU_L433)
 void I2C1_EV_IRQHandler(void)
+#endif
 {
 	if(I2C[0]->ISR.Fields.TXIS != 0)
 	{
@@ -148,7 +167,10 @@ void I2C1_EV_IRQHandler(void)
 	}
 }
 
+#if defined(MCU_G071) || defined(MCU_G070)
+#elif defined(MCU_L433)
 void I2C2_EV_IRQHandler(void)
+#endif
 {
 	if(I2C[0]->ISR.Fields.TXIS != 0)
 	{
