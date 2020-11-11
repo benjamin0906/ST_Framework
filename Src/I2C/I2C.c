@@ -68,7 +68,7 @@ void I2C_Start(dtI2cSessionType SessionType, uint8 SlaveAdd, uint8* RegisterAddr
 	SecondStart = 0;
 
 	/* Initiate the communication session */
-	SET_WRITE_TRANSFER_REQ(I2C1);
+	/*SET_WRITE_TRANSFER_REQ(I2C1);
 	CLEAR_AUTO_ENABLE(I2C1);
 	SET_7BIT_ADDRESS_MODE(I2C1);
 	if(Session == I2C_Read)
@@ -78,7 +78,20 @@ void I2C_Start(dtI2cSessionType SessionType, uint8 SlaveAdd, uint8* RegisterAddr
 	else ENABLE_RELOAD(I2C1);
 	SET_SLAVE_ADDRESS(I2C1,SlaveAdd);
 	SET_TRANSFER_SIZE(I2C1, RegLen);
-	GENERATE_START(I2C1);
+	GENERATE_START(I2C1);*/
+
+	/* Initiate the communication session */
+		SET_WRITE_TRANSFER_REQ(I2C2);
+		CLEAR_AUTO_ENABLE(I2C2);
+		SET_7BIT_ADDRESS_MODE(I2C2);
+		if(Session == I2C_Read)
+		{
+			DISABLE_RELOAD(I2C2);
+		}
+		else ENABLE_RELOAD(I2C2);
+		SET_SLAVE_ADDRESS(I2C2,SlaveAdd);
+		SET_TRANSFER_SIZE(I2C2, RegLen);
+		GENERATE_START(I2C2);
 
 }
 
@@ -88,6 +101,7 @@ dtI2cSessionResult I2C_Result(void)
 }
 
 #if defined(MCU_G071) || defined(MCU_G070)
+void I2C1_IRQHandler(void)
 #elif defined(MCU_L433)
 void I2C1_EV_IRQHandler(void)
 #endif
@@ -168,12 +182,82 @@ void I2C1_EV_IRQHandler(void)
 }
 
 #if defined(MCU_G071) || defined(MCU_G070)
+void I2C2_IRQHandler(void)
 #elif defined(MCU_L433)
 void I2C2_EV_IRQHandler(void)
 #endif
 {
-	if(I2C[0]->ISR.Fields.TXIS != 0)
-	{
-		I2C[0]->TXDR.Fields.TXDATA = *RegisterAdd++;
-	}
+	if(I2C[1]->ISR.Fields.TXIS != 0)
+		{
+			if(SecondStart == 0) I2C[1]->TXDR.Fields.TXDATA = *RegisterAdd++;
+			else I2C[1]->TXDR.Fields.TXDATA = *Data++;
+		}
+		else if(I2C[1]->ISR.Fields.RXNE != 0)
+		{
+			*Data++ = I2C[1]->RXDR.Fields.RXDATA;
+			DataLen--;
+		}
+		else if(I2C[1]->ISR.Fields.TC != 0)
+		{
+			if(Session == I2C_Read && (DataLen > 0))
+			{
+				if(DataLen > 255)
+				{
+					/* Set NBYTES to 255 */
+					SET_TRANSFER_SIZE(I2C2, 255);
+				}
+				else
+				{
+					/* Set NBYYTES to the left amount */
+					SET_TRANSFER_SIZE(I2C2, DataLen);
+				}
+				/* Set a read transfer request */
+				SET_READ_TRANSFER_REQ(I2C2);
+
+				/* Generate a start condition */
+				GENERATE_START(I2C2);
+			}
+			else
+			{
+				/* Generate a stop condition */
+				GENERATE_STOP(I2C2);
+			}
+		}
+		else if(I2C[1]->ISR.Fields.TCR != 0)
+		{
+			if(Session == I2C_Read)
+			{
+
+			}
+			else
+			{
+				if(DataLen > 255)
+				{
+					/* Set to NBYTES 255 */
+					SET_TRANSFER_SIZE(I2C2, 255);
+				}
+				else
+				{
+					/* Set to NBYTES the left amount */
+					SET_TRANSFER_SIZE(I2C2, DataLen);
+
+					/* Disable reload mode */
+					DISABLE_RELOAD(I2C2);
+
+					/* Enable auto end mode */
+					SET_AUTO_ENABLE(I2C2);
+				}
+				SecondStart = 1;
+			}
+		}
+		else if(I2C[1]->ISR.Fields.STOPF != 0)
+		{
+			CLEAR_STOP_FLAG(I2C2);
+			Result = Done;
+			if(I2C[1]->ISR.Fields.NACKF != 0)
+			{
+				CLEAR_NACK_FLAG(I2C2);
+				Result = Error;
+			}
+		}
 }
