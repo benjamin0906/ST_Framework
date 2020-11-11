@@ -43,12 +43,12 @@ void I2C_Init(dtI2CInstance Instance, dtI2cConfig config)
 	NVIC_EnableIRQ(IRQ_I2C1_EV);
 }
 
-void I2C_Start(dtI2cSessionType SessionType, uint8 SlaveAdd, uint8* RegisterAddress, uint8 RegisterLength, uint8* Data, uint8 DataLength)
+void I2C_Start(dtI2cSessionType SessionType, uint8 SlaveAdd, uint8* RegisterAddress, uint8 RegisterLength, uint8* DataPointer, uint8 DataLength)
 {
 	SlaveAddress = SlaveAdd;
 	RegisterAdd = RegisterAddress;
 	RegLen = RegisterLength;
-	Data = Data;
+	Data = DataPointer;
 	DataLen = DataLength;
 	Session = SessionType;
 	Result = Busy;
@@ -133,6 +133,7 @@ void I2C1_EV_IRQHandler(void)
 				/* Enable auto end mode */
 				SET_AUTO_ENABLE(I2C1);
 			}
+			SecondStart = 1;
 		}
 	}
 	else if(I2C[0]->ISR.Fields.STOPF != 0)
