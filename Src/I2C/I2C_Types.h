@@ -196,3 +196,93 @@ typedef struct
 } dtI2C;
 
 #define SET_SLAVE_ADDRESS(x)	I2C[1]->CR2.Fields.SADD = x
+#define SET_TRANSFER_SIZE(Instance, Size)	\
+{\
+	dtCR2 temp = I2C[Instance]->CR2;\
+	temp.Fields.NBYTES = Size;\
+	I2C[Instance]->CR2 = temp; \
+}
+
+#define GENERATE_STOP(Instance)	\
+{\
+	dtCR2 temp = I2C[Instance]->CR2;\
+	temp.Fields.STOP = 1;\
+	I2C[Instance]->CR2 = temp; \
+}
+
+#define GENERATE_START(Instance)	\
+{\
+	dtCR2 temp = I2C[Instance]->CR2;\
+	temp.Fields.START = 1;\
+	I2C[Instance]->CR2 = temp; \
+}
+
+#define DISABLE_RELOAD(Instance)	\
+{\
+	dtCR2 temp = I2C[Instance]->CR2;\
+	temp.Fields.RELOAD = 0;\
+	I2C[Instance]->CR2 = temp; \
+}
+
+#define ENABLE_RELOAD(Instance)	\
+{\
+	dtCR2 temp = I2C[Instance]->CR2;\
+	temp.Fields.RELOAD = 1;\
+	I2C[Instance]->CR2 = temp; \
+}
+
+#define SET_AUTO_ENABLE(Instance)	\
+{\
+	dtCR2 temp = I2C[Instance]->CR2;\
+	temp.Fields.AUTOEND = 1;\
+	I2C[Instance]->CR2 = temp; \
+}
+
+#define CLEAR_AUTO_ENABLE(Instance)	\
+{\
+	dtCR2 temp = I2C[Instance]->CR2;\
+	temp.Fields.AUTOEND = 0;\
+	I2C[Instance]->CR2 = temp; \
+}
+
+#define CLEAR_STOP_FLAG(Instance)	\
+{\
+	dtICR temp = I2C[Instance]->ICR;\
+	temp.Fields.STOPCF = 1;\
+	I2C[Instance]->ICR = temp; \
+}
+
+#define CLEAR_NACK_FLAG(Instance)	\
+{\
+	dtICR temp = I2C[Instance]->ICR;\
+	temp.Fields.NACKCF = 1;\
+	I2C[Instance]->ICR = temp; \
+}
+
+#define SET_READ_TRANSFER_REQ(Instance)	\
+{\
+	dtCR2 temp = I2C[Instance]->CR2;\
+	temp.Fields.RD_WRN = 1;\
+	I2C[Instance]->CR2 = temp; \
+}
+
+#define SET_WRITE_TRANSFER_REQ(Instance)	\
+{\
+	dtCR2 temp = I2C[Instance]->CR2;\
+	temp.Fields.RD_WRN = 0;\
+	I2C[Instance]->CR2 = temp; \
+}
+
+#define SET_7BIT_ADDRESS_MODE(Instance)	\
+{\
+	dtCR2 temp = I2C[Instance]->CR2;\
+	temp.Fields.HEAD10R = 1;\
+	I2C[Instance]->CR2 = temp; \
+}
+
+#define SET_SLAVE_ADDRESS(Instance, x)	\
+{\
+	dtCR2 temp = I2C[Instance]->CR2;\
+	temp.Fields.SADD = x<<1;\
+	I2C[Instance]->CR2 = temp; \
+}

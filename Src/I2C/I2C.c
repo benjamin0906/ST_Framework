@@ -17,23 +17,13 @@ static uint8 *RegisterAdd;
 static uint8 RegLen;
 static uint8 *Data;
 static uint8 DataLen;
+static uint8 SecondStart;
+static dtI2cSessionResult Result;
 dtI2cSessionType Session;
 
 void I2C_Init(dtI2CInstance Instance, dtI2cConfig config);
 void I2C_Start(dtI2cSessionType SessionType, uint8 SlaveAdd, uint8* RegisterAddress, uint8 RegisterLength, uint8* Data, uint8 DataLength);
-void SetCR2(void)
-{
-	dtCR2 temp = {.Word = 0};
-	temp.Fields.SADD = SlaveAddress;
-	temp.Fields.RD_WRN = 0;
-	temp.Fields.AUTOEND = 0;
-	temp.Fields.HEAD10R = 1;
-	if(Session == I2C_Read) I2C[1]->CR2.Fields.RELOAD = 0;
-	else I2C[1]->CR2.Fields.RELOAD = 1;
-	temp.Fields.NBYTES = RegLen;
-	temp.Fields.START = 1;
-	I2C[1]->CR2 = temp;
-}
+dtI2cSessionResult I2C_Result(void);
 
 void I2C_Init(dtI2CInstance Instance, dtI2cConfig config)
 {
@@ -41,11 +31,16 @@ void I2C_Init(dtI2CInstance Instance, dtI2cConfig config)
 	I2C[Instance]->CR1.Fields.PE = 0;
 	temp.Fields.ANFOFF = !config.AnalogFilter;
 	temp.Fields.PE = 1;
+	temp.Fields.TXIE = 1;
+	temp.Fields.RXIE = 1;
+	temp.Fields.STOPIE = 1;
+	temp.Fields.TCIE = 1;
 	I2C[Instance]->TIMINGR.Word = config.TimingReg;
 
 	I2C[Instance]->CR1 = temp;
 
-	NVIC_EnableIRQ(IRQ_I2C2);
+	//NVIC_EnableIRQ(IRQ_I2C2);
+	NVIC_EnableIRQ(IRQ_I2C1_EV);
 }
 
 void I2C_Start(dtI2cSessionType SessionType, uint8 SlaveAdd, uint8* RegisterAddress, uint8 RegisterLength, uint8* Data, uint8 DataLength)
@@ -56,14 +51,106 @@ void I2C_Start(dtI2cSessionType SessionType, uint8 SlaveAdd, uint8* RegisterAddr
 	Data = Data;
 	DataLen = DataLength;
 	Session = SessionType;
+	Result = Busy;
+	SET_WRITE_TRANSFER_REQ(I2C1);
+	CLEAR_AUTO_ENABLE(I2C1);
+	SET_7BIT_ADDRESS_MODE(I2C1);
+	if(Session == I2C_Read)
+	{
+		DISABLE_RELOAD(I2C1);
+	}
+	else ENABLE_RELOAD(I2C1);
+	SET_SLAVE_ADDRESS(I2C1,SlaveAddress);
+	SET_TRANSFER_SIZE(I2C1, RegLen);
+	GENERATE_START(I2C1);
 
-	SetCR2();
 }
 
-void I2C2_IRQHandler(void)
+dtI2cSessionResult I2C_Result(void)
 {
+	return Result;
+}
 
+void I2C1_EV_IRQHandler(void)
+{
+	if(I2C[0]->ISR.Fields.TXIS != 0)
 	{
-		I2C[1]->TXDR.Fields.TXDATA = *RegisterAdd++;
+		if(SecondStart == 0) I2C[0]->TXDR.Fields.TXDATA = *RegisterAdd++;
+		else I2C[0]->TXDR.Fields.TXDATA = *Data++;
+	}
+	else if(I2C[0]->ISR.Fields.RXNE != 0)
+	{
+		*Data++ = I2C[0]->RXDR.Fields.RXDATA;
+		DataLen--;
+	}
+	else if(I2C[0]->ISR.Fields.TC != 0)
+	{
+		if(Session == I2C_Read && (DataLen > 0))
+		{
+			if(DataLen > 255)
+			{
+				/* Set NBYTES to 255 */
+				SET_TRANSFER_SIZE(I2C1, 255);
+			}
+			else
+			{
+				/* Set NBYYTES to the left amount */
+				SET_TRANSFER_SIZE(I2C1, DataLen);
+			}
+			/* Set a read transfer request */
+			SET_READ_TRANSFER_REQ(I2C1);
+
+			/* Generate a start condition */
+			GENERATE_START(I2C1);
+		}
+		else
+		{
+			/* Generate a stop condition */
+			GENERATE_STOP(I2C1);
+		}
+	}
+	else if(I2C[0]->ISR.Fields.TCR != 0)
+	{
+		if(Session == I2C_Read)
+		{
+
+		}
+		else
+		{
+			if(DataLen > 255)
+			{
+				/* Set to NBYTES 255 */
+				SET_TRANSFER_SIZE(I2C1, 255);
+			}
+			else
+			{
+				/* Set to NBYTES the left amount */
+				SET_TRANSFER_SIZE(I2C1, DataLen);
+
+				/* Disable reload mode */
+				DISABLE_RELOAD(I2C1);
+
+				/* Enable auto end mode */
+				SET_AUTO_ENABLE(I2C1);
+			}
+		}
+	}
+	else if(I2C[0]->ISR.Fields.STOPF != 0)
+	{
+		CLEAR_STOP_FLAG(I2C1);
+		Result = Done;
+		if(I2C[0]->ISR.Fields.NACKF != 0)
+		{
+			CLEAR_NACK_FLAG(I2C1);
+			Result = Error;
+		}
+	}
+}
+
+void I2C2_EV_IRQHandler(void)
+{
+	if(I2C[0]->ISR.Fields.TXIS != 0)
+	{
+		I2C[0]->TXDR.Fields.TXDATA = *RegisterAdd++;
 	}
 }
