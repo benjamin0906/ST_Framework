@@ -14,15 +14,15 @@ static dtI2C *I2C[2] = {(dtI2C*)0x40005400,
 
 static uint8 *RegisterAdd;
 static uint8 RegLen;
-static uint8 *Data;
-static uint8 DataLen;
-static uint8 SecondStart;
-static dtI2cSessionResult Result;
-dtI2cSessionType Session;
+static uint8 *Data[2];
+static uint8 DataLen[2];
+static dtI2cSessionResult Result[2];
+static uint8 SecondStart[2];
+dtI2cSessionType Session[2];
 
 void I2C_Init(dtI2CInstance Instance, dtI2cConfig config);
-void I2C_Start(dtI2cSessionType SessionType, uint8 SlaveAdd, uint8* RegisterAddress, uint8 RegisterLength, uint8* Data, uint8 DataLength);
-dtI2cSessionResult I2C_Result(void);
+void I2C_Start(dtI2CInstance Instance, dtI2cSessionType SessionType, uint8 SlaveAdd, uint8* RegisterAddress, uint8 RegisterLength, uint8* Data, uint8 DataLength);
+dtI2cSessionResult I2C_Result(dtI2CInstance Instance);
 
 void I2C_Init(dtI2CInstance Instance, dtI2cConfig config)
 {
@@ -54,50 +54,37 @@ void I2C_Init(dtI2CInstance Instance, dtI2cConfig config)
 	}
 }
 
-void I2C_Start(dtI2cSessionType SessionType, uint8 SlaveAdd, uint8* RegisterAddress, uint8 RegisterLength, uint8* DataPointer, uint8 DataLength)
+void I2C_Start(dtI2CInstance Instance, dtI2cSessionType SessionType, uint8 SlaveAdd, uint8* RegisterAddress, uint8 RegisterLength, uint8* DataPointer, uint8 DataLength)
 {
 	/* Copy the necessary infos into the own variables of the module */
 	RegisterAdd = RegisterAddress;
 	RegLen = RegisterLength;
-	Data = DataPointer;
-	DataLen = DataLength;
-	Session = SessionType;
+	Data[Instance] = DataPointer;
+	DataLen[Instance] = DataLength;
+	Session[Instance] = SessionType;
 
 	/* Set the status sign variable to busy */
-	Result = Busy;
-	SecondStart = 0;
+	Result[Instance] = Busy;
+	SecondStart[Instance] = 0;
 
 	/* Initiate the communication session */
-	/*SET_WRITE_TRANSFER_REQ(I2C1);
-	CLEAR_AUTO_ENABLE(I2C1);
-	SET_7BIT_ADDRESS_MODE(I2C1);
-	if(Session == I2C_Read)
+	SET_WRITE_TRANSFER_REQ(Instance);
+	CLEAR_AUTO_ENABLE(Instance);
+	SET_7BIT_ADDRESS_MODE(Instance);
+	if(Session[Instance] == I2C_Read)
 	{
-		DISABLE_RELOAD(I2C1);
+		DISABLE_RELOAD(Instance);
 	}
-	else ENABLE_RELOAD(I2C1);
-	SET_SLAVE_ADDRESS(I2C1,SlaveAdd);
-	SET_TRANSFER_SIZE(I2C1, RegLen);
-	GENERATE_START(I2C1);*/
-
-	/* Initiate the communication session */
-		SET_WRITE_TRANSFER_REQ(I2C2);
-		CLEAR_AUTO_ENABLE(I2C2);
-		SET_7BIT_ADDRESS_MODE(I2C2);
-		if(Session == I2C_Read)
-		{
-			DISABLE_RELOAD(I2C2);
-		}
-		else ENABLE_RELOAD(I2C2);
-		SET_SLAVE_ADDRESS(I2C2,SlaveAdd);
-		SET_TRANSFER_SIZE(I2C2, RegLen);
-		GENERATE_START(I2C2);
+	else ENABLE_RELOAD(Instance);
+	SET_SLAVE_ADDRESS(Instance,SlaveAdd);
+	SET_TRANSFER_SIZE(Instance, RegLen);
+	GENERATE_START(Instance);
 
 }
 
-dtI2cSessionResult I2C_Result(void)
+dtI2cSessionResult I2C_Result(dtI2CInstance Instance)
 {
-	return Result;
+	return Result[Instance];
 }
 
 #if defined(MCU_G071) || defined(MCU_G070)
@@ -106,21 +93,21 @@ void I2C1_IRQHandler(void)
 void I2C1_EV_IRQHandler(void)
 #endif
 {
-	if(I2C[0]->ISR.Fields.TXIS != 0)
+	if(I2C[I2C1]->ISR.Fields.TXIS != 0)
 	{
-		if(SecondStart == 0) I2C[0]->TXDR.Fields.TXDATA = *RegisterAdd++;
-		else I2C[0]->TXDR.Fields.TXDATA = *Data++;
+		if(SecondStart[I2C1] == 0) I2C[I2C1]->TXDR.Fields.TXDATA = *RegisterAdd++;
+		else I2C[I2C1]->TXDR.Fields.TXDATA = *Data[I2C1]++;
 	}
-	else if(I2C[0]->ISR.Fields.RXNE != 0)
+	else if(I2C[I2C1]->ISR.Fields.RXNE != 0)
 	{
-		*Data++ = I2C[0]->RXDR.Fields.RXDATA;
-		DataLen--;
+		*Data[I2C1]++ = I2C[I2C1]->RXDR.Fields.RXDATA;
+		DataLen[I2C1]--;
 	}
-	else if(I2C[0]->ISR.Fields.TC != 0)
+	else if(I2C[I2C1]->ISR.Fields.TC != 0)
 	{
-		if(Session == I2C_Read && (DataLen > 0))
+		if(Session[I2C1] == I2C_Read && (DataLen[I2C1] > 0))
 		{
-			if(DataLen > 255)
+			if(DataLen[I2C1] > 255)
 			{
 				/* Set NBYTES to 255 */
 				SET_TRANSFER_SIZE(I2C1, 255);
@@ -128,7 +115,7 @@ void I2C1_EV_IRQHandler(void)
 			else
 			{
 				/* Set NBYYTES to the left amount */
-				SET_TRANSFER_SIZE(I2C1, DataLen);
+				SET_TRANSFER_SIZE(I2C1, DataLen[I2C1]);
 			}
 			/* Set a read transfer request */
 			SET_READ_TRANSFER_REQ(I2C1);
@@ -142,15 +129,15 @@ void I2C1_EV_IRQHandler(void)
 			GENERATE_STOP(I2C1);
 		}
 	}
-	else if(I2C[0]->ISR.Fields.TCR != 0)
+	else if(I2C[I2C1]->ISR.Fields.TCR != 0)
 	{
-		if(Session == I2C_Read)
+		if(Session[I2C1] == I2C_Read)
 		{
 
 		}
 		else
 		{
-			if(DataLen > 255)
+			if(DataLen[I2C1] > 255)
 			{
 				/* Set to NBYTES 255 */
 				SET_TRANSFER_SIZE(I2C1, 255);
@@ -158,7 +145,7 @@ void I2C1_EV_IRQHandler(void)
 			else
 			{
 				/* Set to NBYTES the left amount */
-				SET_TRANSFER_SIZE(I2C1, DataLen);
+				SET_TRANSFER_SIZE(I2C1, DataLen[I2C1]);
 
 				/* Disable reload mode */
 				DISABLE_RELOAD(I2C1);
@@ -166,17 +153,17 @@ void I2C1_EV_IRQHandler(void)
 				/* Enable auto end mode */
 				SET_AUTO_ENABLE(I2C1);
 			}
-			SecondStart = 1;
+			SecondStart[I2C1] = 1;
 		}
 	}
-	else if(I2C[0]->ISR.Fields.STOPF != 0)
+	else if(I2C[I2C1]->ISR.Fields.STOPF != 0)
 	{
 		CLEAR_STOP_FLAG(I2C1);
-		Result = Done;
-		if(I2C[0]->ISR.Fields.NACKF != 0)
+		Result[I2C1] = Done;
+		if(I2C[I2C1]->ISR.Fields.NACKF != 0)
 		{
 			CLEAR_NACK_FLAG(I2C1);
-			Result = Error;
+			Result[I2C1] = Error;
 		}
 	}
 }
@@ -187,21 +174,21 @@ void I2C2_IRQHandler(void)
 void I2C2_EV_IRQHandler(void)
 #endif
 {
-	if(I2C[1]->ISR.Fields.TXIS != 0)
+	if(I2C[I2C2]->ISR.Fields.TXIS != 0)
 		{
-			if(SecondStart == 0) I2C[1]->TXDR.Fields.TXDATA = *RegisterAdd++;
-			else I2C[1]->TXDR.Fields.TXDATA = *Data++;
+			if(SecondStart[I2C2] == 0) I2C[I2C2]->TXDR.Fields.TXDATA = *RegisterAdd++;
+			else I2C[I2C2]->TXDR.Fields.TXDATA = *Data[I2C2]++;
 		}
-		else if(I2C[1]->ISR.Fields.RXNE != 0)
+		else if(I2C[I2C2]->ISR.Fields.RXNE != 0)
 		{
-			*Data++ = I2C[1]->RXDR.Fields.RXDATA;
-			DataLen--;
+			*Data[I2C2]++ = I2C[I2C2]->RXDR.Fields.RXDATA;
+			DataLen[I2C2]--;
 		}
-		else if(I2C[1]->ISR.Fields.TC != 0)
+		else if(I2C[I2C2]->ISR.Fields.TC != 0)
 		{
-			if(Session == I2C_Read && (DataLen > 0))
+			if(Session[I2C2] == I2C_Read && (DataLen[I2C2] > 0))
 			{
-				if(DataLen > 255)
+				if(DataLen[I2C2] > 255)
 				{
 					/* Set NBYTES to 255 */
 					SET_TRANSFER_SIZE(I2C2, 255);
@@ -209,7 +196,7 @@ void I2C2_EV_IRQHandler(void)
 				else
 				{
 					/* Set NBYYTES to the left amount */
-					SET_TRANSFER_SIZE(I2C2, DataLen);
+					SET_TRANSFER_SIZE(I2C2, DataLen[I2C2]);
 				}
 				/* Set a read transfer request */
 				SET_READ_TRANSFER_REQ(I2C2);
@@ -225,13 +212,13 @@ void I2C2_EV_IRQHandler(void)
 		}
 		else if(I2C[1]->ISR.Fields.TCR != 0)
 		{
-			if(Session == I2C_Read)
+			if(Session[1] == I2C_Read)
 			{
 
 			}
 			else
 			{
-				if(DataLen > 255)
+				if(DataLen[I2C2] > 255)
 				{
 					/* Set to NBYTES 255 */
 					SET_TRANSFER_SIZE(I2C2, 255);
@@ -239,7 +226,7 @@ void I2C2_EV_IRQHandler(void)
 				else
 				{
 					/* Set to NBYTES the left amount */
-					SET_TRANSFER_SIZE(I2C2, DataLen);
+					SET_TRANSFER_SIZE(I2C2, DataLen[I2C2]);
 
 					/* Disable reload mode */
 					DISABLE_RELOAD(I2C2);
@@ -247,17 +234,17 @@ void I2C2_EV_IRQHandler(void)
 					/* Enable auto end mode */
 					SET_AUTO_ENABLE(I2C2);
 				}
-				SecondStart = 1;
+				SecondStart[I2C2] = 1;
 			}
 		}
-		else if(I2C[1]->ISR.Fields.STOPF != 0)
+		else if(I2C[I2C2]->ISR.Fields.STOPF != 0)
 		{
 			CLEAR_STOP_FLAG(I2C2);
-			Result = Done;
-			if(I2C[1]->ISR.Fields.NACKF != 0)
+			Result[I2C2] = Done;
+			if(I2C[I2C2]->ISR.Fields.NACKF != 0)
 			{
 				CLEAR_NACK_FLAG(I2C2);
-				Result = Error;
+				Result[I2C2] = Error;
 			}
 		}
 }

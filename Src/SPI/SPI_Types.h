@@ -215,7 +215,7 @@ typedef struct
 	uint16	:16;
 	uint16	TxCRC;
 	uint16	:16;
-#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_G070) || defined(MCU_G071)
+#if defined(MCU_F446) || defined(MCU_F410) || defined(G070)
 	dtI2SCFGR	I2SCFGR;
 	dtI2SPR	I2SPR;
 #endif

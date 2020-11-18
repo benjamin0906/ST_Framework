@@ -144,7 +144,7 @@ dtSpStatus SPI_Status(uint8 Instance)
 	return GetDataOfInstance(Instance)->Status;
 }
 
-#if defined(MCU_F410) | defined(MCU_F446)
+#if defined(MCU_F410) || defined(MCU_F446) ||  defined(MCU_G071)
 void SPI1_IRQHandler(void)
 {
 	dtSpiData *DataInstance = GetDataOfInstance(1);
@@ -166,7 +166,7 @@ void SPI1_IRQHandler(void)
 }
 #endif
 
-#if defined(MCU_F410) | defined(MCU_F446)
+#if defined(MCU_F410) | defined(MCU_F446) ||  defined(MCU_G071)
 void SPI2_IRQHandler(void)
 {
 
