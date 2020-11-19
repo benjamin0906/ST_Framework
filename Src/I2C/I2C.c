@@ -8,6 +8,9 @@
 #include "I2C_Types.h"
 #include "I2C.h"
 #include "NVIC.h"
+#include "GPIO.h"
+#include "RCC.h"
+#include "config.h"
 
 static dtI2C *I2C[2] = {(dtI2C*)0x40005400,
 						(dtI2C*)0x40005800};
@@ -26,6 +29,32 @@ dtI2cSessionResult I2C_Result(dtI2CInstance Instance);
 
 void I2C_Init(dtI2CInstance Instance, dtI2cConfig config)
 {
+	if(Instance == I2C1)
+	{
+#if defined(I2C1_SDA_PIN) && defined(I2C1_SDA_ALTER) && defined(I2C1_SCL_PIN) && defined(I2C1_SCL_ALTER)
+		GPIO_PinInit(I2C1_SDA_PIN,(dtGPIOConfig){.Mode = I2C1_SDA_ALTER, .PUPD = PullUp, .Speed = Medium, .Type = OpenDrain});
+		GPIO_PinInit(I2C1_SCL_PIN,(dtGPIOConfig){.Mode = I2C1_SCL_ALTER, .PUPD = PullUp, .Speed = Medium, .Type = OpenDrain});
+		RCC_ClockEnable(RCC_I2C1,Enable);
+#if defined(MCU_G071) || defined(MCU_G070)
+		NVIC_EnableIRQ(IRQ_I2C1);
+#elif defined(MCU_L433)
+		NVIC_EnableIRQ(IRQ_I2C1_EV);
+#endif
+#endif
+	}
+	else if(Instance == I2C2)
+	{
+#if defined(I2C2_SDA_PIN) && defined(I2C2_SDA_ALTER) && defined(I2C2_SCL_PIN) && defined(I2C2_SCL_ALTER)
+		GPIO_PinInit(I2C2_SDA_PIN,(dtGPIOConfig){.Mode = I2C2_SDA_ALTER, .PUPD = PullUp, .Speed = Medium, .Type = OpenDrain});
+		GPIO_PinInit(I2C2_SCL_PIN,(dtGPIOConfig){.Mode = I2C2_SCL_ALTER, .PUPD = PullUp, .Speed = Medium, .Type = OpenDrain});
+		RCC_ClockEnable(RCC_I2C2,Enable);
+#if defined(MCU_G071) || defined(MCU_G070)
+		NVIC_EnableIRQ(IRQ_I2C2);
+#elif defined(MCU_L433)
+		NVIC_EnableIRQ(IRQ_I2C2_EV);
+#endif
+#endif
+	}
 	dtCR1 temp = {.Word = 0};
 	I2C[Instance]->CR1.Fields.PE = 0;
 	temp.Fields.ANFOFF = !config.AnalogFilter;
@@ -36,22 +65,6 @@ void I2C_Init(dtI2CInstance Instance, dtI2cConfig config)
 	temp.Fields.TCIE = 1;
 	I2C[Instance]->TIMINGR.Word = config.TimingReg;
 	I2C[Instance]->CR1 = temp;
-	if(Instance == I2C1)
-	{
-#if defined(MCU_G071) || defined(MCU_G070)
-		NVIC_EnableIRQ(IRQ_I2C1);
-#elif defined(MCU_L433)
-		NVIC_EnableIRQ(IRQ_I2C1_EV);
-#endif
-	}
-	else if(Instance == I2C2)
-	{
-#if defined(MCU_G071) || defined(MCU_G070)
-		NVIC_EnableIRQ(IRQ_I2C2);
-#elif defined(MCU_L433)
-		NVIC_EnableIRQ(IRQ_I2C2_EV);
-#endif
-	}
 }
 
 void I2C_Start(dtI2CInstance Instance, dtI2cSessionType SessionType, uint8 SlaveAdd, uint8* RegisterAddress, uint8 RegisterLength, uint8* DataPointer, uint8 DataLength)
