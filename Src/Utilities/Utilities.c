@@ -10,7 +10,7 @@
 
 float32 Power(uint8 Power, float32 Number);
 uint32 IsPassed(uint32 TimeStamp, uint32 Limit);
-uint8 StrEq(uint8 *str1, uint8 str2);
+uint8 StrEq(const uint8 *str1,const uint8 *str2);
 
 float32 Power(uint8 Power, float32 Number)
 {
@@ -30,9 +30,15 @@ uint32 IsPassed(uint32 TimeStamp, uint32 Limit)
 	return ret;
 }
 
-uint8 StrEq(uint8 *str1, uint8 str2)
+uint8 StrEq(const uint8 *str1,const uint8 *str2)
 {
 	uint8 ret = 0;
+	while((*str1 != 0) && (*str2 != 0) && (*str1 == *str2))
+	{
+		str1++;
+		str2++;
+	}
+	if((*str1 == 0) || (*str2 == 0)) ret = 1;
 	return ret;
 }
 
