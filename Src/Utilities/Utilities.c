@@ -8,6 +8,10 @@
 #include "types.h"
 #include "main.h"
 
+float32 Power(uint8 Power, float32 Number);
+uint32 IsPassed(uint32 TimeStamp, uint32 Limit);
+uint8 StrEq(uint8 *str1, uint8 str2);
+
 float32 Power(uint8 Power, float32 Number)
 {
 	uint8 looper;
@@ -25,6 +29,13 @@ uint32 IsPassed(uint32 TimeStamp, uint32 Limit)
 	if(PassedTime > Limit) ret=CurrentTicks;
 	return ret;
 }
+
+uint8 StrEq(uint8 *str1, uint8 str2)
+{
+	uint8 ret = 0;
+	return ret;
+}
+
 #if defined(MCU_F446)
 __asm(	".globl sqrt			\n"
 		".p2align 2				\n"
