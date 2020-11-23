@@ -33,6 +33,7 @@ static dtUSART4Data USART4Data;
 void USART_Init(dtUSARTInstance Instance, dtUSARTConfig Config);
 void USART_Send(dtUSARTInstance Instance, uint8 *Data, uint8 DataSize);
 uint8 USART_GetTxFifoFreeSize(dtUSARTInstance Instance);
+uint8 USART_GetRxFifoFilledSize(dtUSARTInstance Instance);
 uint8 USART_GetRxData(dtUSARTInstance Instance);
 
 void USART_Init(dtUSARTInstance Instance, dtUSARTConfig Config)
