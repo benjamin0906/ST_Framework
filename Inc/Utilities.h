@@ -9,6 +9,7 @@
 #define UTILITIES_UTILITIES_H_
 
 #include "types.h"
+#include "main.h"
 
 extern float32 Power(uint8 Power, float32 Number);
 extern uint32 IsPassed(uint32 TimeStamp, uint32 Limit);

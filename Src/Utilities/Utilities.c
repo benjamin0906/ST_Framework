@@ -37,8 +37,16 @@ uint8 StrEq(const uint8 *str1,const uint8 *str2)
 	{
 		str1++;
 		str2++;
+		ret++;
 	}
-	if((*str1 == 0) || (*str2 == 0)) ret = 1;
+	//if((*str1 == 0) || (*str2 == 0)) ret = 1;
+	return ret;
+}
+
+uint8 StrLen(const uint8 *const str)
+{
+	uint8 ret = 0;
+	while(str[ret] != 0) ret++;
 	return ret;
 }
 

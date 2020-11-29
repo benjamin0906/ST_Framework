@@ -210,5 +210,6 @@ typedef enum
 
 extern void GPIO_PinInit(dtGPIOs Gpio, dtGPIOConfig Config);
 extern void GPIO_Set(dtGPIOs Gpio, dtPortValue Value);
+extern uint8 GPIO_Get(dtGPIOs Gpio);
 
 #endif /* GPIO_GPIO_H_ */

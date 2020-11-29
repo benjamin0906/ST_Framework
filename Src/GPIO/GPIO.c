@@ -87,6 +87,7 @@ static dtGPIO *GPIOH = (dtGPIO*) &TestGPIOH;
 
 void GPIO_PinInit(dtGPIOs Gpio, dtGPIOConfig Config);
 void GPIO_Set(dtGPIOs Gpio, dtPortValue Value);
+uint8 GPIO_Get(dtGPIOs Gpio);
 static inline dtGPIO* GetPort(dtGPIOs Gpio);
 
 void GPIO_PinInit(dtGPIOs Gpio, dtGPIOConfig Config)
@@ -144,6 +145,15 @@ void GPIO_Set(dtGPIOs Gpio, dtPortValue Value)
 	if((Value == Clear) || ((Value == Toggle) && ((Temp->ODR.Word & Pin) != 0))) Pin <<= 16;
 
 	Temp->BSRR.Word |= Pin;
+}
+
+uint8 GPIO_Get(dtGPIOs Gpio)
+{
+	uint8 ret = 0;
+	uint32 Pin = (Gpio & 0xF);
+	dtGPIO *Temp = GetPort(Gpio);
+	ret = Temp->IDR.Word>>Pin & 1;
+	return ret;
 }
 
 static inline dtGPIO* GetPort(dtGPIOs Gpio)
