@@ -14,6 +14,7 @@
 extern float32 Power(uint8 Power, float32 Number);
 extern uint32 IsPassed(uint32 TimeStamp, uint32 Limit);
 extern uint8 StrEq(const uint8 *str1,const uint8 *str2);
+extern uint8 StrLen(const uint8 *const str);
 
 #if defined(MCU_F446)
 extern float32 sqrt(float32 Number);

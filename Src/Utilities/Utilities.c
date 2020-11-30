@@ -11,6 +11,7 @@
 float32 Power(uint8 Power, float32 Number);
 uint32 IsPassed(uint32 TimeStamp, uint32 Limit);
 uint8 StrEq(const uint8 *str1,const uint8 *str2);
+uint8 StrLen(const uint8 *const str);
 
 float32 Power(uint8 Power, float32 Number)
 {

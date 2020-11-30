@@ -340,5 +340,6 @@ void USART3_USART4_LPUART1_IRQHandler(void)
 		USART3Data.RxFiFo[USART3Data.RxWriteIndex++] = USART[2]->RDR.Fields.RDR;
 		USART3Data.RxWriteIndex &= USART3_RX_FIFO_SIZE;
 	}
+	if(USART[2]->ISR.Fields.ORE != 0) USART[2]->ICR.Fields.ORECF = 1;
 }
 #endif

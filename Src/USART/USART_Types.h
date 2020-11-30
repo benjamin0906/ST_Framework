@@ -335,7 +335,7 @@ typedef union
 		uint32 CMCF		:1;
 		uint32 			:2;
 		uint32 WUCF		:1;
-	};
+	}Fields;
 } dtICR;
 #endif
 
