@@ -211,6 +211,60 @@ void Dabler16Bit(uint16 value, uint8 *Digits)
     Digits[looper] = 0;
 }
 
+uint8 DecStrToNum(uint8 *str, uint8 *num)
+{
+	uint8 ret = 0;
+	if((str != 0) && (num != 0))
+	{
+		uint8 len = StrLen(str);
+		uint8 mult=1;
+		do
+		{
+			len--;
+			switch(*(str+len))
+			{
+			case '0':
+				break;
+			case '1':
+				*num += mult*1;
+				break;
+			case '2':
+				*num += mult*2;
+				break;
+			case '3':
+				*num += mult*3;
+				break;
+			case '4':
+				*num += mult*4;
+				break;
+			case '5':
+				*num += mult*5;
+				break;
+			case '6':
+				*num += mult*6;
+				break;
+			case '7':
+				*num += mult*7;
+				break;
+			case '8':
+				*num += mult*8;
+				break;
+			case '9':
+				*num += mult*9;
+				break;
+			default:
+				ret = 1;
+			}
+			mult *= 10;
+		} while(len != 0);
+	}
+	else
+	{
+		ret = 1;
+	}
+	return ret;
+}
+
 #if defined(MCU_F446)
 __asm(	".globl sqrt			\n"
 		".p2align 2				\n"
