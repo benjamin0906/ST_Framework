@@ -12,6 +12,7 @@ float32 Power(uint8 Power, float32 Number);
 uint32 IsPassed(uint32 TimeStamp, uint32 Limit);
 uint8 StrEq(const uint8 *str1,const uint8 *str2);
 uint8 StrLen(const uint8 *const str);
+uint8 NumToHexStr(uint16 Num, uint8 *StrBuf);
 
 float32 Power(uint8 Power, float32 Number)
 {
@@ -210,6 +211,20 @@ void Dabler16Bit(uint16 value, uint8 *Digits)
     } while(DigitNum != 0);
     Digits[looper] = 0;
 }
+
+uint8 NumToHexStr(uint16 Num, uint8 *StrBuf)
+{
+	int8 looper;
+	uint8 Index = 0;
+	for(looper = 12; looper >= 0; looper -= 4, Index++)
+	{
+		uint8 temp = Num>>looper;
+		if(temp <= 9) StrBuf[Index] = '0'+temp;
+		else if(temp <= 0xF) StrBuf[Index] = '7'+temp;
+	}
+	return Index;
+}
+
 
 uint8 DecStrToNum(uint8 *str, uint8 *num)
 {
