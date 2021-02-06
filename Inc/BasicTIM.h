@@ -8,6 +8,8 @@
 #ifndef BASICTIM_BASICTIM_H_
 #define BASICTIM_BASICTIM_H_
 
+#include "types.h"
+
 typedef enum
 {
 #if defined(MCU_F410) || defined(MCU_G070) || defined(MCU_L433) || defined(MCU_G071) || defined(MCU_F446)
