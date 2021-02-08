@@ -413,10 +413,10 @@ typedef struct
 #if defined(USART2_TX_FIFO_SIZE) && defined(USART2_RX_FIFO_SIZE)
 typedef struct
 {
-	uint8 TxFiFo[USART2_TX_FIFO_SIZE];
+	uint8 TxFiFo[USART2_TX_FIFO_SIZE+1];
 	uint8 TxReadIndex;
 	uint8 TxWriteIndex;
-	uint8 RxFiFo[USART2_RX_FIFO_SIZE];
+	uint8 RxFiFo[USART2_RX_FIFO_SIZE+1];
 	uint8 RxWriteIndex;
 	uint8 RxReadIndex;
 } dtUSART2Data;

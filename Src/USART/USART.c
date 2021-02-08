@@ -17,16 +17,16 @@ static dtUSART *USART[4] = {(dtUSART*)0x40013800,
 							(dtUSART*)0x40004800,
 							(dtUSART*)0x40004C00};
 #endif
-#if defined(USART1_TX_FIFO_SIZE) && defined(USART3_RX_FIFO_SIZE)
+#if defined(USART1_TX_FIFO_SIZE) && defined(USART1_RX_FIFO_SIZE)
 static dtUSART1Data USART1Data;
 #endif
-#if defined(USART2_TX_FIFO_SIZE) && defined(USART3_RX_FIFO_SIZE)
+#if defined(USART2_TX_FIFO_SIZE) && defined(USART2_RX_FIFO_SIZE)
 static dtUSART2Data USART2Data;
 #endif
 #if defined(USART3_TX_FIFO_SIZE) && defined(USART3_RX_FIFO_SIZE)
 static dtUSART3Data USART3Data;
 #endif
-#if defined(USART4_TX_FIFO_SIZE) && defined(USART3_RX_FIFO_SIZE)
+#if defined(USART4_TX_FIFO_SIZE) && defined(USART4_RX_FIFO_SIZE)
 static dtUSART4Data USART4Data;
 #endif
 
@@ -58,7 +58,7 @@ void USART_Init(dtUSARTInstance Instance, dtUSARTConfig Config)
 	USART[Instance]->CR2.Fields.STOP = Config.StopBits;
 
 	uint32 USARTClock = RCC_GetClock(APB1_Peripheral);
-	int32 ClockDiff = 0x7FFFFFFF;
+	int32 BaudDiff = 0x7FFFFFFF;
 	uint8 SamplingLooper;
 	for(SamplingLooper = 0; SamplingLooper < 2; SamplingLooper++)
 	{
@@ -83,14 +83,15 @@ void USART_Init(dtUSARTInstance Instance, dtUSARTConfig Config)
 			if(CalculatedDiv & 0x1) CalculatedDiv = (CalculatedDiv>>1) + 1;
 			else CalculatedDiv = CalculatedDiv>>1;
 
-			/* Calculate the difference between the original clock and the rounded divider*baud */
-			int32 NewClockDiff = CalcBaseClock - CalculatedDiv*Config.Baud;
-			if(NewClockDiff < 0) NewClockDiff *= (-1);
+			/* Calculate the abs difference between the calculated baud and the desired baud */
+			int32 NewBaudDiff = Config.Baud-CalcBaseClock/CalculatedDiv;
+			if(NewBaudDiff < 0) NewBaudDiff *= (-1);
+
 
 			/* Save the parameter if it is better approximation than the previous */
-			if(NewClockDiff < ClockDiff)
+			if(NewBaudDiff < BaudDiff)
 			{
-				ClockDiff = NewClockDiff;
+				BaudDiff = NewBaudDiff;
 				TempCR1.Fields.OVER8 = SamplingLooper;
 				USART[Instance]->PRESC.PRESCALER = PrescLooper;
 				USART[Instance]->BRR.BRR = CalculatedDiv;
@@ -132,7 +133,7 @@ void USART_Init(dtUSARTInstance Instance, dtUSARTConfig Config)
 	case USART3:
 	case USART4:
 #if defined(USART3_TX_FIFO_SIZE) && defined(USART3_RX_FIFO_SIZE)
-		NVIC_SetPriority(IRQ_USART3_4,0);
+		NVIC_SetPriority(IRQ_USART3_4,2);
 		NVIC_EnableIRQ(IRQ_USART3_4);
 #endif
 		break;
@@ -169,8 +170,8 @@ void USART_Send(dtUSARTInstance Instance, uint8 *Data, uint8 DataSize)
 			/* Fill the buffer with the data */
 			while(Data < EndIndex)
 			{
-				USART3Data.TxFiFo[USART3Data.TxWriteIndex++] = *Data++;
-				USART3Data.TxWriteIndex &= USART3_TX_FIFO_SIZE;
+				USART2Data.TxFiFo[USART2Data.TxWriteIndex++] = *Data++;
+				USART2Data.TxWriteIndex &= USART2_TX_FIFO_SIZE;
 			}
 			USART[Instance]->CR1.Fields.TXFNFIE = 1;
 		}
@@ -196,7 +197,7 @@ void USART_Send(dtUSARTInstance Instance, uint8 *Data, uint8 DataSize)
 			while(Data < EndIndex)
 			{
 				USART3Data.TxFiFo[USART3Data.TxWriteIndex++] = *Data++;
-				USART3Data.TxWriteIndex &= USART3_TX_FIFO_SIZE;
+				USART3Data.TxWriteIndex &= USART4_TX_FIFO_SIZE;
 			}
 			USART[Instance]->CR1.Fields.TXFNFIE = 1;
 		}
@@ -323,6 +324,26 @@ uint8 USART_GetRxFifoFilledSize(dtUSARTInstance Instance)
 #endif
 	return ret;
 }
+
+#if defined(MCU_G071)
+void USART2_IRQHandler(void)
+{
+	if((USART[1]->CR1.Fields.TXFNFIE != 0) && (USART[1]->ISR.Fields.TXFNF != 0))
+	{
+		USART[1]->TDR.TDR = USART2Data.TxFiFo[USART2Data.TxReadIndex++];
+		USART2Data.TxReadIndex &= USART2_TX_FIFO_SIZE;
+
+		/* If there is no more data to send disable the tx-empty interrupt */
+		if(USART2Data.TxReadIndex == USART2Data.TxWriteIndex) USART[1]->CR1.Fields.TXFNFIE = 0;
+	}
+	if(USART[1]->ISR.Fields.RXFNE != 0)
+	{
+		USART2Data.RxFiFo[USART2Data.RxWriteIndex++] = USART[1]->RDR.Fields.RDR;
+		USART2Data.RxWriteIndex &= USART2_RX_FIFO_SIZE;
+	}
+	if(USART[1]->ISR.Fields.ORE != 0) USART[1]->ICR.Fields.ORECF = 1;
+}
+#endif
 
 #if defined(MCU_G070) || defined(MCU_G071)
 void USART3_USART4_LPUART1_IRQHandler(void)
