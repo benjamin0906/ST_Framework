@@ -7,6 +7,7 @@
 
 #include "RCC_Types.h"
 #include "RCC.h"
+#include "RCC_RTC.h"
 #include "Pwr.h"
 #include "Flash.h"
 #include "config.h"
@@ -65,6 +66,7 @@ uint32 ClockFreq = 2000000;
 void RCC_ClockEnable(dtRCCClock Clock, dtRCCClockSets Value);
 void RCC_ClockInit(void);
 uint32 RCC_GetClock(dtBus Bus);
+void RCC_RTCDomainConfig(dtRCCRtcConfig Config);
 
 void RCC_ClockEnable(dtRCCClock Clock, dtRCCClockSets Value)
 {
@@ -273,4 +275,10 @@ uint32 RCC_GetClock(dtBus Bus)
 	else if(Bus == AHB) ret = AHBClock;
 	else if(Bus == Core) ret = ClockFreq;
 	return ret;
+}
+
+void RCC_RTCDomainConfig(dtRCCRtcConfig Config)
+{
+	RCC->BDCR.Fields.RTC_SEL = Config.RTCClock;
+	RCC->BDCR.Fields.RTCEN = Config.RTCClockEnable;
 }

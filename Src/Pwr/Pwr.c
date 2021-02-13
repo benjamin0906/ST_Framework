@@ -42,3 +42,10 @@ uint8 Pwr_GetVos(void)
 	return Pwr->CR.Fields.VOS;
 #endif
 }
+
+void Pwr_RtcWp(void)
+{
+	dtPwrCR temp = Pwr->CR;
+	temp.Fields.DBP = 1;
+	Pwr->CR = temp;
+}

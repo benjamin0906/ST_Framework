@@ -117,6 +117,9 @@ typedef enum
 #if defined(MCU_L433)
 	RCC_QSPI	= 72,
 #endif
+#if defined(MCU_G071)
+	RCC_RTC		= 74,
+#endif
 #if defined(MCU_G070) || defined(MCU_G071)
 	RCC_SPI2	= 78,
 #endif
