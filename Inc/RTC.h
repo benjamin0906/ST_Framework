@@ -47,5 +47,6 @@ typedef struct
 extern void RTC_Init(dtRTCConfig Config);
 extern dtRTCDate RTC_GetDate(void);
 extern dtRTCTime RTC_GetTime(void);
+extern uint8 RTC_SetTime(dtRTCTime Time);
 
 #endif /* RTC_H_ */

@@ -14,8 +14,10 @@ static dtRTC* RTC = (dtRTC*)0x40002800;
 
 void RTC_Init(dtRTCConfig Config);
 void RTC_WPUnlock(void);
+void RTC_Lock(void);
 dtRTCDate RTC_GetDate(void);
 dtRTCTime RTC_GetTime(void);
+uint8 RTC_SetTime(dtRTCTime Time);
 
 void RTC_Init(dtRTCConfig Config)
 {
@@ -64,7 +66,7 @@ void RTC_Init(dtRTCConfig Config)
 
 	RTC->ICSR.Fields.INIT = 0;
 
-
+	RTC_Lock();
 }
 
 dtRTCTime RTC_GetTime(void)
@@ -95,4 +97,37 @@ void RTC_WPUnlock(void)
 {
 	RTC->WPR.Fields.KEY = 0xCA;
 	RTC->WPR.Fields.KEY = 0x53;
+}
+
+void RTC_Lock(void)
+{
+	RTC->WPR.Fields.KEY = 0;
+}
+
+uint8 RTC_SetTime(dtRTCTime Time)
+{
+	uint8 ret = 0;
+	if(RTC->ICSR.Fields.INIT == 0)
+	{
+		/* Unlock RTC registers */
+		RTC_WPUnlock();
+		RTC->ICSR.Fields.INIT = 1;
+	}
+	else if(RTC->ICSR.Fields.INITF == 1)
+	{
+		dtRTC_TR TimeTemp = {.Word = 0};
+		TimeTemp.Fields.HT = Time.HourTens;
+		TimeTemp.Fields.HU = Time.HourUnits;
+		TimeTemp.Fields.MNT = Time.MinTens;
+		TimeTemp.Fields.MNU = Time.MinUnits;
+		TimeTemp.Fields.ST = Time.SecTens;
+		TimeTemp.Fields.SU = Time.SecUnits;
+		RTC->TR = TimeTemp;
+
+		RTC->ICSR.Fields.INIT = 0;
+
+		RTC_Lock();
+		ret = 1;
+	}
+	return ret;
 }
