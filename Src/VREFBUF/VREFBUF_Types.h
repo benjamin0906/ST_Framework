@@ -31,4 +31,10 @@ typedef union
 	} Fields;
 } dtVrefBuf_CCR;
 
+typedef struct
+{
+	dtVrefBuf_CSR	CSR;
+	dtVrefBuf_CCR	CCR;
+} dtVREFBUF;
+
 #endif /* SRC_VREFBUF_VREFBUF_TYPES_H_ */
