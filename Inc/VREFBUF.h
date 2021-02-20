@@ -16,5 +16,7 @@ typedef enum
 	Vref_2500,
 } dtVoltScale;
 
+extern void VREFBUF_Set(dtVoltScale Config);
+extern uint8 VREFBUF_Status(void);
 
 #endif /* INC_VREFBUF_H_ */

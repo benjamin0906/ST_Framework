@@ -10,6 +10,12 @@
 
 static dtADC *const ADC = (dtADC*)(0x40012400);
 
+void ADC_Init(dtAdcConfig Config);
+void ADC_SetChConfig(dtAdcCh Ch, dtAdcSmp Smp);
+uint8 ADC_CheckChConfig(void);
+void ADC_StartConversation(void);
+uint8 ADC_ReadData(uint16 *Data);
+
 void ADC_Init(dtAdcConfig Config)
 {
 	ADC->CR.Word = 0;
@@ -23,22 +29,30 @@ void ADC_Init(dtAdcConfig Config)
 
 	TempCr.Fields.ADVREGEN = 1;
 	TempCr.Fields.ADEN = 1;
+
 	TempCfgr1.Fields.AUTOFF = Config.AutoOff;
 	TempCfgr1.Fields.WAIT = Config.WaitMode;
 	TempCfgr1.Fields.CONT = Config.ContMode;
 	TempCfgr1.Fields.OVRMOD = Config.OverRun;
 	TempCfgr1.Fields.ALIGN = Config.LeftAlign;
 	TempCfgr1.Fields.RES = Config.Resolution;
+
 	TempCfgr2.Fields.CKMODE = Config.ClkMode;
-	TempCfgr2.Fields.OVSR = Config.OverSample;
+	TempCfgr2.Fields.OVSR = Config.OVS;
+	TempCfgr2.Fields.OVSS = Config.OVSShift;
+	TempCfgr2.Fields.OVSE = Config.OVSEn;
 	TempCfgr2.Fields.TOVS = 0;
-	TempCfgr2.Fields.OVSE = 1;
+
 	TempSmpr.Fields.SMP1 = Config.SMP1;
 	TempSmpr.Fields.SMP2 = Config.SMP2;
-	TempSmpr.Fields.SMPSEL = Config.SMPSEL;
-	TempChselr.ModeZero_Fields.CHSEL = Config.CHSEL;
 
 	ADC->ISR.Fields.ADRDY = 1;
+
+	if(Config.ClkMode == 0)
+	{
+		TempCcr.Fields.PRESC = Config.ClkDiv;
+	}
+	TempCcr.Fields.VREFEN = 1;
 
 	ADC->CFGR1 = TempCfgr1;
 	ADC->CFGR2 = TempCfgr2;
@@ -48,12 +62,43 @@ void ADC_Init(dtAdcConfig Config)
 	ADC->CCR = TempCcr;
 
 	while(ADC->ISR.Fields.ADRDY == 0);
+}
 
-	while(1)
+void ADC_SetChConfig(dtAdcCh Ch, dtAdcSmp Smp)
+{
+	dtADC_SMPR TempSmpr = ADC->SMPR;
+	dtADC_CHSELR TempChselr = ADC->CHSELR;
+
+	TempSmpr.Fields.SMPSEL = 0;
+	TempSmpr.Word |= 1<<(Ch+8);
+
+	TempChselr.Word = 1<<Ch;
+
+	ADC->SMPR = TempSmpr;
+	ADC->CHSELR = TempChselr;
+}
+
+/* Checks if the channel config has been written successfully */
+uint8 ADC_CheckChConfig(void)
+{
+	uint8 ret = ADC->ISR.Fields.CCRDY;
+	if(ret != 0) ADC->ISR.Fields.CCRDY = 1;
+	return ret;
+}
+
+void ADC_StartConversation(void)
+{
+	ADC->CR.Fields.ADSTART = 1;
+}
+
+uint8 ADC_ReadData(uint16 *Data)
+{
+	uint8 ret = 0;
+	if(ADC->ISR.Fields.EOC != 0)
 	{
-		ADC->CR.Fields.ADSTART = 1;
-		while(ADC->ISR.Fields.EOC == 0);
+		if(Data != 0) *Data = ADC->DR.Fields.Data;
 		ADC->ISR.Fields.EOC = 1;
+		ret = 1;
 	}
-
+	return ret;
 }
