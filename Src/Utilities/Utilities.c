@@ -13,6 +13,7 @@ uint32 IsPassed(uint32 TimeStamp, uint32 Limit);
 uint8 StrEq(const uint8 *str1,const uint8 *str2);
 uint8 StrLen(const uint8 *const str);
 uint8 NumToHexStr(uint16 Num, uint8 *StrBuf);
+uint8 UQNumToStr(uint32 Num, uint8 QRes, uint8 QRound, uint8 *Str);
 
 float32 Power(uint8 Power, float32 Number)
 {
@@ -20,6 +21,17 @@ float32 Power(uint8 Power, float32 Number)
 	float32 ret = 1;
 	for(looper = 0; looper<Power; looper++) ret *= Number;
 	return ret;
+}
+
+uint32 PwrUint32(uint8 Power, uint32 Number)
+{
+	uint32 Num = 1;
+	while(Power != 0)
+	{
+		Num *= Number;
+		Power--;
+	}
+	return Num;
 }
 
 uint32 IsPassed(uint32 TimeStamp, uint32 Limit)
@@ -52,7 +64,7 @@ uint8 StrLen(const uint8 *const str)
 	return ret;
 }
 
-void Dabler8Bit(uint8 value, uint8 *Digits)
+uint8 Dabler8Bit(uint8 value, uint8 *Digits)
 {
     uint32 bcd = 0;
     uint8 DigitNum = 8;
@@ -129,9 +141,11 @@ void Dabler8Bit(uint8 value, uint8 *Digits)
         DigitNum--;
     } while(DigitNum != 0);
     Digits[looper] = 0;
+
+    return looper;
 }
 
-void Dabler16Bit(uint16 value, uint8 *Digits)
+uint8 Dabler16Bit(uint16 value, uint8 *Digits)
 {
     uint32 bcd = 0;
     uint8 DigitNum = 8;
@@ -210,6 +224,7 @@ void Dabler16Bit(uint16 value, uint8 *Digits)
         DigitNum--;
     } while(DigitNum != 0);
     Digits[looper] = 0;
+    return looper;
 }
 
 uint8 NumToHexStr(uint16 Num, uint8 *StrBuf)
@@ -224,7 +239,6 @@ uint8 NumToHexStr(uint16 Num, uint8 *StrBuf)
 	}
 	return Index;
 }
-
 
 uint8 DecStrToNum(uint8 *str, uint8 *num)
 {
@@ -278,6 +292,68 @@ uint8 DecStrToNum(uint8 *str, uint8 *num)
 		ret = 1;
 	}
 	return ret;
+}
+
+/* Copies the data in length from the Src to the Dst
+ * and first the end of the array will be filled
+ *
+ *        _ _ _ _ _ _ _ _
+ * start |_|_|_|_|_|_|_|_| end
+ *        | |         | |
+ *        n (n-1) ... 2 1
+ *        | |         | |
+ *        _ _ _ _ _ _ _ _
+ *       |_|_|_|_|_|_|_|_|
+ *   */
+void MemCpyRigth(uint8 *Src, uint8 *Dst, uint32 Length)
+{
+	while(Length != 0)
+	{
+		Length--;
+		Dst[Length] = Src[Length];
+	}
+}
+
+uint8 UQNumToStr(uint32 Num, uint8 QRes, uint8 QRound, uint8 *Str)
+{
+	uint32 WholePart = Num >> QRes;
+	uint8 Looper = QRound;
+
+	uint32 Mask = 0xFFFFFFFF;
+	Mask <<= 32 - QRes;
+	Mask >>= 32 - QRes;
+
+	Num &= Mask;
+
+	while(Looper > 0)
+	{
+		Looper--;
+		Num *= 10;
+		uint8 NumToRound = Num >> (QRes-1);
+
+		if(Looper == 0)
+		{
+			if((NumToRound & 1) != 0) NumToRound += 0x2;
+		}
+
+		WholePart *= 10;
+
+		WholePart += NumToRound>>1;
+
+		Num &= Mask;
+	}
+
+	uint8 Length = 0;
+
+	Length = Dabler16Bit(WholePart, Str);
+
+	Str += Length - QRound;
+
+	MemCpyRigth(Str, Str+1, QRound);
+
+	*Str = '.';
+
+	return Length+1;
 }
 
 #if defined(MCU_F446)
