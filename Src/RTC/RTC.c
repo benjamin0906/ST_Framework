@@ -15,7 +15,7 @@ static dtRTC* RTC = (dtRTC*)0x40002800;
 void RTC_Init(dtRTCConfig Config);
 void RTC_WPUnlock(void);
 void RTC_Lock(void);
-dtRTCDate RTC_GetDate(void);
+dtDate RTC_GetDate(void);
 dtTime RTC_GetTime(void);
 uint8 RTC_SetTime(dtTime Time);
 
@@ -81,9 +81,9 @@ dtTime RTC_GetTime(void)
 	return ret;
 }
 
-dtRTCDate RTC_GetDate(void)
+dtDate RTC_GetDate(void)
 {
-	dtRTCDate ret;
+	dtDate ret;
 	ret.YearTens = RTC->DR.Fields.YT;
 	ret.YearUnit = RTC->DR.Fields.YU;
 	ret.MountTens = RTC->DR.Fields.MT;

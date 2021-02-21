@@ -29,4 +29,15 @@ typedef struct
 	uint32 SecUnits		:4;
 } dtTime;
 
+/* This structure stores the members of a data in BCD */
+typedef struct
+{
+	uint32 YearTens		:4;
+	uint32 YearUnit		:4;
+	uint32 MountTens	:4;
+	uint32 MountUnits	:4;
+	uint32 DayTens		:4;
+	uint32 DayUnits		:4;
+} dtDate;
+
 #endif /* TYPES_H_ */
