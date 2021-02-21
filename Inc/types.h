@@ -18,4 +18,15 @@ typedef signed char			int8;
 
 typedef float				float32;
 
+/* This structure stores the members of a time in BCD */
+typedef struct
+{
+	uint32 HourTens		:4;
+	uint32 HourUnits	:4;
+	uint32 MinTens		:4;
+	uint32 MinUnits		:4;
+	uint32 SecTens		:4;
+	uint32 SecUnits		:4;
+} dtTime;
+
 #endif /* TYPES_H_ */

@@ -16,8 +16,8 @@ void RTC_Init(dtRTCConfig Config);
 void RTC_WPUnlock(void);
 void RTC_Lock(void);
 dtRTCDate RTC_GetDate(void);
-dtRTCTime RTC_GetTime(void);
-uint8 RTC_SetTime(dtRTCTime Time);
+dtTime RTC_GetTime(void);
+uint8 RTC_SetTime(dtTime Time);
 
 void RTC_Init(dtRTCConfig Config)
 {
@@ -69,9 +69,9 @@ void RTC_Init(dtRTCConfig Config)
 	RTC_Lock();
 }
 
-dtRTCTime RTC_GetTime(void)
+dtTime RTC_GetTime(void)
 {
-	dtRTCTime ret;
+	dtTime ret;
 	ret.HourTens = RTC->TR.Fields.HT;
 	ret.HourUnits = RTC->TR.Fields.HU;
 	ret.MinTens = RTC->TR.Fields.MNT;
@@ -104,7 +104,7 @@ void RTC_Lock(void)
 	RTC->WPR.Fields.KEY = 0;
 }
 
-uint8 RTC_SetTime(dtRTCTime Time)
+uint8 RTC_SetTime(dtTime Time)
 {
 	uint8 ret = 0;
 	if(RTC->ICSR.Fields.INIT == 0)
