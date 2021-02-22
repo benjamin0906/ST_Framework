@@ -26,5 +26,6 @@ extern void RTC_Init(dtRTCConfig Config);
 extern dtDate RTC_GetDate(void);
 extern dtTime RTC_GetTime(void);
 extern uint8 RTC_SetTime(dtTime Time);
+extern uint8 RTC_SetDate(dtDate Date);
 
 #endif /* RTC_H_ */

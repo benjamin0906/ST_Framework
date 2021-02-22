@@ -18,6 +18,7 @@ void RTC_Lock(void);
 dtDate RTC_GetDate(void);
 dtTime RTC_GetTime(void);
 uint8 RTC_SetTime(dtTime Time);
+uint8 RTC_SetDate(dtDate Date);
 
 void RTC_Init(dtRTCConfig Config)
 {
@@ -123,6 +124,33 @@ uint8 RTC_SetTime(dtTime Time)
 		TimeTemp.Fields.ST = Time.SecTens;
 		TimeTemp.Fields.SU = Time.SecUnits;
 		RTC->TR = TimeTemp;
+
+		RTC->ICSR.Fields.INIT = 0;
+
+		RTC_Lock();
+		ret = 1;
+	}
+	return ret;
+}
+uint8 RTC_SetDate(dtDate Date)
+{
+	uint8 ret = 0;
+	if(RTC->ICSR.Fields.INIT == 0)
+	{
+		/* Unlock RTC registers */
+		RTC_WPUnlock();
+		RTC->ICSR.Fields.INIT = 1;
+	}
+	else if(RTC->ICSR.Fields.INITF == 1)
+	{
+		dtRTC_DR DateTemp = {.Word = 0};
+		DateTemp.Fields.YT = Date.YearTens;
+		DateTemp.Fields.YU = Date.YearUnit;
+		DateTemp.Fields.MT = Date.MountTens;
+		DateTemp.Fields.MU = Date.MountUnits;
+		DateTemp.Fields.DT = Date.DayTens;
+		DateTemp.Fields.DU = Date.DayUnits;
+		RTC->DR = DateTemp;
 
 		RTC->ICSR.Fields.INIT = 0;
 
