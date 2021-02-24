@@ -15,6 +15,7 @@ void ADC_SetChConfig(dtAdcCh Ch, dtAdcSmp Smp);
 uint8 ADC_CheckChConfig(void);
 void ADC_StartConversation(void);
 uint8 ADC_ReadData(uint16 *Data);
+uint8 ADC_CalibProcess(void);
 
 void ADC_Init(dtAdcConfig Config)
 {
@@ -101,4 +102,40 @@ uint8 ADC_ReadData(uint16 *Data)
 		ret = 1;
 	}
 	return ret;
+}
+
+uint8 ADC_CalibProcess(void)
+{
+	uint8 ret = 0;
+	if((ADC->CR.Fields.ADEN == 1) || (ADC->CR.Fields.ADVREGEN == 0))
+	{
+		/* ADC is not yet ready for calibration */
+		dtADC_CR Temp = ADC->CR;
+		Temp.Fields.ADDIS = 1;
+		Temp.Fields.ADVREGEN = 1;
+		ADC->CR = Temp;
+	}
+	else if((ADC->ISR.Fields.EOCAL == 0) && (ADC->CR.Fields.ADCAL == 0))
+	{
+		/* Calibration is not running and has not yet been done */
+		dtADC_CR Temp = ADC->CR;
+		Temp.Fields.ADCAL = 1;
+		ADC->CR = Temp;
+	}
+	else if(ADC->ISR.Fields.EOCAL != 0)
+	{
+		/* Calibration is done, clear the flag*/
+		dtADC_ISR TempISR = {.Word = 0};
+		TempISR.Fields.EOCAL = 1;
+		ADC->ISR = TempISR;
+
+		dtADC_CR Temp = ADC->CR;
+		Temp.Fields.ADEN = 1;
+		Temp.Fields.ADVREGEN = 1;
+		ADC->CR = Temp;
+
+		ret = 1;
+	}
+	return ret;
+
 }
