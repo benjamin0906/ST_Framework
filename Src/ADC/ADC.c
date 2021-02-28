@@ -109,11 +109,25 @@ uint8 ADC_CalibProcess(void)
 	uint8 ret = 0;
 	if((ADC->CR.Fields.ADEN == 1) || (ADC->CR.Fields.ADVREGEN == 0))
 	{
-		/* ADC is not yet ready for calibration */
-		dtADC_CR Temp = ADC->CR;
-		Temp.Fields.ADDIS = 1;
-		Temp.Fields.ADVREGEN = 1;
-		ADC->CR = Temp;
+		if(ADC->ISR.Fields.EOCAL == 0)
+		{
+			/* ADC is not yet ready for calibration */
+			dtADC_CR Temp = ADC->CR;
+			Temp.Fields.ADDIS = 1;
+			Temp.Fields.ADVREGEN = 1;
+			ADC->CR = Temp;
+
+			/* Clear ADC ready flag */
+			ADC->ISR.Word |= 1;
+		}
+		else if(ADC->ISR.Fields.ADRDY != 0)
+		{
+			/* Calibration is done, ADC has been enabled and it is ready to operate */
+			dtADC_ISR TempISR = {.Word = 0};
+			TempISR.Fields.EOCAL = 1;
+			ADC->ISR = TempISR;
+			ret = 1;
+		}
 	}
 	else if((ADC->ISR.Fields.EOCAL == 0) && (ADC->CR.Fields.ADCAL == 0))
 	{
@@ -124,17 +138,11 @@ uint8 ADC_CalibProcess(void)
 	}
 	else if(ADC->ISR.Fields.EOCAL != 0)
 	{
-		/* Calibration is done, clear the flag*/
-		dtADC_ISR TempISR = {.Word = 0};
-		TempISR.Fields.EOCAL = 1;
-		ADC->ISR = TempISR;
-
+		/* Calibration is done, enable ADC but waiting is needed until ADC is ready */
 		dtADC_CR Temp = ADC->CR;
 		Temp.Fields.ADEN = 1;
-		Temp.Fields.ADVREGEN = 1;
+		Temp.Fields.ADVREGEN = 0;
 		ADC->CR = Temp;
-
-		ret = 1;
 	}
 	return ret;
 
