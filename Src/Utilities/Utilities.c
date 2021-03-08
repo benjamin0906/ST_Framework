@@ -40,7 +40,7 @@ uint32 IsPassed(uint32 TimeStamp, uint32 Limit)
 	uint32 CurrentTicks = GetTicks();
 	uint32 PassedTime = CurrentTicks - TimeStamp;
 	if(TimeStamp > CurrentTicks) PassedTime = ~PassedTime;
-	if(PassedTime > Limit) ret=CurrentTicks;
+	if(PassedTime >= Limit) ret=CurrentTicks;
 	return ret;
 }
 

@@ -25,6 +25,7 @@ typedef struct
 	uint32 SMP1			:3;
 	uint32 SMP2			:3;
 	uint32 ClkDiv		:4;
+	uint32 Interrupt	:1
 
 } dtAdcConfig;
 

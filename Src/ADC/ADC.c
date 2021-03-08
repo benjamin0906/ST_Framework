@@ -7,6 +7,7 @@
 
 #include "ADC_Types.h"
 #include "ADC.h"
+#include "NVIC.h"
 
 static dtADC *const ADC = (dtADC*)(0x40012400);
 
@@ -27,6 +28,7 @@ void ADC_Init(dtAdcConfig Config)
 	dtADC_SMPR TempSmpr = {.Word = 0};
 	dtADC_CHSELR TempChselr = {.Word = 0};
 	dtADC_CCR TempCcr = {.Word = 0x400000};
+	dtADC_IER TempIER = {.Word = 0};
 
 	TempCr.Fields.ADVREGEN = 1;
 	TempCr.Fields.ADEN = 1;
@@ -54,6 +56,15 @@ void ADC_Init(dtAdcConfig Config)
 		TempCcr.Fields.PRESC = Config.ClkDiv;
 	}
 	TempCcr.Fields.VREFEN = 1;
+
+	/* If interrupt is used, the SW shall set the corresponding bits in the interrupt enable register
+	 * and shall enable the ADC interrupt */
+	if(Config.Interrupt != 0)
+	{
+		TempIER.Fields.CCRDYIE = 1;
+		TempIER.Fields.ADRDYIE = 1;
+		NVIC_EnableIRQ(IRQ_ADC);
+	}
 
 	ADC->CFGR1 = TempCfgr1;
 	ADC->CFGR2 = TempCfgr2;
@@ -145,5 +156,10 @@ uint8 ADC_CalibProcess(void)
 		ADC->CR = Temp;
 	}
 	return ret;
+
+}
+
+void ADC_COMP_IRQHandler(void)
+{
 
 }

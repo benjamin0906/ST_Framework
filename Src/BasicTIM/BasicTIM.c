@@ -81,6 +81,15 @@ void TIM6_DAC_LPTIM1_IRQHandler(void)
 #error undefined BasicTIM interrupt;
 #endif
 {
-	BTIMs[0]->SR.Fields.UIF = 0;
-	if(IrqPtrs[0] != 0) IrqPtrs[0]();
+	BTIMs[TIM6]->SR.Fields.UIF = 0;
+	if(IrqPtrs[TIM6] != 0) IrqPtrs[TIM6]();
+}
+#if defined(MCU_G070) || defined(MCU_G071)
+void TIM7_LPTIM2_IRQHandler(void)
+#else
+#error undefined BasicTIM interrupt;
+#endif
+{
+	BTIMs[TIM7]->SR.Fields.UIF = 0;
+	if(IrqPtrs[TIM7] != 0) IrqPtrs[TIM7]();
 }
