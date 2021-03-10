@@ -25,8 +25,9 @@ typedef struct
 	uint32 SMP1			:3;
 	uint32 SMP2			:3;
 	uint32 ClkDiv		:4;
-	uint32 Interrupt	:1
-
+	uint32 Interrupt	:2;
+	uint32 ExtTrigger	:3;
+	uint32 ExtrTrigEn	:2;
 } dtAdcConfig;
 
 typedef enum
@@ -64,5 +65,7 @@ extern uint8 ADC_CheckChConfig(void);
 extern void ADC_StartConversation(void);
 extern uint8 ADC_ReadData(uint16 *Data);
 extern uint8 ADC_CalibProcess(void);
+extern void ADC_SetDataHandler(void (*Handler)(uint16));
+extern void ADC_SetSequence(uint8 Order, dtAdcCh Ch);
 
 #endif /* INC_ADC_H_ */

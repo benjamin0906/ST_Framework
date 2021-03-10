@@ -10,6 +10,7 @@
 #include "NVIC.h"
 
 static dtADC *const ADC = (dtADC*)(0x40012400);
+static void (*DataHandler)(uint16);
 
 void ADC_Init(dtAdcConfig Config);
 void ADC_SetChConfig(dtAdcCh Ch, dtAdcSmp Smp);
@@ -17,6 +18,8 @@ uint8 ADC_CheckChConfig(void);
 void ADC_StartConversation(void);
 uint8 ADC_ReadData(uint16 *Data);
 uint8 ADC_CalibProcess(void);
+void ADC_SetDataHandler(void (*Handler)(uint16));
+void ADC_SetSequence(uint8 Order, dtAdcCh Ch);
 
 void ADC_Init(dtAdcConfig Config)
 {
@@ -39,6 +42,8 @@ void ADC_Init(dtAdcConfig Config)
 	TempCfgr1.Fields.OVRMOD = Config.OverRun;
 	TempCfgr1.Fields.ALIGN = Config.LeftAlign;
 	TempCfgr1.Fields.RES = Config.Resolution;
+	TempCfgr1.Fields.EXTSEL = Config.ExtTrigger;
+	TempCfgr1.Fields.EXTEN = Config.ExtrTrigEn;
 
 	TempCfgr2.Fields.CKMODE = Config.ClkMode;
 	TempCfgr2.Fields.OVSR = Config.OVS;
@@ -61,11 +66,12 @@ void ADC_Init(dtAdcConfig Config)
 	 * and shall enable the ADC interrupt */
 	if(Config.Interrupt != 0)
 	{
-		TempIER.Fields.CCRDYIE = 1;
-		TempIER.Fields.ADRDYIE = 1;
+		TempIER.Fields.CCRDYIE = Config.Interrupt&0x1;
+		TempIER.Fields.EOCIE = (Config.Interrupt>>1)&0x1;
 		NVIC_EnableIRQ(IRQ_ADC);
 	}
 
+	ADC->IER = TempIER;
 	ADC->CFGR1 = TempCfgr1;
 	ADC->CFGR2 = TempCfgr2;
 	ADC->SMPR = TempSmpr;
@@ -88,6 +94,20 @@ void ADC_SetChConfig(dtAdcCh Ch, dtAdcSmp Smp)
 
 	ADC->SMPR = TempSmpr;
 	ADC->CHSELR = TempChselr;
+}
+
+void ADC_SetSequence(uint8 Order, dtAdcCh Ch)
+{
+	ADC->ISR.Word |= 0x2000;
+	dtADC_CHSELR TempChselr = ADC->CHSELR;
+	TempChselr.Word |= Ch<<(Order*4);
+	ADC->CHSELR = TempChselr;
+}
+void ADC_ConfSequence(void)
+{
+	dtADC_CFGR1 TempCfgr1 = ADC->CFGR1;
+	TempCfgr1.Fields.CHSELRMOD = 1;
+	ADC->CFGR1 = TempCfgr1;
 }
 
 /* Checks if the channel config has been written successfully */
@@ -159,7 +179,29 @@ uint8 ADC_CalibProcess(void)
 
 }
 
+void ADC_SetDataHandler(void (*Handler)(uint16))
+{
+	DataHandler = Handler;
+}
+
 void ADC_COMP_IRQHandler(void)
 {
+	dtADC_ISR ClearFlag = {.Word = 0};
+	dtADC_ISR Flags = ADC->ISR;
+	if(ADC->ISR.Fields.CCRDY != 0)
+	{
+		/* Channel configuration is ready, conversion is needed */
+		ADC->CR.Fields.ADSTART = 1;
+		ClearFlag.Fields.CCRDY = 1;
+	}
+	else if(ADC->ISR.Fields.EOC != 0)
+	{
+		/* Conversion is ready */
+		uint16 Data = ADC->DR.Fields.Data;
+		if(DataHandler != 0) DataHandler(Data);
+		ClearFlag.Fields.EOC = 1;
+	}
 
+	/* Clearing the flag which caused the interrupt */
+	ADC->ISR = ClearFlag;
 }

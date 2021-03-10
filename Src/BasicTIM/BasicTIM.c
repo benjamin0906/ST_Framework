@@ -37,6 +37,7 @@ void BasicTIM_Set(dtBTimId Id, dtBasicTimConfig Config, void (*IrqPtr)(void))
 	BTIMs[Id]->CR1.Fields.OPM = Config.OnePulse;
 	BTIMs[Id]->CR1.Fields.URS = Config.UpdateSource;
 	BTIMs[Id]->CR1.Fields.UDIS = Config.UpdateDisable;
+	BTIMs[Id]->CR2.Fields.MMS = Config.MasterMode;
 	BTIMs[Id]->PSC.Fields.PSC = Config.Prescaler;
 	BTIMs[Id]->ARR.Fields.ARR = Config.AutoReload;
 
