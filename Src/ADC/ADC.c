@@ -20,6 +20,7 @@ uint8 ADC_ReadData(uint16 *Data);
 uint8 ADC_CalibProcess(void);
 void ADC_SetDataHandler(void (*Handler)(uint16));
 void ADC_SetSequence(uint8 Order, dtAdcCh Ch);
+void ADC_ConfSequence(void);
 
 void ADC_Init(dtAdcConfig Config)
 {
@@ -187,7 +188,6 @@ void ADC_SetDataHandler(void (*Handler)(uint16))
 void ADC_COMP_IRQHandler(void)
 {
 	dtADC_ISR ClearFlag = {.Word = 0};
-	dtADC_ISR Flags = ADC->ISR;
 	if(ADC->ISR.Fields.CCRDY != 0)
 	{
 		/* Channel configuration is ready, conversion is needed */

@@ -67,5 +67,6 @@ extern uint8 ADC_ReadData(uint16 *Data);
 extern uint8 ADC_CalibProcess(void);
 extern void ADC_SetDataHandler(void (*Handler)(uint16));
 extern void ADC_SetSequence(uint8 Order, dtAdcCh Ch);
+extern void ADC_ConfSequence(void);
 
 #endif /* INC_ADC_H_ */
