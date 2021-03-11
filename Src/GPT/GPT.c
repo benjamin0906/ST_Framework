@@ -16,6 +16,7 @@ void GPT_Init(dtGPTInstance Instance, dtGPTConfig);
 void GPT_Start(dtGPTInstance Instance);
 void GPT_Stop(dtGPTInstance Instance);
 void GPT_SetCompare(dtGPTInstance Instance, uint16 CompareValue);
+uint16 GPT_GetCntr(dtGPTInstance Instance);
 
 void GPT_Init(dtGPTInstance Instance, dtGPTConfig Config)
 {
@@ -115,4 +116,22 @@ void GPT_SetCompare(dtGPTInstance Instance, uint16 CompareValue)
 		TIM17->CCR1.Field.CCR1 = CompareValue;
 		break;
 	}
+}
+
+uint16 GPT_GetCntr(dtGPTInstance Instance)
+{
+	uint16 ret = 0;
+	switch(Instance)
+	{
+	case Instance_TIM15:
+		ret = TIM15->CNT.Field.CNT;
+		break;
+	case Instance_TIM16:
+		ret = TIM16->CNT.Field.CNT;
+		break;
+	case Instance_TIM17:
+		ret = TIM17->CNT.Field.CNT;
+		break;
+	}
+	return ret;
 }

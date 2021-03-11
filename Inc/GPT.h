@@ -34,5 +34,6 @@ extern void GPT_Init(dtGPTInstance Instance, dtGPTConfig);
 extern void GPT_Start(dtGPTInstance Instance);
 extern void GPT_SetCompare(dtGPTInstance Instance, uint16 CompareValue);
 extern void GPT_Stop(dtGPTInstance Instance);
+extern uint16 GPT_GetCntr(dtGPTInstance Instance);
 
 #endif /* GPT_H_ */
