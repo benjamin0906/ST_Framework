@@ -17,6 +17,8 @@ extern uint8 StrEq(const uint8 *str1,const uint8 *str2);
 extern uint8 StrLen(const uint8 *const str);
 extern uint8 Dabler8Bit(uint8 value, uint8 *Digits);
 extern uint8 DecStrToNum(uint8 *str, uint8 *num);
+extern uint8 DecStrToNum32(uint8 *str, uint32 *Num);
+extern uint32 FloatToQ(uint8 *str, uint8 Q);
 extern uint8 NumToHexStr(uint16 Num, uint8 *StrBuf);
 extern void MemCpyRigth(uint8 *Src, uint8 *Dst, uint32 Length);
 extern uint8 UQNumToStr(uint32 Num, uint8 QRes, uint8 QRound, uint8 *Str);

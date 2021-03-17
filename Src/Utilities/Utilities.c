@@ -14,6 +14,7 @@ uint8 StrEq(const uint8 *str1,const uint8 *str2);
 uint8 StrLen(const uint8 *const str);
 uint8 NumToHexStr(uint16 Num, uint8 *StrBuf);
 uint8 UQNumToStr(uint32 Num, uint8 QRes, uint8 QRound, uint8 *Str);
+uint32 FloatToQ(uint8 *str, uint8 Q);
 
 float32 Power(uint8 Power, float32 Number)
 {
@@ -240,6 +241,56 @@ uint8 NumToHexStr(uint16 Num, uint8 *StrBuf)
 	return Index;
 }
 
+uint8 DecStrToNum32(uint8 *str, uint32 *num)
+{
+	uint8 ret = 0;
+	if((str != 0) && (num != 0))
+	{
+		uint8 mult=1;
+		while((*str != 0) && (*str >= '0') && (*str <= '9'))
+		{
+			switch(*str)
+			{
+			case '0':
+				break;
+			case '1':
+				*num += mult*1;
+				break;
+			case '2':
+				*num += mult*2;
+				break;
+			case '3':
+				*num += mult*3;
+				break;
+			case '4':
+				*num += mult*4;
+				break;
+			case '5':
+				*num += mult*5;
+				break;
+			case '6':
+				*num += mult*6;
+				break;
+			case '7':
+				*num += mult*7;
+				break;
+			case '8':
+				*num += mult*8;
+				break;
+			case '9':
+				*num += mult*9;
+				break;
+			default:
+				break;
+			}
+			mult *= 10;
+			str++;
+			ret++;
+		}
+	}
+	return ret;
+}
+
 uint8 DecStrToNum(uint8 *str, uint8 *num)
 {
 	uint8 ret = 0;
@@ -292,6 +343,45 @@ uint8 DecStrToNum(uint8 *str, uint8 *num)
 		ret = 1;
 	}
 	return ret;
+}
+
+uint32 FloatToQ(uint8 *str, uint8 Q)
+{
+	uint8 PointIndex;
+	uint32 Cmpr = 5;
+	uint32 Fract = 0;
+	uint32 Num = 0;
+
+	/* Getting the whole part */
+	PointIndex = DecStrToNum32(str, &Num);
+
+	/* Multiple it with the quotiens factor */
+	Num <<= Q;
+
+	/* Rebase string pointer to the start of the fraction part */
+	str = &str[PointIndex+1];
+
+	while(Q>0)
+	{
+		Q--;
+		if(*str != 0)
+		{
+			Fract += *str - '0';
+			str++;
+		}
+		if(Fract >= Cmpr)
+		{
+			Num += 1 << Q;
+			Fract -= Cmpr;
+		}
+		Cmpr *= 5;
+		Fract *= 10;
+	}
+
+	/* Rounding */
+	if(Fract >= Cmpr) Num += 1;
+
+	return Num;
 }
 
 /* Copies the data in length from the Src to the Dst
