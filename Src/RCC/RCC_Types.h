@@ -1193,8 +1193,8 @@ typedef struct
 
 typedef enum
 {
-	Clear 	= 0,
-	Set 	= 1,
-} dtSetOrClear;
+	Clock_Clear 	= 0,
+	Clock_Set 	= 1,
+} dtClockSetOrClear;
 
 #endif /* RCC_RCC_TYPES_H_ */

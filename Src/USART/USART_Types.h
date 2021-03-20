@@ -446,4 +446,16 @@ typedef struct
 } dtUSART4Data;
 #endif
 
+#define CR1_BIT_TXFNFIE	0x80
+
+#define USART_CR1_SET_BIT(Instance, Bit) 	\
+		dtCR1 Temp = USART[Instance]->CR1;	\
+		Temp.Word |= Bit;					\
+		USART[Instance]->CR1 = Temp;
+
+#define USART_CR1_CLEAR_BIT(Instance, Bit) 	\
+		dtCR1 Temp = USART[Instance]->CR1;	\
+		Temp.Word &= ~Bit;					\
+		USART[Instance]->CR1 = Temp;
+
 #endif /* USART_USART_TYPES_H_ */

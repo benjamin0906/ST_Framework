@@ -72,7 +72,7 @@ void RCC_ClockEnable(dtRCCClock Clock, dtRCCClockSets Value)
 {
 	uint32 BusId = Clock>>5;
 	uint32 ClockMask = 1 << (Clock&0x1F);
-	dtSetOrClear SetOrClear = Set;
+	dtClockSetOrClear SetOrClear = Clock_Set;
 	dtBusGroup *GroupPtr;
 
 	if((Value == Enable) || (Value == Disable)) GroupPtr = &RCC->ENR;
@@ -85,7 +85,7 @@ void RCC_ClockEnable(dtRCCClock Clock, dtRCCClockSets Value)
 
 	if((Value == Disable) || (Value == LpDisable))
 	{
-		SetOrClear = Clear;
+		SetOrClear = Clock_Clear;
 		ClockMask = ~ClockMask;
 	}
 #if defined(MCU_G070) || defined(MCU_G071)
@@ -93,7 +93,7 @@ void RCC_ClockEnable(dtRCCClock Clock, dtRCCClockSets Value)
 #elif defined(MCU_F446) || defined(MCU_F410) || defined(MCU_L433)
 	uint32 *Pointer = &GroupPtr->AHB1.Word + BusId;
 #endif
-	if(SetOrClear == Set) *Pointer |= ClockMask;
+	if(SetOrClear == Clock_Set) *Pointer |= ClockMask;
 	else *Pointer &= ClockMask;
 }
 

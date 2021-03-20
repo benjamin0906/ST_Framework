@@ -39,6 +39,8 @@ uint8 USART_GetRxData(dtUSARTInstance Instance);
 void USART_Init(dtUSARTInstance Instance, dtUSARTConfig Config)
 {
 #if defined(MCU_G070) || defined(MCU_G071)
+	if(USART[Instance]->CR1.Fields.UE == 0)
+	{
 	dtCR1 TempCR1 = {.Word = 0};
 
 	/* Set 8 databits */
@@ -138,6 +140,7 @@ void USART_Init(dtUSARTInstance Instance, dtUSARTConfig Config)
 #endif
 		break;
 	}
+	}
 #endif
 }
 
@@ -173,7 +176,7 @@ void USART_Send(dtUSARTInstance Instance, uint8 *Data, uint8 DataSize)
 				USART2Data.TxFiFo[USART2Data.TxWriteIndex++] = *Data++;
 				USART2Data.TxWriteIndex &= USART2_TX_FIFO_SIZE;
 			}
-			USART[Instance]->CR1.Fields.TXFNFIE = 1;
+			USART_CR1_SET_BIT(Instance, CR1_BIT_TXFNFIE);
 		}
 #endif
 			break;
@@ -334,7 +337,10 @@ void USART2_IRQHandler(void)
 		USART2Data.TxReadIndex &= USART2_TX_FIFO_SIZE;
 
 		/* If there is no more data to send disable the tx-empty interrupt */
-		if(USART2Data.TxReadIndex == USART2Data.TxWriteIndex) USART[1]->CR1.Fields.TXFNFIE = 0;
+		if(USART2Data.TxReadIndex == USART2Data.TxWriteIndex)
+		{
+			USART_CR1_CLEAR_BIT(USART2, CR1_BIT_TXFNFIE);
+		}
 	}
 	if(USART[1]->ISR.Fields.RXFNE != 0)
 	{
