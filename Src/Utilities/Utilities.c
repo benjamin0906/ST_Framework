@@ -407,43 +407,54 @@ void MemCpyRigth(uint8 *Src, uint8 *Dst, uint32 Length)
 uint8 UQNumToStr(uint32 Num, uint8 QRes, uint8 QRound, uint8 *Str)
 {
 	uint32 WholePart = Num >> QRes;
-	uint8 Looper = QRound;
+	uint8 ret = Dabler16Bit(WholePart, Str);
+	Str += ret;
 
-	uint32 Mask = 0xFFFFFFFF;
-	Mask <<= 32 - QRes;
-	Mask >>= 32 - QRes;
-
-	Num &= Mask;
-
-	while(Looper > 0)
+	if(QRound > 0)
 	{
-		Looper--;
-		Num *= 10;
-		uint8 NumToRound = Num >> (QRes-1);
+		WholePart = 0;
+		*Str++ = '.';
+		ret++;
 
-		if(Looper == 0)
-		{
-			if((NumToRound & 1) != 0) NumToRound += 0x2;
-		}
+		uint8 Looper = QRound;
 
-		WholePart *= 10;
-
-		WholePart += NumToRound>>1;
+		uint32 Mask = 0xFFFFFFFF;
+		Mask <<= 32 - QRes;
+		Mask >>= 32 - QRes;
 
 		Num &= Mask;
+
+		while(Looper > 0)
+		{
+			Looper--;
+			Num *= 10;
+			uint8 NumToRound = Num >> (QRes-1);
+
+			if(Looper == 0)
+			{
+				if((NumToRound & 1) != 0) NumToRound += 0x2;
+			}
+
+			WholePart *= 10;
+
+			WholePart += NumToRound>>1;
+
+			Num &= Mask;
+		}
+		int8 shift;
+
+		uint8 Length = Dabler16Bit(WholePart, Str);
+
+		MemCpyRigth(Str, Str+(QRound - Length), QRound);
+
+		while(Length < QRound)
+		{
+			*Str++ = '0';
+			Length++;
+		}
+		ret += Length;
 	}
-
-	uint8 Length = 0;
-
-	Length = Dabler16Bit(WholePart, Str);
-
-	Str += Length - QRound;
-
-	MemCpyRigth(Str, Str+1, QRound);
-
-	*Str = '.';
-
-	return Length+1;
+	return ret;
 }
 
 #if defined(MCU_F446)
