@@ -25,21 +25,22 @@ typedef union
 	uint32 Word;
 	struct
 	{
-		uint32 				:27;
-		uint32 SEVONPEND	:1;
 		uint32				:1;
-		uint32 SLEEPDEEP	:1;
 		uint32 SLEEPONEXIT	:1;
+		uint32 SLEEPDEEP	:1;
 		uint32 				:1;
+		uint32 SEVONPEND	:1;
+		uint32 				:27;
 	} Fields;
 } dtSCR;
 
 typedef struct
 {
-	uint32	CPUID;
-	uint32	ICSR;
-	uint32	AIRCR;
-	dtSCR	SCR;
+	uint32	CPUID;	//0x00
+	uint32	ICSR;	//0x04
+	uint32 :32;		//0x08
+	uint32	AIRCR;	//0x0C
+	dtSCR	SCR;	//0x10
 	uint32	CCR;
 	uint32	SHPR2;
 	uint32	SHPR3;
