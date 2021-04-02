@@ -76,6 +76,7 @@ extern void ADC_Init(dtAdcConfig Config);
 extern void ADC_SetChConfig(dtAdcCh Ch, dtAdcSmp Smp);
 extern uint8 ADC_CheckChConfig(void);
 extern void ADC_StartConversation(void);
+extern void ADC_StopConversion(void);
 extern uint8 ADC_ReadData(uint16 *Data);
 extern uint8 ADC_CalibProcess(void);
 extern void ADC_SetDataHandler(void (*Handler)(uint16));

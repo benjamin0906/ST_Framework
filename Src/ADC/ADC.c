@@ -142,7 +142,16 @@ uint8 ADC_CheckChConfig(void)
 
 void ADC_StartConversation(void)
 {
-	ADC->CR.Fields.ADSTART = 1;
+	dtADC_CR TempCr = ADC->CR;
+	TempCr.Fields.ADSTART = 1;
+	ADC->CR = TempCr;
+}
+
+void ADC_StopConversion(void)
+{
+	dtADC_CR TempCr = ADC->CR;
+	TempCr.Fields.ADSTP = 1;
+	ADC->CR = TempCr;
 }
 
 void ADC_SetExtTrigMode(dtAdcExtTrigMode TrigMode)
