@@ -27,7 +27,6 @@ typedef struct
 	uint32 ClkDiv		:4;
 	uint32 Interrupt	:2;
 	uint32 ExtTrigger	:3;
-	uint32 ExtrTrigEn	:2;
 } dtAdcConfig;
 
 typedef enum
@@ -59,6 +58,20 @@ typedef enum
 	ADC_SMP2,
 } dtAdcSmp;
 
+typedef enum
+{
+	AdcEnabled,
+	AdcDisabled,
+} dtAdcState;
+
+typedef enum
+{
+	AdcSwTrig,
+	AdcRisingEdgeTrig,
+	AdcFallingEdgeTrig,
+	AdcBothEdgeTrig,
+} dtAdcExtTrigMode;
+
 extern void ADC_Init(dtAdcConfig Config);
 extern void ADC_SetChConfig(dtAdcCh Ch, dtAdcSmp Smp);
 extern uint8 ADC_CheckChConfig(void);
@@ -68,5 +81,9 @@ extern uint8 ADC_CalibProcess(void);
 extern void ADC_SetDataHandler(void (*Handler)(uint16));
 extern void ADC_SetSequence(uint8 Order, dtAdcCh Ch);
 extern void ADC_ConfSequence(void);
+extern uint8 ADC_IsAdcReady(void);
+extern void ADC_Enable(void);
+extern void ADC_Disable(void);
+extern void ADC_SetExtTrigMode(dtAdcExtTrigMode TrigMode);
 
 #endif /* INC_ADC_H_ */

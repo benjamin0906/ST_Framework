@@ -44,7 +44,6 @@ void ADC_Init(dtAdcConfig Config)
 	TempCfgr1.Fields.ALIGN = Config.LeftAlign;
 	TempCfgr1.Fields.RES = Config.Resolution;
 	TempCfgr1.Fields.EXTSEL = Config.ExtTrigger;
-	TempCfgr1.Fields.EXTEN = Config.ExtrTrigEn;
 
 	TempCfgr2.Fields.CKMODE = Config.ClkMode;
 	TempCfgr2.Fields.OVSR = Config.OVS;
@@ -79,8 +78,30 @@ void ADC_Init(dtAdcConfig Config)
 	ADC->CHSELR = TempChselr;
 	ADC->CR = TempCr;
 	ADC->CCR = TempCcr;
+}
 
-	while(ADC->ISR.Fields.ADRDY == 0);
+dtAdcState ADC_IsAdcReady(void)
+{
+	if((ADC->CR.Fields.ADDIS == 0)  && (ADC->CR.Fields.ADEN != 0) && (ADC->ISR.Fields.ADRDY != 0)) return AdcEnabled;
+	return AdcDisabled;
+}
+
+void ADC_Enable(void)
+{
+	dtADC_CR TempCr = ADC->CR;
+	TempCr.Fields.ADEN = 1;
+	ADC->CR = TempCr;
+}
+
+void ADC_Disable(void)
+{
+	/* First clearing the ADCRDY flag, then set the disable flag */
+	dtADC_CR TempCr = ADC->CR;
+	dtADC_ISR TempIsr = ADC->ISR;
+	TempIsr.Fields.ADRDY = 1;
+	TempCr.Fields.ADDIS = 1;
+	ADC->ISR = TempIsr;
+	ADC->CR = TempCr;
 }
 
 void ADC_SetChConfig(dtAdcCh Ch, dtAdcSmp Smp)
@@ -122,6 +143,13 @@ uint8 ADC_CheckChConfig(void)
 void ADC_StartConversation(void)
 {
 	ADC->CR.Fields.ADSTART = 1;
+}
+
+void ADC_SetExtTrigMode(dtAdcExtTrigMode TrigMode)
+{
+	dtADC_CFGR1 TempCfgr1 = ADC->CFGR1;
+	TempCfgr1.Fields.EXTEN = TrigMode;
+	ADC->CFGR1 = TempCfgr1;
 }
 
 uint8 ADC_ReadData(uint16 *Data)
