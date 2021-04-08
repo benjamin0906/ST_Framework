@@ -22,17 +22,19 @@ void Pwr_LowPowerMode(dtLowPwrModes Mode);
 
 void Pwr_SetVos(uint8 mode)
 {
+	dtPwrCR TempCr = Pwr->CR;
 #if defined(MCU_F446) || defined(MCU_F410)
-	Pwr->CR.Fields.VOS = mode & 0x3;
+	TempCr.Fields.VOS = mode & 0x3;
 #ifdef MODULE_TEST
 	Pwr->CSR.Fields.VOSRDY = 1;
 #endif
 	while(Pwr->CSR.Fields.VOSRDY != 1);
 #elif defined(MCU_G070) || defined(MCU_G071)
-	Pwr->CR.Fields.VOS = mode & 0x3;
+	TempCr.Fields.VOS = mode & 0x3;
 #ifdef MODULE_TEST
 	Pwr->SR2.Fields.VOSF = 0;
 #endif
+	Pwr->CR = TempCr;
 	while(Pwr->SR2.Fields.VOSF != 0);
 #endif
 }
