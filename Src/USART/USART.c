@@ -12,6 +12,7 @@
 
 #if defined(MCU_G070) || defined(MCU_G071)
 /* Not every USART instances has the same features. USART1 and 2 have full functionality but USART 3 and 4 have only basic functionality */
+/* The registers of the module can only be accessed 32 bit operations */
 static dtUSART *USART[4] = {(dtUSART*)0x40013800,
 							(dtUSART*)0x40004400,
 							(dtUSART*)0x40004800,
@@ -35,6 +36,7 @@ void USART_Send(dtUSARTInstance Instance, uint8 *Data, uint8 DataSize);
 uint8 USART_GetTxFifoFreeSize(dtUSARTInstance Instance);
 uint8 USART_GetRxFifoFilledSize(dtUSARTInstance Instance);
 uint8 USART_GetRxData(dtUSARTInstance Instance);
+void USART_Disable(dtUSARTInstance Instance);
 
 void USART_Init(dtUSARTInstance Instance, dtUSARTConfig Config)
 {
@@ -326,6 +328,15 @@ uint8 USART_GetRxFifoFilledSize(dtUSARTInstance Instance)
 	}
 #endif
 	return ret;
+}
+
+void USART_Disable(dtUSARTInstance Instance)
+{
+	dtCR1 TempCr1 = USART[Instance]->CR1;
+	TempCr1.Fields.UE = 0;
+	TempCr1.Fields.TE = 0;
+	TempCr1.Fields.RE = 0;
+	USART[Instance]->CR1 = TempCr1;
 }
 
 #if defined(MCU_G071)
