@@ -191,7 +191,7 @@ void USART_Send(dtUSARTInstance Instance, uint8 *Data, uint8 DataSize)
 				USART3Data.TxFiFo[USART3Data.TxWriteIndex++] = *Data++;
 				USART3Data.TxWriteIndex &= USART3_TX_FIFO_SIZE;
 			}
-			USART[Instance]->CR1.Fields.TXFNFIE = 1;
+			USART_CR1_SET_BIT(Instance, CR1_BIT_TXFNFIE);
 		}
 #endif
 			break;
@@ -371,7 +371,10 @@ void USART3_USART4_LPUART1_IRQHandler(void)
 		USART3Data.TxReadIndex &= USART3_TX_FIFO_SIZE;
 
 		/* If there is no more data to send disable the tx-empty interrupt */
-		if(USART3Data.TxReadIndex == USART3Data.TxWriteIndex) USART[2]->CR1.Fields.TXFNFIE = 0;
+		if(USART3Data.TxReadIndex == USART3Data.TxWriteIndex)
+		{
+			USART_CR1_CLEAR_BIT(USART3, CR1_BIT_TXFNFIE);
+		}
 	}
 	if(USART[2]->ISR.Fields.RXFNE != 0)
 	{
