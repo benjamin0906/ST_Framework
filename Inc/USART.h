@@ -46,5 +46,6 @@ extern uint8 USART_GetTxFifoFreeSize(dtUSARTInstance Instance);
 extern uint8 USART_GetRxFifoFilledSize(dtUSARTInstance Instance);
 extern uint8 USART_GetRxData(dtUSARTInstance Instance);
 extern void USART_Disable(dtUSARTInstance Instance);
+extern uint8 USART_Transmitting(dtUSARTInstance Instance);
 
 #endif /* INC_USART_H_ */

@@ -37,6 +37,7 @@ uint8 USART_GetTxFifoFreeSize(dtUSARTInstance Instance);
 uint8 USART_GetRxFifoFilledSize(dtUSARTInstance Instance);
 uint8 USART_GetRxData(dtUSARTInstance Instance);
 void USART_Disable(dtUSARTInstance Instance);
+uint8 USART_Transmitting(dtUSARTInstance Instance);
 
 void USART_Init(dtUSARTInstance Instance, dtUSARTConfig Config)
 {
@@ -337,6 +338,12 @@ void USART_Disable(dtUSARTInstance Instance)
 	TempCr1.Fields.TE = 0;
 	TempCr1.Fields.RE = 0;
 	USART[Instance]->CR1 = TempCr1;
+}
+
+uint8 USART_Transmitting(dtUSARTInstance Instance)
+{
+	/* If TCFNFIE is set the module is transmitting */
+	return (USART[Instance]->CR1.Fields.TXFNFIE != 0) || (USART[Instance]->ISR.Fields.TC == 0);
 }
 
 #if defined(MCU_G071)
