@@ -19,6 +19,9 @@ dtDate RTC_GetDate(void);
 dtTime RTC_GetTime(void);
 uint8 RTC_SetTime(dtTime Time);
 uint8 RTC_SetDate(dtDate Date);
+uint8 RTC_SetPeriodicWake(dtRTCWuckSel CkSel, uint16 Value);
+void RTC_ClearInt(dtRTCIntMask Mask);
+uint8 RTC_IsIntPending(dtRTCIntMask Mask);
 
 void RTC_Init(dtRTCConfig Config)
 {
@@ -158,4 +161,43 @@ uint8 RTC_SetDate(dtDate Date)
 		ret = 1;
 	}
 	return ret;
+}
+
+uint8 RTC_SetPeriodicWake(dtRTCWuckSel CkSel, uint16 Value)
+{
+	uint8 ret = 0;
+	RTC_WPUnlock();
+	if(RTC->CR.Fields.WUTE != 0)
+	{
+		dtRTC_CR TempCR = RTC->CR;
+		TempCR.Fields.WUTE = 0;
+		RTC->CR = TempCR;
+		RTC_Lock();
+	}
+	else if(RTC->ICSR.Fields.WUTWF != 0)
+	{
+		dtRTC_CR TempCR = RTC->CR;
+		dtRTC_WUTR TempWUTR;
+		TempWUTR.Fields.WUT = Value;
+		RTC->WUTR = TempWUTR;
+		TempCR.Fields.WUTIE = 1;
+		TempCR.Fields.WUTE = 1;
+		TempCR.Fields.WUCKSEL = CkSel;
+		RTC->CR = TempCR;
+
+		RTC_Lock();
+		ret = 1;
+	}
+	return ret;
+}
+
+void RTC_ClearInt(dtRTCIntMask Mask)
+{
+	dtRTC_SCR TempScr = {.Word = Mask};
+	RTC->SCR = TempScr;
+}
+
+uint8 RTC_IsIntPending(dtRTCIntMask Mask)
+{
+	return (RTC->SR.Word & Mask) != 0;
 }
