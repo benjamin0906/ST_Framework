@@ -18,6 +18,16 @@ static dtUSART *USART[4] = {(dtUSART*)0x40013800,
 							(dtUSART*)0x40004800,
 							(dtUSART*)0x40004C00};
 #endif
+#if defined(MCU_F415)
+static dtUSART *USART[8] = {(dtUSART*)0x40011000,
+							(dtUSART*)0x40004400,
+							(dtUSART*)0x40004800,
+							(dtUSART*)0x40004C00,
+							(dtUSART*)0x40005000,
+							(dtUSART*)0x40011400,
+							(dtUSART*)0x40007800,
+							(dtUSART*)0x40007C00};
+#endif
 #if defined(USART1_TX_FIFO_SIZE) && defined(USART1_RX_FIFO_SIZE)
 static dtUSART1Data USART1Data;
 #endif
@@ -343,7 +353,11 @@ void USART_Disable(dtUSARTInstance Instance)
 uint8 USART_Transmitting(dtUSARTInstance Instance)
 {
 	/* If TCFNFIE is set the module is transmitting */
+#if defined(MCU_G070) || defined(MCU_G071)
 	return (USART[Instance]->CR1.Fields.TXFNFIE != 0) || (USART[Instance]->ISR.Fields.TC == 0);
+#elif defined(MCU_F446) || defined(MCU_F415)
+	return (USART[Instance]->CR1.Fields.TXEIE != 0) || (USART[Instance]->SR.Fields.TC == 0);
+#endif
 }
 
 #if defined(MCU_G071)

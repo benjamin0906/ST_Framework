@@ -43,7 +43,7 @@ typedef union
 		uint32 RXFFIE	:1;
 	} Fields;
 } dtCR1;
-#elif defined(MCU_F446)
+#elif defined(MCU_F446) || defined(MCU_F415)
 typedef union
 {
 	uint32 Word;
@@ -387,7 +387,7 @@ typedef struct
 	dtRDR RDR;
 	dtTDR TDR;
 	dtPRESC PRESC;
-#elif defined(MCU_F446)
+#elif defined(MCU_F446) || defined(MCU_F415)
 	dtSR	SR;
 	dtDR	DR;
 	dtBRR	BRR;
