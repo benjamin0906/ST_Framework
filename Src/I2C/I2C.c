@@ -105,7 +105,7 @@ dtI2cSessionResult I2C_Result(dtI2CInstance Instance)
 
 #if defined(MCU_G071) || defined(MCU_G070)
 void I2C1_IRQHandler(void)
-#elif defined(MCU_L433)
+#elif defined(MCU_L433) || defined(MCU_F415)
 void I2C1_EV_IRQHandler(void)
 #endif
 {
@@ -186,7 +186,7 @@ void I2C1_EV_IRQHandler(void)
 
 #if defined(MCU_G071) || defined(MCU_G070)
 void I2C2_IRQHandler(void)
-#elif defined(MCU_L433)
+#elif defined(MCU_L433) || defined(MCU_F415)
 void I2C2_EV_IRQHandler(void)
 #endif
 {

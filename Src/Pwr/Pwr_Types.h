@@ -62,6 +62,24 @@ typedef union
 	} Fields;
 	uint32 Word;
 } dtPwrCR;
+#elif defined(MCU_F415)
+typedef union
+{
+	struct
+	{
+		uint32 LPDS		:1;
+		uint32 PDDS		:1;
+		uint32 CWUF		:1;
+		uint32 CSBF		:1;
+		uint32 PVDE		:1;
+		uint32 PLS		:3;
+		uint32 DBP		:1;
+		uint32 FPDS		:1;
+		uint32 			:4;
+		uint32 VOS		:2;
+	} Fields;
+	uint32 Word;
+} dtPwrCR;
 #endif
 
 #ifdef MCU_F410
@@ -102,6 +120,23 @@ typedef union
 		uint32 ODSWRDY	:1;
 		uint32 UDRDY	:2;
 		uint32 			:12;
+	} Fields;
+	uint32 Word;
+} dtCSR;
+#elif defined(MCU_F415)
+typedef union
+{
+	struct
+	{
+		uint32 WUF		:1;
+		uint32 SBF		:1;
+		uint32 PVDO		:1;
+		uint32 BRR		:1;
+		uint32 			:4;
+		uint32 EWUP		:1;
+		uint32 BRE		:1;
+		uint32 			:4;
+		uint32 VOSRDY	:1;
 	} Fields;
 	uint32 Word;
 } dtCSR;
@@ -241,7 +276,7 @@ typedef union
 
 typedef struct
 {
-#if defined(MCU_F410) || defined(MCU_F446) || defined(MCU_G070) || defined(MCU_G071)
+#if defined(MCU_F410) || defined(MCU_F446) || defined(MCU_G070) || defined(MCU_G071) || defined(MCU_F415)
 	dtPwrCR 	CR;
 #endif
 #if defined(MCU_G070)
@@ -264,7 +299,7 @@ typedef struct
 #if defined(MCU_G070) || defined(MCU_G071)
 	dtSCR	SCR;
 #endif
-#if defined(MCU_F410) || defined(MCU_F446)
+#if defined(MCU_F410) || defined(MCU_F446) || defined(MCU_F415)
 	dtCSR CSR;
 #endif
 } dtPwr;
