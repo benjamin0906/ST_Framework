@@ -11,16 +11,16 @@
 #include "types.h"
 #include "SPI.h"
 
-#if defined(MCU_F446) || defined(MCU_F410)
+#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_F415)
 typedef union
 {
 	struct
 	{
-		uint32 CPHA	:1;
-		uint32 CPOL	:1;
-		uint32 MSTR	:1;
-		uint32 BR	:3;
-		uint32 SPE	:1;
+		uint32 CPHA		:1;
+		uint32 CPOL		:1;
+		uint32 MSTR		:1;
+		uint32 BR		:3;
+		uint32 SPE		:1;
 		uint32 LSBFIRST	:1;
 		uint32 SSI		:1;
 		uint32 SSM		:1;
@@ -57,7 +57,7 @@ typedef union
 } dtCR1;
 #endif
 
-#if defined(MCU_F446) || defined(MCU_F410)
+#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_F415)
 typedef union
 {
 	struct
@@ -95,7 +95,7 @@ typedef union
 } dtCR2;
 #endif
 
-#if defined(MCU_F446) || defined(MCU_F410)
+#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_F415)
 typedef union
 {
 	struct
@@ -187,9 +187,26 @@ typedef union
 	} Fields;
 	uint32 Word;
 } dtI2SCFGR;
+#elif defined(MCU_F415)
+typedef union
+{
+	struct
+	{
+		uint32 CHLEN	:1;
+		uint32 DATLEN	:2;
+		uint32 CKPOL	:1;
+		uint32 I2SSTD	:2;
+		uint32 			:1;
+		uint32 PCMSYNC	:1;
+		uint32 I2SCFG	:2;
+		uint32 I2SE		:1;
+		uint32 I2SMOD	:1;
+	} Fields;
+	uint32 Word;
+} dtI2SCFGR;
 #endif
 
-#if defined(MCU_F446) || defined(MCU_G070) || defined(MCU_F410) || defined(MCU_G071)
+#if defined(MCU_F446) || defined(MCU_G070) || defined(MCU_F410) || defined(MCU_G071) || defined(MCU_F415)
 typedef union
 {
 	struct
@@ -215,7 +232,7 @@ typedef struct
 	uint16	:16;
 	uint16	TxCRC;
 	uint16	:16;
-#if defined(MCU_F446) || defined(MCU_F410) || defined(G070)
+#if defined(MCU_F446) || defined(MCU_F410) || defined(G070) || defined(MCU_F415)
 	dtI2SCFGR	I2SCFGR;
 	dtI2SPR	I2SPR;
 #endif
