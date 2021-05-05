@@ -15,7 +15,7 @@
 #ifndef MODULE_TEST
 #if defined(MCU_L476) || defined(MCU_G070) || defined(MCU_L433) || defined(MCU_G071)
 static dtRCC *const RCC = (dtRCC*) (0x40021000);
-#elif defined(MCU_F446) || defined(MCU_F410)
+#elif defined(MCU_F446) || defined(MCU_F410) || defined(MCU_F415)
 static dtRCC *const RCC = (dtRCC*) (0x40023800);
 #endif
 #else
@@ -23,6 +23,19 @@ static dtRCC *const RCC = (dtRCC*)&TestRCC;
 #endif
 
 #if defined(MCU_F446) || defined(MCU_F410)
+#define DIVIDER_M_MIN	2
+#define DIVIDER_M_MAX	63
+#define DIVIDER_P_MIN	0
+#define DIVIDER_P_MAX	3
+#define MULT_N_MIN		50
+#define MULT_N_MAX		432
+#define PLL_INPUT_FREQ_MIN	1000000
+#define PLL_INPUT_FREQ_MAX	2000000
+#define PLL_VCO_FREQ_MIN	100000000
+#define PLL_VCO_FREQ_MAX	432000000
+#define INTERNAL_CLOCK_FREQ	16000000
+
+#elif defined(MCU_F415)
 #define DIVIDER_M_MIN	2
 #define DIVIDER_M_MAX	63
 #define DIVIDER_P_MIN	0
@@ -78,7 +91,7 @@ void RCC_ClockEnable(dtRCCClock Clock, dtRCCClockSets Value)
 	if((Value == Enable) || (Value == Disable)) GroupPtr = &RCC->ENR;
 #if defined(MCU_G070) || defined(MCU_L433) || defined(MCU_G071)
 	else if((Value == LpEnable) || (Value == LpDisable)) GroupPtr = &RCC->SMENR;
-#elif defined(MCU_F410)
+#elif defined(MCU_F410) || defined(MCU_F415)
 	else if((Value == LpEnable) || (Value == LpDisable)) GroupPtr = &RCC->LPENR;
 #endif
 	else GroupPtr = &RCC->RSTR;
@@ -90,7 +103,7 @@ void RCC_ClockEnable(dtRCCClock Clock, dtRCCClockSets Value)
 	}
 #if defined(MCU_G070) || defined(MCU_G071)
 	uint32 *Pointer = &GroupPtr->IOP.Word + BusId;
-#elif defined(MCU_F446) || defined(MCU_F410) || defined(MCU_L433)
+#elif defined(MCU_F446) || defined(MCU_F410) || defined(MCU_L433) || defined(MCU_F415)
 	uint32 *Pointer = &GroupPtr->AHB1.Word + BusId;
 #endif
 	if(SetOrClear == Clock_Set) *Pointer |= ClockMask;
@@ -102,7 +115,7 @@ void RCC_ClockSet(dtRccInitConfig Config)
 	uint8 Result = 0;
 	uint16 DividerM;
 	uint16 MultiplierN;
-#if defined(MCU_F446) || defined(MCU_F410)
+#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_F415)
 	uint16 DividerP;
 #elif defined(MCU_G070) || defined(MCU_G071)
 	uint16 DividerR;
@@ -121,7 +134,7 @@ void RCC_ClockSet(dtRccInitConfig Config)
 				uint32 PllClock = PllInClock*MultiplierN;
 				if((PllClock >= PLL_VCO_FREQ_MIN) && (PllClock <= PLL_VCO_FREQ_MAX))
 				{
-#if defined(MCU_F446) || defined(MCU_F410)
+#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_F415)
 					for(DividerP = DIVIDER_P_MIN; (DividerP <= DIVIDER_P_MAX) && (Result == 0); DividerP++)
 					{
 						CalculatedClock = PllClock / ((DividerP+1)*2);
@@ -149,7 +162,7 @@ void RCC_ClockSet(dtRccInitConfig Config)
 			RCC->CR.Fields.HSERDY = 1;
 #endif
 			while(RCC->CR.Fields.HSERDY == 0);
-#if defined(MCU_F446) || defined(MCU_F410)
+#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_F415)
 			RCC->PLLCFGR.Fields.PLLSRC = 1;
 #elif defined(MCU_G070) || defined(MCU_G071)
 			RCC->PLLCFGR.Fields.PLLSRC = 3;
@@ -162,14 +175,14 @@ void RCC_ClockSet(dtRccInitConfig Config)
 			RCC->CR.Fields.HSIRDY = 1;
 #endif
 			while(RCC->CR.Fields.HSIRDY == 0);
-#if defined(MCU_F446) || defined(MCU_F410)
+#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_F415)
 			RCC->PLLCFGR.Fields.PLLSRC = 0;
 #elif defined(MCU_G070) || defined(MCU_G071)
 			RCC->PLLCFGR.Fields.PLLSRC = 2;
 #endif
 		}
 
-#if defined(MCU_F446) || defined(MCU_F410)
+#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_F415)
 		/* We use the MSI clock, being by default 4MHz, for the PLL so it not need to divide. */
 		RCC->PLLCFGR.Fields.PLLM = DividerM-1;
 #elif defined(MCU_G070) || defined(MCU_G071)
@@ -178,7 +191,7 @@ void RCC_ClockSet(dtRccInitConfig Config)
 
 		/* 4MHz * 40 = 160 MHz for VCO frequency */
 		RCC->PLLCFGR.Fields.PLLN = MultiplierN-1;
-#if defined(MCU_F446) || defined(MCU_F410)
+#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_F415)
 		RCC->PLLCFGR.Fields.PLLP = DividerP-1;
 #elif defined(MCU_G070) || defined(MCU_G071)
 		RCC->PLLCFGR.Fields.PLLR = DividerR-1;
@@ -198,9 +211,11 @@ void RCC_ClockSet(dtRccInitConfig Config)
 		else if(ClockFreq <= 84000000) Pwr_SetVos(2);
 		else Pwr_SetVos(3);
 		Flash_SetLatency(ClockFreq, SUPPLY_VOLTAGE);
+#elif defined(MCU_F415)
+#warning implementation is missing
 #endif
 
-#if defined(MCU_F446) || defined(MCU_F410)
+#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_F415)
 		if(Config.APB2_Presc == APB_Presc1) RCC->CFGR.Fields.PPRE2 = 0;
 		else RCC->CFGR.Fields.PPRE2 = 0x4 | (Config.APB2_Presc-1);
 
@@ -230,12 +245,12 @@ uint32 RCC_GetClock(dtBus Bus)
 	uint32 ret = 0;
 	uint16 AHBPresc = 1;
 	uint8 APB1Presc = 1;
-#if defined(MCU_F446) || defined(MCU_F410)
+#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_F415)
 	uint8 APB2Presc = 1;
 #endif
 	uint32 AHBClock;
 	uint32 APB1Clock;
-#if defined(MCU_F446) || defined(MCU_F410)
+#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_F415)
 	uint32 APB2Clock;
 #endif
 
@@ -244,7 +259,7 @@ uint32 RCC_GetClock(dtBus Bus)
 		AHBPresc = 1 << ((RCC->CFGR.Fields.HPRE & 0x7) + 1);
 		if(RCC->CFGR.Fields.HPRE >= 0xC) AHBPresc <<= 1;
 	}
-#if defined(MCU_F446) || defined(MCU_F410)
+#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_F415)
 	if(RCC->CFGR.Fields.PPRE2 >= 0x4) APB2Presc = 1 << ((RCC->CFGR.Fields.PPRE2 & 0x3) + 1);
 	if(RCC->CFGR.Fields.PPRE1 >= 0x4) APB1Presc = 1 << ((RCC->CFGR.Fields.PPRE1 & 0x3) + 1);
 #elif defined(MCU_G070) || defined(MCU_G071)
@@ -252,7 +267,7 @@ uint32 RCC_GetClock(dtBus Bus)
 #endif
 	AHBClock = ClockFreq/AHBPresc;
 	APB1Clock = AHBClock/APB1Presc;
-#if defined(MCU_F446) || defined(MCU_F410)
+#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_F415)
 	APB2Clock = AHBClock/APB2Presc;
 #endif
 
@@ -261,7 +276,7 @@ uint32 RCC_GetClock(dtBus Bus)
 		ret = APB1Clock;
 		if(APB1Presc != 1) ret *= 2;
 	}
-#if defined(MCU_F446) || defined(MCU_F410)
+#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_F415)
 	else if(Bus == APB2_Timer)
 	{
 		ret = APB2Clock;
@@ -269,7 +284,7 @@ uint32 RCC_GetClock(dtBus Bus)
 	}
 #endif
 	else if(Bus == APB1_Peripheral) ret = APB1Clock;
-#if defined(MCU_F446) || defined(MCU_F410)
+#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_F415)
 	else if(Bus == APB2_Peripheral) ret = APB2Clock;
 #endif
 	else if(Bus == AHB) ret = AHBClock;
