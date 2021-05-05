@@ -7,25 +7,29 @@
 
 #include "SPI_Types.h"
 
-#if defined(MCU_F410) || defined(MCU_F446) || defined(MCU_L433) || defined(MCU_G070) || defined(MCU_G071)
+#if defined(MCU_F410) || defined(MCU_F446) || defined(MCU_L433) || defined(MCU_G070) || defined(MCU_G071) || defined(MCU_F415)
 static dtSPI_I2S *const SPI1 = (dtSPI_I2S*)(0x40013000);
 static dtSpiData SPI1Data;
 #endif
-#if defined(MCU_F410) || defined(MCU_F446) || defined(MCU_L433) || defined(MCU_G070) || defined(MCU_G071)
+#if defined(MCU_F410) || defined(MCU_F446) || defined(MCU_L433) || defined(MCU_G070) || defined(MCU_G071) || defined(MCU_F415)
 static dtSPI_I2S *const SPI2 = (dtSPI_I2S*)(0x40003800);
 static dtSpiData SPI2Data;
 #endif
-#if defined(MCU_F446) || defined(MCU_L433)
+#if defined(MCU_F446) || defined(MCU_L433) || defined(MCU_F415)
 static dtSPI_I2S *const SPI3 = (dtSPI_I2S*)(0x40003C00);
 static dtSpiData SPI3Data;
 #endif
-#if defined(MCU_F446)
+#if defined(MCU_F446) || defined(MCU_F415)
 static dtSPI_I2S *const SPI4 = (dtSPI_I2S*)(0x40013400);
 static dtSpiData SPI4Data;
 #endif
-#if defined(MCU_F410)
+#if defined(MCU_F410) || defined(MCU_F415)
 static dtSPI_I2S *const SPI5 = (dtSPI_I2S*)(0x40015000);
 static dtSpiData SPI5Data;
+#endif
+#if defined(MCU_F415)
+static dtSPI_I2S *const SPI6 = (dtSPI_I2S*)(0x40015400);
+static dtSpiData SPI6Data;
 #endif
 
 void SPI_Init(dtSpiConf Config);
@@ -38,29 +42,34 @@ dtSpiData* GetDataOfInstance(uint8 instance)
 	dtSpiData *ret = 0;
 	switch(instance)
 	{
-#if defined(MCU_F410) || defined(MCU_F446) || defined(MCU_L433) || defined(MCU_G070) || defined(MCU_G071)
+#if defined(MCU_F410) || defined(MCU_F446) || defined(MCU_L433) || defined(MCU_G070) || defined(MCU_G071) || defined(MCU_F415)
 	case 1:
 		ret = &SPI1Data;
 		break;
 #endif
-#if defined(MCU_F410) || defined(MCU_F446) || defined(MCU_L433) || defined(MCU_G070) || defined(MCU_G071)
+#if defined(MCU_F410) || defined(MCU_F446) || defined(MCU_L433) || defined(MCU_G070) || defined(MCU_G071) || defined(MCU_F415)
 	case 2:
 		ret = &SPI2Data;
 		break;
 #endif
-#if defined(MCU_F446) || defined(MCU_L433)
+#if defined(MCU_F446) || defined(MCU_L433) || defined(MCU_F415)
 	case 3:
 		ret = &SPI3Data;
 		break;
 #endif
-#if defined(MCU_F446)
+#if defined(MCU_F446) || defined(MCU_F415)
 	case 4:
 		ret = &SPI4Data;
 		break;
 #endif
-#if defined(MCU_F410)
+#if defined(MCU_F410) || defined(MCU_F415)
 	case 5:
 		ret = &SPI5Data;
+		break;
+#endif
+#if defined(MCU_F415)
+	case 6:
+		ret = &SPI6Data;
 		break;
 #endif
 	}
@@ -78,19 +87,24 @@ dtSPI_I2S* GetSpiInstance(uint8 instance)
 	case 2:
 		ret = SPI2;
 		break;
-#if defined(MCU_F446)
+#if defined(MCU_F446) || defined(MCU_F415)
 	case 3:
 		ret = SPI3;
 		break;
 #endif
-#if defined(MCU_F446)
+#if defined(MCU_F446) || defined(MCU_F415)
 	case 4:
 		ret = SPI4;
 		break;
 #endif
-#if defined(MCU_F410)
+#if defined(MCU_F410) || defined(MCU_F415)
 	case 5:
 		ret = SPI5;
+		break;
+#endif
+#if defined(MCU_F415)
+	case 6:
+		ret = SPI6;
 		break;
 #endif
 	}
@@ -106,7 +120,7 @@ void SPI_Init(dtSpiConf Config)
 
 	Cr1Temp.Fields.BR = Config.ClockDiv;
 	Cr1Temp.Fields.LSBFIRST = Config.LsbOrMsb;
-#if defined(MCU_F446)
+#if defined(MCU_F446) || defined(MCU_F415)
 	Cr1Temp.Fields.DFF = Config.DataSize;
 #endif
 	Cr1Temp.Fields.CPHA = Config.CHPA;
@@ -144,7 +158,7 @@ dtSpStatus SPI_Status(uint8 Instance)
 	return GetDataOfInstance(Instance)->Status;
 }
 
-#if defined(MCU_F410) || defined(MCU_F446) ||  defined(MCU_G071)
+#if defined(MCU_F410) || defined(MCU_F446) ||  defined(MCU_G071) || defined(MCU_F415)
 void SPI1_IRQHandler(void)
 {
 	dtSpiData *DataInstance = GetDataOfInstance(1);
@@ -166,14 +180,14 @@ void SPI1_IRQHandler(void)
 }
 #endif
 
-#if defined(MCU_F410) | defined(MCU_F446) ||  defined(MCU_G071)
+#if defined(MCU_F410) | defined(MCU_F446) ||  defined(MCU_G071) || defined(MCU_F415)
 void SPI2_IRQHandler(void)
 {
 
 }
 #endif
 
-#if defined(MCU_F446)
+#if defined(MCU_F446) || defined(MCU_F415)
 void SPI3_IRQHandler(void)
 {
 	dtSpiData *DataInstance = GetDataOfInstance(3);
