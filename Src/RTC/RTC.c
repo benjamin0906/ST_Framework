@@ -38,8 +38,10 @@ void RTC_Init(dtRTCConfig Config)
 	}
 
 	/* Start initialization */
+#if defined(MCU_G071)
 	RTC->ICSR.Fields.INIT = 1;
 	while(RTC->ICSR.Fields.INITF == 0);
+#endif
 
 	dtRTC_PRER PrerTemp;
 	PrerTemp.Fields.PREDIV_A = Config.Presc_A;
@@ -67,8 +69,9 @@ void RTC_Init(dtRTCConfig Config)
 	RTC->TR = TimeTemp;
 
 	RTC->CR.Fields.FMT = Config.Format;
-
+#if defined(MCU_G071)
 	RTC->ICSR.Fields.INIT = 0;
+#endif
 
 	RTC_Lock();
 }
@@ -111,6 +114,7 @@ void RTC_Lock(void)
 uint8 RTC_SetTime(dtTime Time)
 {
 	uint8 ret = 0;
+#if defined(MCU_G071)
 	if(RTC->ICSR.Fields.INIT == 0)
 	{
 		/* Unlock RTC registers */
@@ -133,11 +137,13 @@ uint8 RTC_SetTime(dtTime Time)
 		RTC_Lock();
 		ret = 1;
 	}
+#endif
 	return ret;
 }
 uint8 RTC_SetDate(dtDate Date)
 {
 	uint8 ret = 0;
+#if defined(MCU_G071)
 	if(RTC->ICSR.Fields.INIT == 0)
 	{
 		/* Unlock RTC registers */
@@ -160,12 +166,14 @@ uint8 RTC_SetDate(dtDate Date)
 		RTC_Lock();
 		ret = 1;
 	}
+#endif
 	return ret;
 }
 
 uint8 RTC_SetPeriodicWake(dtRTCWuckSel CkSel, uint16 Value)
 {
 	uint8 ret = 0;
+#if defined(MCU_G071)
 	RTC_WPUnlock();
 	if(RTC->CR.Fields.WUTE != 0)
 	{
@@ -188,16 +196,21 @@ uint8 RTC_SetPeriodicWake(dtRTCWuckSel CkSel, uint16 Value)
 		RTC_Lock();
 		ret = 1;
 	}
+#endif
 	return ret;
 }
 
 void RTC_ClearInt(dtRTCIntMask Mask)
 {
+#if defined(MCU_G071)
 	dtRTC_SCR TempScr = {.Word = Mask};
 	RTC->SCR = TempScr;
+#endif
 }
 
 uint8 RTC_IsIntPending(dtRTCIntMask Mask)
 {
+#if defined(MCU_G071)
 	return (RTC->SR.Word & Mask) != 0;
+#endif
 }
