@@ -212,7 +212,9 @@ void RCC_ClockSet(dtRccInitConfig Config)
 		else Pwr_SetVos(3);
 		Flash_SetLatency(ClockFreq, SUPPLY_VOLTAGE);
 #elif defined(MCU_F415)
-#warning implementation is missing
+		if(ClockFreq <= 144000000) Pwr_SetVos(0);
+		else Pwr_SetVos(1);
+		Flash_SetLatency(ClockFreq, SUPPLY_VOLTAGE);
 #endif
 
 #if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_F415)
