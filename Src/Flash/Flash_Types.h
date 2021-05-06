@@ -423,35 +423,126 @@ typedef union
 } dtSECR;
 
 #endif
+#elif defined(MCU_F415)
+typedef union
+{
+	struct
+	{
+		uint32 LATENCY	:3;
+		uint32			:5;
+		uint32 PRFTEN	:1;
+		uint32 ICEN		:1;
+		uint32 DCEN		:1;
+		uint32 ICRST	:1;
+		uint32 DCRST	:1;
+		uint32			:19;
+	} Fields;
+	uint32 Word;
+} dtACR;
+
+typedef union
+{
+	struct
+	{
+		uint32 KEYR		:32;
+	} Fields;
+	uint32 Word;
+} dtKEYR;
+
+typedef union
+{
+	struct
+	{
+		uint32 OPTKEYR	:32;
+	} Fields;
+	uint32 Word;
+} dtOPTKEYR;
+
+typedef union
+{
+	struct
+	{
+		uint32 EOP		:1;
+		uint32 OPERR	:1;
+		uint32 			:2;
+		uint32 WRPERR	:1;
+		uint32 PGAERR	:1;
+		uint32 PGPERR	:1;
+		uint32 PGSERR	:1;
+		uint32 			:8;
+		uint32 BSY		:1;
+		uint32 			:15;
+	} Fields;
+	uint32 Word;
+} dtSR;
+
+typedef union
+{
+	struct
+	{
+		uint32 PG			:1;
+		uint32 SER			:1;
+		uint32 MER			:1;
+		uint32 SNB			:4;
+		uint32 				:1;
+		uint32 PSIZE		:2;
+		uint32 				:6;
+		uint32 STRT			:1;
+		uint32 				:7;
+		uint32 EOPIE		:1;
+		uint32 				:6;
+		uint32 LOCK			:1;
+	} Fields;
+	uint32 Word;
+} dtFlashCR;
+
+typedef union
+{
+	struct
+	{
+		uint32 OPTLOCK		:1;
+		uint32 OPTSTRT		:1;
+		uint32 BOR_LEV		:2;
+		uint32 				:1;
+		uint32 WDG_SW		:1;
+		uint32 nRST_STOP	:1;
+		uint32 nRST_STDBY	:1;
+		uint32 RDP			:8;
+		uint32 nWRP			:12;
+		uint32 				:4;
+	}Fields;
+	uint32 Word;
+} dtOPTCR;
+
 #endif
 typedef struct
 {
-#if defined(MCU_F410) || defined(MCU_G070) || defined(MCU_G071) || defined(MCU_F446)
+#if defined(MCU_F410) || defined(MCU_G070) || defined(MCU_G071) || defined(MCU_F446) || defined(MCU_F415)
 	dtACR 		ACR;
 #endif
 #if defined(MCU_G070) || defined(MCU_G071)
 	uint32		:32;
 #endif
-#if defined(MCU_F410) || defined(MCU_G070) || defined(MCU_G071) || defined(MCU_F446)
+#if defined(MCU_F410) || defined(MCU_G070) || defined(MCU_G071) || defined(MCU_F446) || defined(MCU_F415)
 	dtKEYR 		KEY;
 #endif
-#if defined(MCU_F410) || defined(MCU_G070) || defined(MCU_G071) || defined(MCU_F446)
+#if defined(MCU_F410) || defined(MCU_G070) || defined(MCU_G071) || defined(MCU_F446) || defined(MCU_F415)
 	dtOPTKEYR 	OPTKEYR;
 #endif
-#if defined(MCU_F410) || defined(MCU_G070) || defined(MCU_G071) || defined(MCU_F446)
+#if defined(MCU_F410) || defined(MCU_G070) || defined(MCU_G071) || defined(MCU_F446) || defined(MCU_F415)
 	dtSR 		SR;
 #endif
-#if defined(MCU_F410) || defined(MCU_G070) || defined(MCU_G071) || defined(MCU_F446)
+#if defined(MCU_F410) || defined(MCU_G070) || defined(MCU_G071) || defined(MCU_F446) || defined(MCU_F415)
 	dtFlashCR 	CR;
 #endif
-#if defined(MCU_F446)
+#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_F415)
 	dtOPTCR		OPTCR;
 #endif
 #if defined(MCU_G070) || defined(MCU_G071)
 	dtECCR		ECCR;
 #endif
 #if defined(MCU_G070) || defined(MCU_G071)
-	dtOPTR		OPTR;
+	dtOPTR		OPTCR;
 #endif
 #if defined(MCU_G070)
 	uint32		:32;
@@ -487,9 +578,6 @@ typedef struct
 	uint32		:32;
 	uint32		:32;
 	dtSECR		SECR;
-#endif
-#if defined(MCU_F410)
-	dtOPTCR 	OPTCR;
 #endif
 } dtFlash;
 

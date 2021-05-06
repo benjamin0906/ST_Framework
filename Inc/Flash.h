@@ -16,7 +16,7 @@ typedef enum
 	LatFailed,
 } dtSetLatRet;
 
-#if defined(MCU_F410) || defined(MCU_F446)
+#if defined(MCU_F410) || defined(MCU_F446) || defined(MCU_F415)
 extern dtSetLatRet Flash_SetLatency(uint32 clock, uint8 VoltageRange);
 #elif defined(MCU_G070) || defined(MCU_G071)
 dtSetLatRet Flash_SetLatency(uint32 clock);
