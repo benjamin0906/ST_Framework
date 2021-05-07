@@ -169,71 +169,101 @@ static inline dtGPIO* GetPort(dtGPIOs Gpio)
 {
 	dtGPIO *Temp = 0;
 
+#if defined(MCU_F415)
 	if(Gpio >= PortK_0)
 	{
-#if defined(MCU_F415)
 		Temp = GPIOK;
-#endif
 	}
-	else if(Gpio >= PortJ_0)
+	else
+#endif
 	{
 #if defined(MCU_F415)
-		Temp = GPIOJ;
+		if(Gpio >= PortJ_0)
+		{
+			Temp = GPIOJ;
+		}
+		else
 #endif
-	}
-	else if(Gpio >= PortI_0)
-	{
+		{
 #if defined(MCU_F415)
-		Temp = GPIOI;
+			if(Gpio >= PortI_0)
+			{
+				Temp = GPIOI;
+			}
+			else
 #endif
-	}
-	else if(Gpio >= PortH_0)
-	{
+			{
 #if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_L433) || defined(MCU_F415)
-		Temp = GPIOH;
+				if(Gpio >= PortH_0)
+				{
+					Temp = GPIOH;
+				}
+				else
 #endif
-	}
-	else if(Gpio >= PortG_0)
-	{
+				{
 #if defined(MCU_F446) || defined(MCU_F415)
-		Temp = GPIOG;
+					if(Gpio >= PortG_0)
+					{
+					Temp = GPIOG;
+					}
+					else
 #endif
-	}
-	else if(Gpio >= PortF_0)
-	{
+					{
 #if defined(MCU_F446) || defined(MCU_G070) || defined(MCU_G071) || defined(MCU_F415)
-		Temp = GPIOF;
+						if(Gpio >= PortF_0)
+						{
+							Temp = GPIOF;
+						}
+						else
 #endif
-	}
-	else if(Gpio >= PortE_0)
-	{
+						{
 #if defined(MCU_F446) || defined(MCU_L433) || defined(MCU_F415)
-		Temp = GPIOE;
+							if(Gpio >= PortE_0)
+							{
+								Temp = GPIOE;
+							}
+							else
 #endif
-	}
-	else if(Gpio >= PortD_0)
-	{
+							{
 #if defined(MCU_F446) || defined(MCU_G070) || defined(MCU_G071) || defined(MCU_L433) || defined(MCU_F415)
-		Temp = GPIOD;
+								if(Gpio >= PortD_0)
+								{
+									Temp = GPIOD;
+								}
+								else
 #endif
-	}
-	else if(Gpio >= PortC_0)
-	{
+								{
 #if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_G070) || defined(MCU_G071) || defined(MCU_L433) || defined(MCU_F415)
-		Temp = GPIOC;
+									if(Gpio >= PortC_0)
+									{
+										Temp = GPIOC;
+									}
+									else
 #endif
-	}
-	else if(Gpio >= PortB_0)
-	{
+									{
 #if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_G070) || defined(MCU_G071) || defined(MCU_L433) || defined(MCU_F415)
-		Temp = GPIOB;
+										if(Gpio >= PortB_0)
+										{
+											Temp = GPIOB;
+										}
+										else
 #endif
-	}
-	else if(Gpio >= PortA_0)
-	{
+										{
 #if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_G070) || defined(MCU_G071) || defined(MCU_L433) || defined(MCU_F415)
-		Temp = GPIOA;
+											if(Gpio >= PortA_0)
+											{
+												Temp = GPIOA;
+											}
 #endif
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 	return Temp;
 }
