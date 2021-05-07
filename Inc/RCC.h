@@ -456,6 +456,24 @@ enum
 	AHB_Presc512	= 8,
 } eAHBPresc;
 
+enum ePLL_QDiv
+{
+	QDiv_2	= 2,
+	QDiv_3,
+	QDiv_4,
+	QDiv_5,
+	QDiv_6,
+	QDiv_7,
+	QDiv_8,
+	QDiv_9,
+	QDiv_10,
+	QDiv_11,
+	QDiv_12,
+	QDiv_13,
+	QDiv_14,
+	QDiv_15,
+};
+
 typedef struct
 {
 	uint32 Clock;
@@ -465,6 +483,7 @@ typedef struct
 #endif
 	uint32 APB1_Presc			:3;	//max 45MHz
 	uint32 AHB_Presc			:4;
+	uint32 PLL_QDiv				:4;
 	uint32 CrystalClockFreq;
 } dtRccInitConfig;
 

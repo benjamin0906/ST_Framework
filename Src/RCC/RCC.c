@@ -193,6 +193,7 @@ void RCC_ClockSet(dtRccInitConfig Config)
 		RCC->PLLCFGR.Fields.PLLN = MultiplierN-1;
 #if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_F415)
 		RCC->PLLCFGR.Fields.PLLP = DividerP-1;
+		RCC->PLLCFGR.Fields.PLLQ = Config.PLL_QDiv;
 #elif defined(MCU_G070) || defined(MCU_G071)
 		RCC->PLLCFGR.Fields.PLLR = DividerR-1;
 #endif
