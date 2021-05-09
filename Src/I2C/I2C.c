@@ -12,7 +12,7 @@
 #include "RCC.h"
 #include "config.h"
 
-static dtI2C *I2C[2] = {(dtI2C*)0x40005400,
+static dtI2C *const I2C[2] = {(dtI2C*)0x40005400,
 						(dtI2C*)0x40005800};
 
 static uint8 *RegisterAdd;
