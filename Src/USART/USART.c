@@ -13,7 +13,7 @@
 #if defined(MCU_G070) || defined(MCU_G071)
 /* Not every USART instances has the same features. USART1 and 2 have full functionality but USART 3 and 4 have only basic functionality */
 /* The registers of the module can only be accessed 32 bit operations */
-static dtUSART *USART[4] = {(dtUSART*)0x40013800,
+static dtUSART *const USART[4] = {(dtUSART*)0x40013800,
 							(dtUSART*)0x40004400,
 							(dtUSART*)0x40004800,
 							(dtUSART*)0x40004C00};
