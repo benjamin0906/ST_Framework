@@ -10,7 +10,7 @@
 #include "RCC_RTC.h"
 #include "Pwr_RTC.h"
 
-static dtRTC* RTC = (dtRTC*)0x40002800;
+static dtRTC *const RTC = (dtRTC*)0x40002800;
 
 void RTC_Init(dtRTCConfig Config);
 void RTC_WPUnlock(void);
