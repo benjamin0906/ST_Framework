@@ -11,85 +11,85 @@
 /* ----------Register definition section---------- */
 #ifndef MODULE_TEST
 #if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_F415)
-static dtGPIO *GPIOA = (dtGPIO*) 0x40020000;
+static dtGPIO *const GPIOA = (dtGPIO*) 0x40020000;
 #elif defined(MCU_L433)
-static dtGPIO *GPIOA = (dtGPIO*) 0x48000000;
+static dtGPIO *const GPIOA = (dtGPIO*) 0x48000000;
 #elif defined(MCU_G070) || defined(MCU_G071)
-static dtGPIO *GPIOA = (dtGPIO*) 0x50000000;
+static dtGPIO *const GPIOA = (dtGPIO*) 0x50000000;
 #endif
 #if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_F415)
-static dtGPIO *GPIOB = (dtGPIO*) 0x40020400;
+static dtGPIO *const GPIOB = (dtGPIO*) 0x40020400;
 #elif defined(MCU_L433)
-static dtGPIO *GPIOB = (dtGPIO*) 0x48000400;
+static dtGPIO *const GPIOB = (dtGPIO*) 0x48000400;
 #elif defined(MCU_G070) || defined(MCU_G071)
-static dtGPIO *GPIOB = (dtGPIO*) 0x50000400;
+static dtGPIO *const GPIOB = (dtGPIO*) 0x50000400;
 #endif
 #if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_F415)
-static dtGPIO *GPIOC = (dtGPIO*) 0x40020800;
+static dtGPIO *const GPIOC = (dtGPIO*) 0x40020800;
 #elif defined(MCU_L433)
-static dtGPIO *GPIOC = (dtGPIO*) 0x48000800;
+static dtGPIO *const GPIOC = (dtGPIO*) 0x48000800;
 #elif defined(MCU_G070) || defined(MCU_G071)
-static dtGPIO *GPIOC = (dtGPIO*) 0x50000800;
+static dtGPIO *const GPIOC = (dtGPIO*) 0x50000800;
 #endif
 #if defined(MCU_F446) || defined(MCU_F415)
-static dtGPIO *GPIOD = (dtGPIO*) 0x40020C00;
+static dtGPIO *const GPIOD = (dtGPIO*) 0x40020C00;
 #elif defined(MCU_L433)
-static dtGPIO *GPIOD = (dtGPIO*) 0x48000C00;
+static dtGPIO *const GPIOD = (dtGPIO*) 0x48000C00;
 #elif defined(MCU_G070) || defined(MCU_G071)
-static dtGPIO *GPIOD = (dtGPIO*) 0x50000C00;
+static dtGPIO *const GPIOD = (dtGPIO*) 0x50000C00;
 #endif
 #if defined(MCU_F446) || defined(MCU_F415)
-static dtGPIO *GPIOE = (dtGPIO*) 0x40021000;
+static dtGPIO *const GPIOE = (dtGPIO*) 0x40021000;
 #elif defined(MCU_L433)
-static dtGPIO *GPIOE = (dtGPIO*) 0x48001000;
+static dtGPIO *const GPIOE = (dtGPIO*) 0x48001000;
 #endif
 #if defined(MCU_F446) || defined(MCU_F415)
-static dtGPIO *GPIOF = (dtGPIO*) 0x40021400;
+static dtGPIO *const GPIOF = (dtGPIO*) 0x40021400;
 #elif defined(MCU_G070) || defined(MCU_G071)
-static dtGPIO *GPIOF = (dtGPIO*) 0x50001400;
+static dtGPIO *const GPIOF = (dtGPIO*) 0x50001400;
 #endif
 #if defined(MCU_F446) || defined(MCU_F415)
-static dtGPIO *GPIOG = (dtGPIO*) 0x40021800;
+static dtGPIO *const GPIOG = (dtGPIO*) 0x40021800;
 #endif
 #if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_F415)
-static dtGPIO *GPIOH = (dtGPIO*) 0x40021C00;
+static dtGPIO *const GPIOH = (dtGPIO*) 0x40021C00;
 #elif defined(MCU_L433)
-static dtGPIO *GPIOH = (dtGPIO*) 0x48001C00;
+static dtGPIO *const GPIOH = (dtGPIO*) 0x48001C00;
 #endif
 #if defined(MCU_F415)
-static dtGPIO *GPIOI = (dtGPIO*) 0x40022000;
+static dtGPIO *const GPIOI = (dtGPIO*) 0x40022000;
 #endif
 #if defined(MCU_F415)
-static dtGPIO *GPIOJ = (dtGPIO*) 0x40022400;
+static dtGPIO *const GPIOJ = (dtGPIO*) 0x40022400;
 #endif
 #if defined(MCU_F415)
-static dtGPIO *GPIOK = (dtGPIO*) 0x40022800;
+static dtGPIO *const GPIOK = (dtGPIO*) 0x40022800;
 #endif
 #else
 #include "TestEnv.h"
 #if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_G070) || defined(MCU_G071) || defined(MCU_L433)
-static dtGPIO *GPIOA = (dtGPIO*) &TestGPIOA;
+static dtGPIO *const GPIOA = (dtGPIO*) &TestGPIOA;
 #endif
 #if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_G070) || defined(MCU_G071) || defined(MCU_L433)
-static dtGPIO *GPIOB = (dtGPIO*) &TestGPIOB;
+static dtGPIO *const GPIOB = (dtGPIO*) &TestGPIOB;
 #endif
 #if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_G070) || defined(MCU_G071) || defined(MCU_L433)
-static dtGPIO *GPIOC = (dtGPIO*) &TestGPIOC;
+static dtGPIO *const GPIOC = (dtGPIO*) &TestGPIOC;
 #endif
 #if defined(MCU_F446) || defined(MCU_G070) || defined(MCU_G071) || defined(MCU_L433)
-static dtGPIO *GPIOD = (dtGPIO*) &TestGPIOD;
+static dtGPIO *const GPIOD = (dtGPIO*) &TestGPIOD;
 #endif
 #if defined(MCU_F446) || defined(MCU_L433)
-static dtGPIO *GPIOE = (dtGPIO*) &TestGPIOE;
+static dtGPIO *const GPIOE = (dtGPIO*) &TestGPIOE;
 #endif
 #if defined(MCU_F446) || defined(MCU_G070) || defined(MCU_G071)
-static dtGPIO *GPIOF = (dtGPIO*) &TestGPIOF;
+static dtGPIO *const GPIOF = (dtGPIO*) &TestGPIOF;
 #endif
 #if defined(MCU_F446)
-static dtGPIO *GPIOG = (dtGPIO*) &TestGPIOG;
+static dtGPIO *const GPIOG = (dtGPIO*) &TestGPIOG;
 #endif
 #if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_L433)
-static dtGPIO *GPIOH = (dtGPIO*) &TestGPIOH;
+static dtGPIO *const GPIOH = (dtGPIO*) &TestGPIOH;dtGPIO *
 #endif
 #endif
 /* ----------End of register definition section---------- */
