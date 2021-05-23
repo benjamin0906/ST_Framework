@@ -206,6 +206,14 @@ typedef union
 } dtI2SCFGR;
 #endif
 
+#if defined(MCU_G071)
+typedef union
+{
+	uint8 DR8;
+	uint16 DR16;
+} dtSPI_DR;
+#endif
+
 #if defined(MCU_F446) || defined(MCU_G070) || defined(MCU_F410) || defined(MCU_G071) || defined(MCU_F415)
 typedef union
 {
@@ -224,7 +232,7 @@ typedef struct
 	dtCR1	CR1;
 	dtCR2	CR2;
 	dtSR	SR;
-	uint16	DR;
+	dtSPI_DR	DR;
 	uint16	:16;
 	uint16	CRCPOLY;
 	uint16	:16;
@@ -241,9 +249,13 @@ typedef struct
 typedef struct
 {
 	dtSpStatus Status;
-	uint32 *TxBuffPointer;
-	uint32 *RxBuffPointer;
-	uint32 TransferLength;
+	/*uint32 *TxBuffPointer;
+	uint32 *RxBuffPointer;*/
+	uint8* TxBuffPointer;
+	uint8* RxBuffPointer;
+	uint16 TxLength;
+	uint16 RxLength;
+	uint8 Offset;
 	uint32 Indexer;
 	dtGPIOs ChipSelectPin;
 } dtSpiData;

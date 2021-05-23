@@ -53,7 +53,7 @@ typedef struct
 } dtSpiConf;
 
 extern void SPI_Init(dtSpiConf Config);
-extern void SPI_Send(uint8 Instance, uint32 *TxBuff, uint32 *RxBuff, uint32 Length);
+extern void SPI_Send(uint8 Instance, uint8 *TxBuff, uint16 TxLength, uint8 *RxBuff, uint16 RxLength, uint8 Offset);
 extern dtSpStatus SPI_Status(uint8 Instance);
 
 #endif /* ST_FRAMEWORK_SRC_SPI_SPI_H_ */

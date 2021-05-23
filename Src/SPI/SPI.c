@@ -33,7 +33,7 @@ static dtSpiData SPI6Data;
 #endif
 
 void SPI_Init(dtSpiConf Config);
-void SPI_Send(uint8 Instance, uint32 *TxBuff, uint32 *RxBuff, uint32 Length);
+void SPI_Send(uint8 Instance, uint8 *TxBuff, uint16 TxLength, uint8 *RxBuff, uint16 RxLength, uint8 Offset);
 dtSpiData* GetDataOfInstance(uint8 instance);
 dtSPI_I2S* GetSpiInstance(uint8 instance);
 
@@ -122,6 +122,14 @@ void SPI_Init(dtSpiConf Config)
 	Cr1Temp.Fields.LSBFIRST = Config.LsbOrMsb;
 #if defined(MCU_F446) || defined(MCU_F415)
 	Cr1Temp.Fields.DFF = Config.DataSize;
+#elif defined(MCU_G071)
+	Cr2Temp.Fields.DS = 7;
+	Cr2Temp.Fields.FRXTH = 1;
+	if(Config.DataSize == Size16Bit)
+	{
+		Cr2Temp.Fields.FRXTH = 0;
+		Cr2Temp.Fields.DS = 15;
+	}
 #endif
 	Cr1Temp.Fields.CPHA = Config.CHPA;
 	Cr1Temp.Fields.CPOL = Config.CPOL;
@@ -141,16 +149,29 @@ void SPI_Init(dtSpiConf Config)
 	GPIO_Set(GetDataOfInstance(Config.Instance)->ChipSelectPin, Set);
 }
 
-void SPI_Send(uint8 Instance, uint32 *TxBuff, uint32 *RxBuff, uint32 Length)
+void SPI_Send(uint8 Instance, uint8 *TxBuff, uint16 TxLength, uint8 *RxBuff, uint16 RxLength, uint8 Offset)
 {
 	GPIO_Set(GetDataOfInstance(Instance)->ChipSelectPin, Clear);
 	dtSpiData *DataInstance = GetDataOfInstance(Instance);
 	DataInstance->Status 			= SpiInProgress;
-	DataInstance->TransferLength 	= Length;
+	DataInstance->Offset 			= Offset;
 	DataInstance->TxBuffPointer 	= TxBuff;
 	DataInstance->RxBuffPointer 	= RxBuff;
+	DataInstance->TxLength			= TxLength;
+	DataInstance->RxLength			= RxLength;
 	DataInstance->Indexer			= 0;
-	GetSpiInstance(Instance)->DR	= DataInstance->TxBuffPointer[DataInstance->Indexer++]>>16;
+	if((DataInstance->TxBuffPointer != 0) && (DataInstance->TxLength != 0))
+	{
+		GetSpiInstance(Instance)->DR.DR8 = *DataInstance->TxBuffPointer;
+		DataInstance->TxBuffPointer++;
+		DataInstance->TxLength--;
+	}
+	else
+	{
+		GetSpiInstance(Instance)->DR.DR8 = 0;
+		if(DataInstance->Offset != 0) DataInstance->Offset--;
+		else if(DataInstance->RxLength != 0) DataInstance->RxLength--;
+	}
 }
 
 dtSpStatus SPI_Status(uint8 Instance)
@@ -163,19 +184,32 @@ void SPI1_IRQHandler(void)
 {
 	dtSpiData *DataInstance = GetDataOfInstance(1);
 	dtSPI_I2S *Instance = GetSpiInstance(1);
-	uint32 BuffIndex = DataInstance->Indexer>>1;
-	if((DataInstance->Indexer & 1) != 0) DataInstance->RxBuffPointer[BuffIndex] = Instance->DR<<16;
-	else DataInstance->RxBuffPointer[BuffIndex-1] |= Instance->DR;
-	if(BuffIndex < DataInstance->TransferLength)
+	uint8 temp = Instance->DR.DR8;
+	if(DataInstance->Offset == 0)
 	{
-		if((DataInstance->Indexer & 1) != 0) Instance->DR = (uint16)DataInstance->TxBuffPointer[BuffIndex];
-		else Instance->DR = (uint16)DataInstance->TxBuffPointer[BuffIndex]>>16;
-		DataInstance->Indexer++;
+		if((DataInstance->RxBuffPointer != 0) && (DataInstance->RxLength != 0))
+		{
+			*DataInstance->RxBuffPointer = temp;
+			DataInstance->RxBuffPointer++;
+			DataInstance->RxLength--;
+		}
 	}
-	else
+	else DataInstance->Offset--;
+
+	if((DataInstance->TxBuffPointer != 0) && (DataInstance->TxLength != 0))
+	{
+		Instance->DR.DR8 = *DataInstance->TxBuffPointer;
+		DataInstance->TxBuffPointer++;
+		DataInstance->TxLength--;
+	}
+	else if((DataInstance->Offset == 0) && DataInstance->RxLength == 0)
 	{
 		GPIO_Set(GetDataOfInstance(1)->ChipSelectPin, Set);
 		GetDataOfInstance(1)->Status = SpiIdle;
+	}
+	else
+	{
+		Instance->DR.DR8 = 0;
 	}
 }
 #endif
