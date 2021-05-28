@@ -12,10 +12,10 @@
 
 typedef enum
 {
-#if defined(MCU_F410) || defined(MCU_G070) || defined(MCU_L433) || defined(MCU_G071) || defined(MCU_F446) || defined(MCU_F415)
+#if defined(MCU_F410) || defined(MCU_G070) || defined(MCU_L433) || defined(MCU_G071) || defined(MCU_F446) || defined(MCU_F415) || defined(MCU_L476)
 	TIM6 = 0,
 #endif
-#if defined(MCU_G070) || defined(MCU_L433) || defined(MCU_G071) || defined(MCU_F446) || defined(MCU_F415)
+#if defined(MCU_G070) || defined(MCU_L433) || defined(MCU_G071) || defined(MCU_F446) || defined(MCU_F415) || defined(MCU_L476)
 	TIM7 = 1,
 #endif
 } dtBTimId;

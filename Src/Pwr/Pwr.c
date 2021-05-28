@@ -29,7 +29,7 @@ void Pwr_SetVos(uint8 mode)
 	Pwr->CSR.Fields.VOSRDY = 1;
 #endif
 	while(Pwr->CSR.Fields.VOSRDY != 1);
-#elif defined(MCU_G070) || defined(MCU_G071)
+#elif defined(MCU_G070) || defined(MCU_G071) || defined(MCU_L476)
 	TempCr.Fields.VOS = mode & 0x3;
 #ifdef MODULE_TEST
 	Pwr->SR2.Fields.VOSF = 0;
@@ -45,7 +45,7 @@ void Pwr_SetVos(uint8 mode)
 
 uint8 Pwr_GetVos(void)
 {
-#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_G070) || defined(MCU_G071)  || defined(MCU_F415)
+#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_G070) || defined(MCU_G071)  || defined(MCU_F415) || defined(MCU_L476)
 	return Pwr->CR.Fields.VOS;
 #endif
 }
@@ -60,7 +60,7 @@ void Pwr_RtcWp(void)
 /* This function is an interface to set the mode of low-power operation */
 void Pwr_LowPowerMode(dtLowPwrModes Mode)
 {
-#if defined(MCU_G070) || defined(MCU_G071)
+#if defined(MCU_G070) || defined(MCU_G071) || defined(MCU_L476)
 	dtPwrCR TempCr = Pwr->CR;
 	TempCr.Fields.LPMS = Mode;
 	Pwr->CR = TempCr;
