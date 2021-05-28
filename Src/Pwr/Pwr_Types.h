@@ -262,6 +262,118 @@ typedef union
 		uint32 CSBF			:1;
 	} Fields;
 } dtSCR;
+#elif defined(MCU_L476)
+typedef union
+{
+	uint32 Word;
+	struct
+	{
+		uint32 LPMS			:3;
+		uint32 				:5;
+		uint32 DBP			:1;
+		uint32 VOS			:2;
+		uint32 				:3;
+		uint32 LPR			:1;
+	} Fields;
+} dtPwrCR;
+
+typedef union
+{
+	uint32 Word;
+	struct
+	{
+		uint32 PVDE			:1;
+		uint32 PLS			:3;
+		uint32 PVME			:4;
+		uint32 				:1;
+		uint32 IOSV			:1;
+		uint32 USV			:1;
+	} Fields;
+} dtCR2;
+
+typedef union
+{
+	uint32 Word;
+	struct
+	{
+		uint32 EWUP1		:1;
+		uint32 EWUP2		:1;
+		uint32 EWUP3		:1;
+		uint32 EWUP4		:1;
+		uint32 EWUP5		:1;
+		uint32 				:3;
+		uint32 RRS			:1;
+		uint32 				:1;
+		uint32 APC			:1;
+		uint32 				:4;
+		uint32 EIWUL		:1;
+	} Fields;
+} dtCR3;
+
+typedef union
+{
+	uint32 Word;
+	struct
+	{
+		uint32 WP1			:1;
+		uint32 WP2			:1;
+		uint32 WP3			:1;
+		uint32 WP4			:1;
+		uint32 WP5			:1;
+		uint32 				:3;
+		uint32 VBE			:1;
+		uint32 VBRS			:1;
+	} Fields;
+} dtCR4;
+
+typedef union
+{
+	uint32 Word;
+	struct
+	{
+		uint32 WUF1			:1;
+		uint32 WUF2			:1;
+		uint32 WUF3			:1;
+		uint32 WUF4			:1;
+		uint32 WUF5			:1;
+		uint32 				:1;
+		uint32 				:2;
+		uint32 SBF			:1;
+		uint32 				:6;
+		uint32 WUFI			:1;
+	} Fields;
+} dtSR1;
+
+typedef union
+{
+	uint32 Word;
+	struct
+	{
+		uint32 				:7;
+		uint32 				:1;
+		uint32 REGLPS		:1;
+		uint32 REGLPF		:1;
+		uint32 VOSF			:1;
+		uint32 PVDO			:1;
+		uint32 PVMO			:4;
+	} Fields;
+} dtSR2;
+
+typedef union
+{
+	uint32 Word;
+	struct
+	{
+		uint32 CWUF1		:1;
+		uint32 CWUF2		:1;
+		uint32 CWUF3		:1;
+		uint32 CWUF4		:1;
+		uint32 CWUF5		:1;
+		uint32 				:1;
+		uint32 				:2;
+		uint32 CSBF			:1;
+	} Fields;
+} dtSCR;
 
 /*typedef union
 {
@@ -276,27 +388,27 @@ typedef union
 
 typedef struct
 {
-#if defined(MCU_F410) || defined(MCU_F446) || defined(MCU_G070) || defined(MCU_G071) || defined(MCU_F415)
+#if defined(MCU_F410) || defined(MCU_F446) || defined(MCU_G070) || defined(MCU_G071) || defined(MCU_F415) || defined(MCU_L476)
 	dtPwrCR 	CR;
 #endif
 #if defined(MCU_G070)
 	uint32	:32;
-#elif defined(MCU_G071)
+#elif defined(MCU_G071) || defined(MCU_L476)
 	dtCR2	CR2;
 #endif
-#if defined(MCU_G070) || defined(MCU_G071)
+#if defined(MCU_G070) || defined(MCU_G071) || defined(MCU_L476)
 	dtCR3	CR3;
 #endif
-#if defined(MCU_G070) || defined(MCU_G071)
+#if defined(MCU_G070) || defined(MCU_G071) || defined(MCU_L476)
 	dtCR4	CR4;
 #endif
-#if defined(MCU_G070) || defined(MCU_G071)
+#if defined(MCU_G070) || defined(MCU_G071) || defined(MCU_L476)
 	dtSR1	SR1;
 #endif
-#if defined(MCU_G070) || defined(MCU_G071)
+#if defined(MCU_G070) || defined(MCU_G071) || defined(MCU_L476)
 	dtSR2	SR2;
 #endif
-#if defined(MCU_G070) || defined(MCU_G071)
+#if defined(MCU_G070) || defined(MCU_G071) || defined(MCU_L476)
 	dtSCR	SCR;
 #endif
 #if defined(MCU_F410) || defined(MCU_F446) || defined(MCU_F415)

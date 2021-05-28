@@ -14,12 +14,12 @@ typedef enum
 {
 #if defined(MCU_F410) || defined(MCU_F446) || defined(MCU_G070) || defined(MCU_G071) || defined(MCU_F415)
 	RCC_GPIOA 	= 0,
-#elif defined(MCU_L433)
+#elif defined(MCU_L433) || defined(MCU_L476)
 	RCC_DMA1	= 0,
 #endif
 #if defined(MCU_F410) || defined(MCU_F446) || defined(MCU_G070) || defined(MCU_G071) || defined(MCU_F415)
 	RCC_GPIOB	= 1,
-#elif defined(MCU_L433)
+#elif defined(MCU_L433) || defined(MCU_L476)
 	RCC_DMA2	= 1,
 #endif
 #if defined(MCU_F410) || defined(MCU_F446) || defined(MCU_G070) || defined(MCU_G071) || defined(MCU_F415)
@@ -40,7 +40,7 @@ typedef enum
 #if defined(MCU_F410) || defined(MCU_F446) || defined(MCU_F415)
 	RCC_GPIOH 	= 7,
 #endif
-#if defined(MCU_L433)
+#if defined(MCU_L433) || defined(MCU_L476)
 	RCC_FLASH	= 8,
 #elif defined(MCU_F415)
 	RCC_GPIOI	= 8,
@@ -51,11 +51,14 @@ typedef enum
 #if defined(MCU_F415)
 	RCC_GPIOK	= 10,
 #endif
-#if defined(MCU_F410) || defined(MCU_F446) || defined(MCU_L433) || defined(MCU_F415)
+#if defined(MCU_F410) || defined(MCU_F446) || defined(MCU_L433) || defined(MCU_F415) || defined(MCU_L476)
 	RCC_CRC		= 12,
 #endif
-#if defined(MCU_L433)
+#if defined(MCU_L433) || defined(MCU_L476)
 	RCC_TSC		= 16,
+#endif
+#if defined(MCU_L476)
+	RCC_DMA2D	= 17,
 #endif
 #if defined(MCU_F410) || defined(MCU_F446) || defined(MCU_F415)
 	RCC_DMA1	= 21,
@@ -79,50 +82,64 @@ typedef enum
 	RCC_DCMI	= 32,
 #elif defined(MCU_G070) || defined(MCU_G071)
 	RCC_DMA		= 32,
-#elif defined(MCU_L433)
+#elif defined(MCU_L433) || defined(MCU_L476)
 	RCC_GPIOA	= 32,
 #endif
-#if defined(MCU_L433)
+#if defined(MCU_L433) || defined(MCU_L476)
 	RCC_GPIOB	= 33,
 #endif
-#if defined(MCU_L433)
+#if defined(MCU_L433) || defined(MCU_L476)
 	RCC_GPIOC	= 34,
 #endif
-#if defined(MCU_L433)
+#if defined(MCU_L433) || defined(MCU_L476)
 	RCC_GPIOD	= 35,
 #endif
-#if defined(MCU_L433)
+#if defined(MCU_L433) || defined(MCU_L476)
 	RCC_GPIOE	= 36,
 #elif defined(MCU_F415)
 	RCC_CRYP	= 36,
 #endif
 #if defined(MCU_F415)
 	RCC_HASH	= 37,
+#elif defined(MCU_L476)
+	RCC_GPIOF	= 37,
 #endif
 #if defined(MCU_F415)
 	RCC_RNG		= 38,
+#elif defined(MCU_L476)
+	RCC_GPIOG	= 38,
 #endif
-#if defined(MCU_L433)
+#if defined(MCU_L433) || defined(MCU_L476)
 	RCC_GPIOH	= 39,
 #elif defined(MCU_F415)
 	RCC_OTGFS	= 39,
 #endif
 #if defined(MCU_G070) || defined(MCU_G071)
 	RCC_FLASH	= 40,
+#elif defined(MCU_L476)
+	RCC_GPIOI	= 40,
 #endif
 #if defined(MCU_G070) || defined(MCU_G071)
 	RCC_CRC		= 44,
+#elif defined(MCU_L476)
+	RCC_OTGFS	= 44,
 #endif
-#if defined(MCU_L433)
+#if defined(MCU_L433) || defined(MCU_L476)
 	RCC_ADC		= 45,
 #endif
-#if defined(MCU_L433) || defined(MCU_G071)
+#if defined(MCU_L476)
+	RCC_DCMI	= 46,
+#endif
+#if defined(MCU_L433) || defined(MCU_G071) || defined(MCU_L476)
 	RCC_AES		= 48,
 #endif
-#if defined(MCU_L433) || defined(MCU_G071)
+#if defined(MCU_L476)
+	RCC_HASH	= 49,
+#endif
+#if defined(MCU_L433) || defined(MCU_G071) || defined(MCU_L476)
 	RCC_RNG		= 50,
 #endif
-#if defined(MCU_F446) || defined(MCU_F415)
+#if defined(MCU_F446) || defined(MCU_F415) || defined(MCU_L476)
 	RCC_FMC		= 64,
 #elif defined(MCU_G071)
 	RCC_TIM2	= 64,
@@ -138,7 +155,7 @@ typedef enum
 #if defined(MCU_G070) || defined(MCU_G071)
 	RCC_TIM7	= 69,
 #endif
-#if defined(MCU_L433)
+#if defined(MCU_L433) || defined(MCU_L476)
 	RCC_QSPI	= 72,
 #endif
 #if defined(MCU_G071)
@@ -216,22 +233,22 @@ typedef enum
 #if defined(MCU_G070) || defined(MCU_G071)
 	RCC_ADC		= 116,
 #endif
-#if defined(MCU_F446) || defined(MCU_L433) || defined(MCU_F415)
+#if defined(MCU_F446) || defined(MCU_L433) || defined(MCU_F415) || defined(MCU_L476)
 	RCC_TIM2	= 128,
 #endif
-#if defined(MCU_F446) || defined(MCU_L433) || defined(MCU_F415)
+#if defined(MCU_F446) || defined(MCU_L433) || defined(MCU_F415) || defined(MCU_L476)
 	RCC_TIM3	= 129,
 #endif
-#if defined(MCU_F446) || defined(MCU_F415)
+#if defined(MCU_F446) || defined(MCU_F415) || defined(MCU_L476)
 	RCC_TIM4	= 130,
 #endif
-#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_F415)
+#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_F415) || defined(MCU_L476)
 	RCC_TIM5	= 131,
 #endif
-#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_L433) || defined(MCU_F415)
+#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_L433) || defined(MCU_F415) || defined(MCU_L476)
 	RCC_TIM6	= 132,
 #endif
-#if defined(MCU_F446) || defined(MCU_L433) || defined(MCU_F415)
+#if defined(MCU_F446) || defined(MCU_L433) || defined(MCU_F415) || defined(MCU_L476)
 	RCC_TIM7	= 133,
 #endif
 #if defined(MCU_F446) || defined(MCU_F415)
@@ -245,7 +262,7 @@ typedef enum
 #endif
 #if defined(MCU_F410) || defined(MCU_F410)
 	RCC_LPTIM1	= 137,
-#elif defined(MCU_L433)
+#elif defined(MCU_L433) || defined(MCU_L476)
 	RCC_LCD		= 137,
 #endif
 #if defined(MCU_L433)
@@ -254,47 +271,47 @@ typedef enum
 #if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_L433) || defined(MCU_F415)
 	RCC_WWDG	= 139,
 #endif
-#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_L433) || defined(MCU_F415)
+#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_L433) || defined(MCU_F415) || defined(MCU_L476)
 	RCC_SPI2	= 142,
 #endif
-#if defined(MCU_F446) || defined(MCU_L433) || defined(MCU_F415)
+#if defined(MCU_F446) || defined(MCU_L433) || defined(MCU_F415) || defined(MCU_L476)
 	RCC_SPI3	= 143,
 #endif
 #if defined(MCU_F446)
 	RCC_SPDIFRX = 144,
 #endif
-#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_L433) || defined(MCU_F415)
+#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_L433) || defined(MCU_F415) || defined(MCU_L476)
 	RCC_USART2	= 145,
 #endif
-#if defined(MCU_F446) || defined(MCU_L433) || defined(MCU_F415)
+#if defined(MCU_F446) || defined(MCU_L433) || defined(MCU_F415) || defined(MCU_L476)
 	RCC_USART3	= 146,
 #endif
-#if defined(MCU_F446) || defined(MCU_L433) || defined(MCU_F415)
+#if defined(MCU_F446) || defined(MCU_L433) || defined(MCU_F415) || defined(MCU_L476)
 	RCC_USART4	= 147,
 #endif
-#if defined(MCU_F446) || defined(MCU_F415)
+#if defined(MCU_F446) || defined(MCU_F415) || defined(MCU_L476)
 	RCC_USART5	= 148,
 #endif
-#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_L433) || defined(MCU_F415)
+#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_L433) || defined(MCU_F415) || defined(MCU_L476)
 	RCC_I2C1	= 149,
 #endif
-#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_L433) || defined(MCU_F415)
+#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_L433) || defined(MCU_F415) || defined(MCU_L476)
 	RCC_I2C2	= 150,
 #endif
-#if defined(MCU_F446) || defined(MCU_L433) || defined(MCU_F415)
+#if defined(MCU_F446) || defined(MCU_L433) || defined(MCU_F415) || defined(MCU_L476)
 	RCC_I2C3	= 151,
 #endif
 #if defined(MCU_F410)
 	RCC_I2C4	= 152,
 #elif defined(MCU_F446)
 	RCC_FMPI2C1	= 152,
-#elif defined(MCU_L433)
+#elif defined(MCU_L433) || defined(MCU_L476)
 	RCC_CRS		= 152,
 #endif
-#if defined(MCU_F446) || defined(MCU_L433) || defined(MCU_F415)
+#if defined(MCU_F446) || defined(MCU_L433) || defined(MCU_F415) || defined(MCU_L476)
 	RCC_CAN1	= 153,
 #endif
-#if defined(MCU_F446) || defined(MCU_F415)
+#if defined(MCU_F446) || defined(MCU_F415) || defined(MCU_L476)
 	RCC_CAN2	= 154,
 #elif defined(MCU_L433)
 	RCC_USB_FS	= 154,
@@ -302,33 +319,33 @@ typedef enum
 #if defined(MCU_F446)
 	RCC_CEC		= 155,
 #endif
-#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_L433) || defined(MCU_F415)
+#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_L433) || defined(MCU_F415) || defined(MCU_L476)
 	RCC_PWR		= 156,
 #endif
-#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_L433) || defined(MCU_F415)
+#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_L433) || defined(MCU_F415) || defined(MCU_L476)
 	RCC_DAC		= 157,
 #endif
-#if defined(MCU_L433)
+#if defined(MCU_L433) || defined(MCU_L476)
 	RCC_OPAMP	= 158,
 #elif defined(MCU_F415)
 	RCC_UART7	= 158,
 #endif
-#if defined(MCU_L433)
+#if defined(MCU_L433) || defined(MCU_L476)
 	RCC_LPTIM1	= 159,
 #elif defined(MCU_F415)
 	RCC_UART8	= 159,
 #endif
 #if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_F415)
 	RCC_TIM1	= 160,
-#elif defined(MCU_L433)
+#elif defined(MCU_L433) || defined(MCU_L476)
 	RCC_LPUART1	= 160,
 #endif
 #if defined(MCU_F446) || defined(MCU_F415)
 	RCC_TIM8	= 161,
-#elif defined(MCU_L433)
+#elif defined(MCU_L433) || defined(MCU_L476)
 	RCC_I2C4	= 161,
 #endif
-#if defined(MCU_L433)
+#if defined(MCU_L433) || defined(MCU_L476)
 	RCC_SWPMI1	= 162,
 #endif
 #if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_F415)
@@ -336,7 +353,7 @@ typedef enum
 #endif
 #if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_F415)
 	RCC_USART6	= 165,
-#elif defined(MCU_L433)
+#elif defined(MCU_L433) || defined(MCU_L476)
 	RCC_LPTIM2	= 165,
 #endif
 #if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_F415)
@@ -378,31 +395,40 @@ typedef enum
 #if defined(MCU_F415)
 	RCC_LTDC	= 186,
 #endif
-#if defined(MCU_L433)
+#if defined(MCU_L433) || defined(MCU_L476)
 	RCC_SYSCFG	= 192,
 #endif
-#if defined(MCU_L433)
+#if defined(MCU_L433) || defined(MCU_L476)
 	RCC_SDMMC1	= 202,
 #endif
-#if defined(MCU_L433)
+#if defined(MCU_L433) || defined(MCU_L476)
 	RCC_TIM1	= 203,
 #endif
-#if defined(MCU_L433)
+#if defined(MCU_L433) || defined(MCU_L476)
 	RCC_SPI1	= 204,
 #endif
-#if defined(MCU_L433)
+#if defined(MCU_L476)
+	RCC_TIM8	= 205,
+#endif
+#if defined(MCU_L433) || defined(MCU_L476)
 	RCC_USART1	= 206,
 #endif
-#if defined(MCU_L433)
+#if defined(MCU_L433) || defined(MCU_L476)
 	RCC_TIM15	= 208,
 #endif
-#if defined(MCU_L433)
+#if defined(MCU_L433) || defined(MCU_L476)
 	RCC_TIM16	= 209,
 #endif
-#if defined(MCU_L433)
+#if defined(MCU_L476)
+	RCC_TIM17	= 210,
+#endif
+#if defined(MCU_L433) || defined(MCU_L476)
 	RCC_SAI1	= 213,
 #endif
-#if defined(MCU_L433)
+#if defined(MCU_L476)
+	RCC_SAI2	= 214,
+#endif
+#if defined(MCU_L433) || defined(MCU_L476)
 	RCC_DFSDM1	= 216,
 #endif
 } dtRCCClock;

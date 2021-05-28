@@ -17,8 +17,7 @@ static dtUSART *const USART[4] = {(dtUSART*)0x40013800,
 							(dtUSART*)0x40004400,
 							(dtUSART*)0x40004800,
 							(dtUSART*)0x40004C00};
-#endif
-#if defined(MCU_F415)
+#elif defined(MCU_F415)
 static dtUSART *USART[8] = {(dtUSART*)0x40011000,
 							(dtUSART*)0x40004400,
 							(dtUSART*)0x40004800,
@@ -27,6 +26,12 @@ static dtUSART *USART[8] = {(dtUSART*)0x40011000,
 							(dtUSART*)0x40011400,
 							(dtUSART*)0x40007800,
 							(dtUSART*)0x40007C00};
+#elif defined(MCU_L476)
+static dtUSART *const USART[5] = {(dtUSART*)0x40013800,
+							(dtUSART*)0x40004400,
+							(dtUSART*)0x40004800,
+							(dtUSART*)0x40004C00,
+							(dtUSART*)0x40005000};
 #endif
 #if defined(USART1_TX_FIFO_SIZE) && defined(USART1_RX_FIFO_SIZE)
 static dtUSART1Data USART1Data;

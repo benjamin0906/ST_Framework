@@ -7,15 +7,15 @@
 
 #include "SPI_Types.h"
 
-#if defined(MCU_F410) || defined(MCU_F446) || defined(MCU_L433) || defined(MCU_G070) || defined(MCU_G071) || defined(MCU_F415)
+#if defined(MCU_F410) || defined(MCU_F446) || defined(MCU_L433) || defined(MCU_G070) || defined(MCU_G071) || defined(MCU_F415) || defined(MCU_L476)
 static dtSPI_I2S *const SPI1 = (dtSPI_I2S*)(0x40013000);
 static dtSpiData SPI1Data;
 #endif
-#if defined(MCU_F410) || defined(MCU_F446) || defined(MCU_L433) || defined(MCU_G070) || defined(MCU_G071) || defined(MCU_F415)
+#if defined(MCU_F410) || defined(MCU_F446) || defined(MCU_L433) || defined(MCU_G070) || defined(MCU_G071) || defined(MCU_F415) || defined(MCU_L476)
 static dtSPI_I2S *const SPI2 = (dtSPI_I2S*)(0x40003800);
 static dtSpiData SPI2Data;
 #endif
-#if defined(MCU_F446) || defined(MCU_L433) || defined(MCU_F415)
+#if defined(MCU_F446) || defined(MCU_L433) || defined(MCU_F415) || defined(MCU_L476)
 static dtSPI_I2S *const SPI3 = (dtSPI_I2S*)(0x40003C00);
 static dtSpiData SPI3Data;
 #endif
