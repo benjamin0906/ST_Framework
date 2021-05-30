@@ -12,7 +12,7 @@ float32 Power(uint8 Power, float32 Number);
 uint32 IsPassed(uint32 TimeStamp, uint32 Limit);
 uint8 StrEq(const uint8 *str1,const uint8 *str2);
 uint8 StrLen(const uint8 *const str);
-uint8 NumToHexStr(uint16 Num, uint8 *StrBuf);
+uint8 NumToHexStr(uint32 Num, uint8 *str);
 uint8 UQNumToStr(uint32 Num, uint8 QRes, uint8 QRound, uint8 *Str);
 uint32 FloatToQ(uint8 *str, uint8 Q);
 
@@ -228,17 +228,32 @@ uint8 Dabler16Bit(uint16 value, uint8 *Digits)
     return looper;
 }
 
-uint8 NumToHexStr(uint16 Num, uint8 *StrBuf)
+uint8 NumToHexStr(uint32 Num, uint8 *str)
 {
-	int8 looper;
-	uint8 Index = 0;
-	for(looper = 12; looper >= 0; looper -= 4, Index++)
+	uint8 ret = 0;
+	if(str != 0)
 	{
-		uint8 temp = Num>>looper;
-		if(temp <= 9) StrBuf[Index] = '0'+temp;
-		else if(temp <= 0xF) StrBuf[Index] = '7'+temp;
+		uint8 looper = 0;
+		while(((Num >> 28) == 0) && (looper < 7))
+		{
+			Num <<= 4;
+			looper++;
+		}
+
+		do
+		{
+			uint8 HexDigit = Num >> 28;
+			if(HexDigit <= 9) HexDigit += '0';
+			else HexDigit += '7';
+			*str++ = HexDigit;
+			Num <<= 4;
+			ret++;
+			looper++;
+		}
+		while((Num != 0) || (looper < 8));
+		*str = 0;
 	}
-	return Index;
+	return ret;
 }
 
 uint8 DecStrToNum32(uint8 *str, uint32 *num)
