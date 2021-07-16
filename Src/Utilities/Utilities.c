@@ -116,6 +116,7 @@ uint8 DecStrToNum(uint8 *str, uint8 *num)
 	uint8 ret = 0;
 	if((str != 0) && (num != 0))
 	{
+		*num = 0;
 		uint8 len = StrLen(str);
 		uint8 mult=1;
 		do
