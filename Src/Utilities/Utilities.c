@@ -94,19 +94,14 @@ uint8 NumToHexStr(uint32 Num, uint8 *str)
 	return ret;
 }
 
-uint8 DecStrToNum32(uint8 *str, uint32 *num)
+uint32 DecStrToNum32(uint8 *str)
 {
-	uint8 ret = 0;
-	if((str != 0) && (num != 0))
+	uint32 ret = 0;
+	while((*str != 0) && (*str >= '0') && (*str <= '9'))
 	{
-		*num = 0;
-		while((*str != 0) && (*str >= '0') && (*str <= '9'))
-		{
-			*num *= 10;
-			*num += *str - '0';
-			str++;
-			ret++;
-		}
+		ret *= 10;
+		ret += *str - '0';
+		str++;
 	}
 	return ret;
 }
@@ -174,7 +169,8 @@ uint32 FloatToQ(uint8 *str, uint8 Q)
 	uint32 Num = 0;
 
 	/* Getting the whole part */
-	PointIndex = DecStrToNum32(str, &Num);
+	Num = DecStrToNum32(str);
+	for(PointIndex=0; (str[PointIndex] != '.') && (str[PointIndex] != ','); PointIndex++);
 
 	/* Multiple it with the quotiens factor */
 	Num <<= Q;

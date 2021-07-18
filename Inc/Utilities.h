@@ -17,7 +17,7 @@ extern uint32 IsPassed(uint32 TimeStamp, uint32 Limit);
 extern uint8 StrEq(const uint8 *str1,const uint8 *str2);
 extern uint8 StrLen(const uint8 *const str);
 extern uint8 DecStrToNum(uint8 *str, uint8 *num);
-extern uint8 DecStrToNum32(uint8 *str, uint32 *Num);
+extern uint32 DecStrToNum32(uint8 *str);
 extern uint32 FloatToQ(uint8 *str, uint8 Q);
 extern uint8 NumToHexStr(uint32 Num, uint8 *str);
 extern void MemCpyRigth(uint8 *Src, uint8 *Dst, uint32 Length);
