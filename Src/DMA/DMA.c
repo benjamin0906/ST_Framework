@@ -8,7 +8,7 @@
 #include "DMA_Types.h"
 #include "DMA.h"
 #include "NVIC.h"
-#if defined(MCU_F446)
+#if defined(MCU_F446) || defined(MCU_L476)
 static dtDMAx *const DMA[2] = {(dtDMAx*)(0x40020000),(dtDMAx*)(0x40020400)};
 static void (*DMA_IntFunc[2][7])(uint8 Flags, uint32 Cntr);
 
@@ -46,25 +46,53 @@ void DMA_Set(dtDMAInstance Instance, dtChannel Ch, uint32* MemAddr, uint32* Peri
 				switch(Ch)
 				{
 				case Ch1:
+#if defined(MCU_F446)
 					IRQ = IRQ_DMA1_Stream0;
+#elif defined(MCU_L476)
+					IRQ = IRQ_DMA_CH1;
+#endif
 					break;
 				case Ch2:
+#if defined(MCU_F446)
 					IRQ = IRQ_DMA1_Stream1;
+#elif defined(MCU_L476)
+                    IRQ = IRQ_DMA_CH2;
+#endif
 					break;
 				case Ch3:
+#if defined(MCU_F446)
 					IRQ = IRQ_DMA1_Stream2;
+#elif defined(MCU_L476)
+                    IRQ = IRQ_DMA_CH3;
+#endif
 					break;
 				case Ch4:
+#if defined(MCU_F446)
 					IRQ = IRQ_DMA1_Stream3;
+#elif defined(MCU_L476)
+                    IRQ = IRQ_DMA_CH4;
+#endif
 					break;
 				case Ch5:
+#if defined(MCU_F446)
 					IRQ = IRQ_DMA1_Stream4;
+#elif defined(MCU_L476)
+                    IRQ = IRQ_DMA_CH5;
+#endif
 					break;
 				case Ch6:
+#if defined(MCU_F446)
 					IRQ = IRQ_DMA1_Stream5;
+#elif defined(MCU_L476)
+                    IRQ = IRQ_DMA_CH6;
+#endif
 					break;
 				case Ch7:
+#if defined(MCU_F446)
 					IRQ = IRQ_DMA1_Stream6;
+#elif defined(MCU_L476)
+                    IRQ = IRQ_DMA_CH7;
+#endif
 					break;
 				}
 			}
@@ -73,25 +101,53 @@ void DMA_Set(dtDMAInstance Instance, dtChannel Ch, uint32* MemAddr, uint32* Peri
 				switch(Ch)
 				{
 				case Ch1:
+#if defined(MCU_F446)
 					IRQ = IRQ_DMA2_Stream0;
+#elif defined(MCU_L476)
+                    IRQ = IRQ_DMA2_CH1;
+#endif
 					break;
 				case Ch2:
+#if defined(MCU_F446)
 					IRQ = IRQ_DMA2_Stream1;
+#elif defined(MCU_L476)
+                    IRQ = IRQ_DMA2_CH2;
+#endif
 					break;
 				case Ch3:
+#if defined(MCU_F446)
 					IRQ = IRQ_DMA2_Stream2;
+#elif defined(MCU_L476)
+                    IRQ = IRQ_DMA2_CH3;
+#endif
 					break;
 				case Ch4:
+#if defined(MCU_F446)
 					IRQ = IRQ_DMA2_Stream3;
+#elif defined(MCU_L476)
+                    IRQ = IRQ_DMA2_CH4;
+#endif
 					break;
 				case Ch5:
+#if defined(MCU_F446)
 					IRQ = IRQ_DMA2_Stream4;
+#elif defined(MCU_L476)
+                    IRQ = IRQ_DMA2_CH5;
+#endif
 					break;
 				case Ch6:
+#if defined(MCU_F446)
 					IRQ = IRQ_DMA2_Stream5;
+#elif defined(MCU_L476)
+                    IRQ = IRQ_DMA2_CH6;
+#endif
 					break;
 				case Ch7:
+#if defined(MCU_F446)
 					IRQ = IRQ_DMA2_Stream6;
+#elif defined(MCU_L476)
+                    IRQ = IRQ_DMA2_CH7;
+#endif
 					break;
 				}
 			}

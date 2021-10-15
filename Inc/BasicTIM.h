@@ -30,6 +30,7 @@ typedef struct
 	uint8	ARPreload		:1;
 	uint8	Enable			:1;
 	uint8	MasterMode		:2;
+	uint8   DmaTrig         :1;
 } dtBasicTimConfig;
 
 extern void BasicTIM_Set(dtBTimId Id, dtBasicTimConfig Config, void (*IrqPtr)(void));

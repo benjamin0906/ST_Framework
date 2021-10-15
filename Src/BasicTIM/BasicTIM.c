@@ -33,6 +33,7 @@ void BasicTIM_Set(dtBTimId Id, dtBasicTimConfig Config, void (*IrqPtr)(void));
 
 void BasicTIM_Set(dtBTimId Id, dtBasicTimConfig Config, void (*IrqPtr)(void))
 {
+    dtDIER TempDIER;
 	BTIMs[Id]->CR1.Fields.ARPE = Config.ARPreload;
 	BTIMs[Id]->CR1.Fields.OPM = Config.OnePulse;
 	BTIMs[Id]->CR1.Fields.URS = Config.UpdateSource;
@@ -41,9 +42,11 @@ void BasicTIM_Set(dtBTimId Id, dtBasicTimConfig Config, void (*IrqPtr)(void))
 	BTIMs[Id]->PSC.Fields.PSC = Config.Prescaler;
 	BTIMs[Id]->ARR.Fields.ARR = Config.AutoReload;
 
+	TempDIER.Fields.UDE = Config.DmaTrig;
+
 	if(IrqPtr != 0)
 	{
-		BTIMs[Id]->DIER.Fields.UIE = 1;
+	    TempDIER.Fields.UIE = 1;
 		IrqPtrs[Id] = IrqPtr;
 #if defined(MCU_F410)
 	NVIC_SetPriority(IRQ_TIM6_DAC,1);
@@ -78,7 +81,9 @@ void BasicTIM_Set(dtBTimId Id, dtBasicTimConfig Config, void (*IrqPtr)(void))
 	}
 #endif
 	}
-	else BTIMs[Id]->DIER.Fields.UIE = 0;
+	else TempDIER.Fields.UIE = 0;
+
+	BTIMs[Id]->DIER = TempDIER;
 
 	BTIMs[Id]->CR1.Fields.CEN = Config.Enable;
 }
