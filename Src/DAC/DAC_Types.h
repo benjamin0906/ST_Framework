@@ -235,7 +235,7 @@ typedef union
 
 typedef struct
 {
-    dtDAC_CR        DAC_CR; //00
+    dtDAC_CR        CR;     //00
     dtDAC_SWTRGR    SWTRGR; //04
     dtDAC_DHR12R1   DHR12R1;//08
     dtDAC_DHR12L1   DHR12L1;//0C
