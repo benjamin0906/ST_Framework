@@ -83,6 +83,23 @@ void BasicTIM_Set(dtBTimId Id, dtBasicTimConfig Config, void (*IrqPtr)(void))
 	BTIMs[Id]->CR1.Fields.CEN = Config.Enable;
 }
 
+void BasicTIM_SetAR(dtBTimId Id, uint16 Value)
+{
+    dtARR T = {.Fields.ARR = Value};
+    BTIMs[Id]->ARR = T;
+}
+
+void BasicTIM_SetPS(dtBTimId Id, uint16 Value)
+{
+    dtPSC T = {.Fields.PSC = Value};
+    BTIMs[Id]->PSC = T;
+}
+
+void BasicTIM_Update(dtBTimId Id)
+{
+    BTIMs[Id]->EGR.Word = 0xFFFF;
+}
+
 #if defined(MCU_F446) || defined(MCU_L433) || defined(MCU_F415)
 void TIM6_DAC_IRQHandler(void)
 #elif defined(MCU_F410)

@@ -33,5 +33,8 @@ typedef struct
 } dtBasicTimConfig;
 
 extern void BasicTIM_Set(dtBTimId Id, dtBasicTimConfig Config, void (*IrqPtr)(void));
+extern void BasicTIM_SetPS(dtBTimId Id, uint16 Value);
+extern void BasicTIM_SetAR(dtBTimId Id, uint16 Value);
+extern void BasicTIM_Update(dtBTimId Id);
 
 #endif /* BASICTIM_BASICTIM_H_ */

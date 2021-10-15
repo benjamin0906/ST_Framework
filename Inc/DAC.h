@@ -44,6 +44,17 @@ typedef struct
     uint16 Mode     :3;
 } dtDACConf;
 
+typedef enum
+{
+    Dac_Ch1_12R,
+    Dac_Ch1_12L,
+    Dac_Ch1_8R,
+    Dac_Ch2_12R,
+    Dac_Ch2_12L,
+    Dac_Ch2_8R,
+} dtDAC_SetCh;
+
 extern void DAC_Init(dtDACConf Config);
+extern void DAC_Set(dtDAC_SetCh Ch, uint16 Value);
 
 #endif /* INC_DAC_H_ */

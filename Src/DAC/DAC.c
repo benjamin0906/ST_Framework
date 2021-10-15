@@ -40,3 +40,10 @@ void DAC_Init(dtDACConf Config)
         DAC->CR = TempCR;
     }
 }
+
+void DAC_Set(dtDAC_SetCh Ch, uint16 Value)
+{
+    uint32 *DacOut = &DAC->DHR12R1.Word;
+    DacOut += Ch;
+    *DacOut = Value;
+}
