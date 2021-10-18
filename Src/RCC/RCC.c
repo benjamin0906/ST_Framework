@@ -242,6 +242,11 @@ void RCC_ClockSet(dtRccInitConfig Config)
 		if(ClockFreq <= 26000000) Pwr_SetVos(2);
 		else Pwr_SetVos(1);
 		Flash_SetLatency(ClockFreq);
+#elif defined(MCU_F446)
+		if(ClockFreq <= 120000000) Pwr_SetVos(1);
+		else if(ClockFreq <= 144000000) Pwr_SetVos(2);
+		else Pwr_SetVos(3);
+        Flash_SetLatency(ClockFreq, SUPPLY_VOLTAGE);
 #endif
 
 #if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_F415)

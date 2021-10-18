@@ -224,22 +224,35 @@ void SPI2_IRQHandler(void)
 #if defined(MCU_F446) || defined(MCU_F415)
 void SPI3_IRQHandler(void)
 {
-	dtSpiData *DataInstance = GetDataOfInstance(3);
-	dtSPI_I2S *Instance = GetSpiInstance(3);
-	uint32 BuffIndex = DataInstance->Indexer>>1;
-	if((DataInstance->Indexer & 1) != 0) DataInstance->RxBuffPointer[BuffIndex] = Instance->DR<<16;
-	else DataInstance->RxBuffPointer[BuffIndex] |= Instance->DR;
-	if(BuffIndex < DataInstance->TransferLength)
-	{
-		if((DataInstance->Indexer & 1) != 0) Instance->DR = (uint16)DataInstance->TxBuffPointer[BuffIndex];
-		else Instance->DR = (uint16)DataInstance->TxBuffPointer[BuffIndex]>>16;
-		DataInstance->Indexer++;
-	}
-	else
-	{
-		GPIO_Set(GetDataOfInstance(3)->ChipSelectPin, Set);
-		GetDataOfInstance(3)->Status = SpiIdle;
-	}
+    dtSpiData *DataInstance = GetDataOfInstance(3);
+    dtSPI_I2S *Instance = GetSpiInstance(3);
+    uint8 temp = Instance->DR.DR8;
+    if(DataInstance->Offset == 0)
+    {
+        if((DataInstance->RxBuffPointer != 0) && (DataInstance->RxLength != 0))
+        {
+            *DataInstance->RxBuffPointer = temp;
+            DataInstance->RxBuffPointer++;
+            DataInstance->RxLength--;
+        }
+    }
+    else DataInstance->Offset--;
+
+    if((DataInstance->TxBuffPointer != 0) && (DataInstance->TxLength != 0))
+    {
+        Instance->DR.DR8 = *DataInstance->TxBuffPointer;
+        DataInstance->TxBuffPointer++;
+        DataInstance->TxLength--;
+    }
+    else if((DataInstance->Offset == 0) && DataInstance->RxLength == 0)
+    {
+        GPIO_Set(GetDataOfInstance(3)->ChipSelectPin, Set);
+        GetDataOfInstance(3)->Status = SpiIdle;
+    }
+    else
+    {
+        Instance->DR.DR8 = 0;
+    }
 }
 #endif
 

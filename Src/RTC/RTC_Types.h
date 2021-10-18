@@ -10,7 +10,7 @@
 
 #include "types.h"
 
-#if defined(MCU_G071) || defined(MCU_F415) || defined(MCU_L476)
+#if defined(MCU_G071) || defined(MCU_F415) || defined(MCU_L476) || defined(MCU_F446)
 typedef union
 {
 	uint32 Word;
@@ -29,7 +29,7 @@ typedef union
 } dtRTC_TR;
 #endif
 
-#if defined(MCU_G071) || defined(MCU_F415) || defined(MCU_L476)
+#if defined(MCU_G071) || defined(MCU_F415) || defined(MCU_L476) || defined(MCU_F446)
 typedef union
 {
 	uint32 Word;
@@ -47,7 +47,7 @@ typedef union
 } dtRTC_DR;
 #endif
 
-#if defined(MCU_G071) || defined(MCU_F415) || defined(MCU_L476)
+#if defined(MCU_G071) || defined(MCU_F415) || defined(MCU_L476) || defined(MCU_F446)
 typedef union
 {
 	uint32 Word;
@@ -78,7 +78,7 @@ typedef union
 } dtRTC_ICSR;
 #endif
 
-#if defined(MCU_F415)
+#if defined(MCU_F415) || defined(MCU_F446)
 typedef union
 {
 	uint32 Word;
@@ -129,7 +129,7 @@ typedef union
 } dtRTC_ISR;
 #endif
 
-#if defined(MCU_G071) || defined(MCU_F415) || defined(MCU_L476)
+#if defined(MCU_G071) || defined(MCU_F415) || defined(MCU_L476) || defined(MCU_F446)
 typedef union
 {
 	uint32 Word;
@@ -142,7 +142,7 @@ typedef union
 } dtRTC_PRER;
 #endif
 
-#if defined(MCU_G071) || defined(MCU_F415) || defined(MCU_L476)
+#if defined(MCU_G071) || defined(MCU_F415) || defined(MCU_L476) || defined(MCU_F446)
 typedef union
 {
 	uint32 Word;
@@ -189,7 +189,7 @@ typedef union
 		uint32 OUT2EN			:1;
 	} Fields;
 } dtRTC_CR;
-#elif defined(MCU_F415)
+#elif defined(MCU_F415) || defined(MCU_F446)
 typedef union
 {
 	uint32 Word;
@@ -250,7 +250,7 @@ typedef union
 } dtRTC_CR;
 #endif
 
-#if defined(MCU_G071) || defined(MCU_F415) || defined(MCU_L476)
+#if defined(MCU_G071) || defined(MCU_F415) || defined(MCU_L476) || defined(MCU_F446)
 typedef union
 {
 	uint32 Word;
@@ -261,7 +261,7 @@ typedef union
 } dtRTC_WPR;
 #endif
 
-#if defined(MCU_G071) || defined(MCU_F415) || defined(MCU_L476)
+#if defined(MCU_G071) || defined(MCU_F415) || defined(MCU_L476) || defined(MCU_F446)
 typedef union
 {
 	uint32 Word;
@@ -276,7 +276,7 @@ typedef union
 } dtRTC_CALR;
 #endif
 
-#if defined(MCU_F415)
+#if defined(MCU_F415) || defined(MCU_F446)
 typedef union
 {
 	uint32 Word;
@@ -289,7 +289,7 @@ typedef union
 } dtRTC_CALIBR;
 #endif
 
-#if defined(MCU_G071) || defined(MCU_F415) || defined(MCU_L476)
+#if defined(MCU_G071) || defined(MCU_F415) || defined(MCU_L476) || defined(MCU_F446)
 typedef union
 {
 	uint32 Word;
@@ -302,7 +302,7 @@ typedef union
 } dtRTC_SHIFTR;
 #endif
 
-#if defined(MCU_G071) || defined(MCU_F415) || defined(MCU_L476)
+#if defined(MCU_G071) || defined(MCU_F415) || defined(MCU_L476) || defined(MCU_F446)
 typedef union
 {
 	uint32 Word;
@@ -337,7 +337,7 @@ typedef union
 } dtRTC_TSDR;
 #endif
 
-#if defined(MCU_G071) || defined(MCU_F415) || defined(MCU_L476)
+#if defined(MCU_G071) || defined(MCU_F415) || defined(MCU_L476) || defined(MCU_F446)
 typedef union
 {
 	uint32 Word;
@@ -348,7 +348,7 @@ typedef union
 } dtRTC_TSSSR;
 #endif
 
-#if defined(MCU_G071) || defined(MCU_F415) || defined(MCU_L476)
+#if defined(MCU_G071) || defined(MCU_F415) || defined(MCU_L476) || defined(MCU_F446)
 typedef union
 {
 	uint32 Word;
@@ -372,7 +372,7 @@ typedef union
 } dtRTC_ALRMAR;
 #endif
 
-#if defined(MCU_G071) || defined(MCU_F415) || defined(MCU_L476)
+#if defined(MCU_G071) || defined(MCU_F415) || defined(MCU_L476) || defined(MCU_F446)
 typedef union
 {
 	uint32 Word;
@@ -385,7 +385,7 @@ typedef union
 } dtRTC_ALRMASSR;
 #endif
 
-#if defined(MCU_G071) || defined(MCU_F415) || defined(MCU_L476)
+#if defined(MCU_G071) || defined(MCU_F415) || defined(MCU_L476) || defined(MCU_F446)
 typedef union
 {
 	uint32 Word;
@@ -409,7 +409,7 @@ typedef union
 } dtRTC_ALRMBR;
 #endif
 
-#if defined(MCU_G071) || defined(MCU_F415) || defined(MCU_L476)
+#if defined(MCU_G071) || defined(MCU_F415) || defined(MCU_L476) || defined(MCU_F446)
 typedef union
 {
 	uint32 Word;
@@ -470,7 +470,7 @@ typedef union
 } dtRTC_SCR;
 #endif
 
-#if defined(MCU_F415)
+#if defined(MCU_F415) || defined(MCU_F446)
 typedef union
 {
 	uint32 Word;
@@ -553,7 +553,7 @@ typedef struct
 	uint32			:32;		//0x58
 	dtRTC_SCR		SCR;		//0x5C
 } dtRTC;
-#elif defined(MCU_F415)
+#elif defined(MCU_F415) || defined(MCU_F446)
 typedef struct
 {
 	dtRTC_TR		TR;			//0x00

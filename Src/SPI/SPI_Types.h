@@ -206,7 +206,7 @@ typedef union
 } dtI2SCFGR;
 #endif
 
-#if defined(MCU_G071) || defined(MCU_L476)
+#if defined(MCU_G071) || defined(MCU_L476) || defined(MCU_F446)
 typedef union
 {
 	uint8 DR8;

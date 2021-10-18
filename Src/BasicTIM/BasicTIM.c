@@ -57,6 +57,9 @@ void BasicTIM_Set(dtBTimId Id, dtBasicTimConfig Config, void (*IrqPtr)(void))
 #if defined(MCU_L433) || defined(MCU_L476)
 		NVIC_SetPriority(IRQ_TIM6_DACUNDER, 1);
 		NVIC_EnableIRQ(IRQ_TIM6_DACUNDER);
+#elif  defined(MCU_F446)
+		NVIC_SetPriority(IRQ_TIM6_DAC, 1);
+		NVIC_EnableIRQ(IRQ_TIM6_DAC);
 #else
 		NVIC_SetPriority(IRQ_TIM6,1);
 		NVIC_EnableIRQ(IRQ_TIM6);
@@ -122,7 +125,7 @@ void TIM6_DACUNDER_IRQHandler(void)
 }
 #if defined(MCU_G070) || defined(MCU_G071)
 void TIM7_LPTIM2_IRQHandler(void)
-#elif defined(MCU_F415) || defined(MCU_L476)
+#elif defined(MCU_F415) || defined(MCU_L476) || defined(MCU_F446)
 void TIM7_IRQHandler(void)
 #else
 #error undefined BasicTIM interrupt;

@@ -421,6 +421,24 @@ typedef union
 	} Fields;
 } dtAPB2;
 
+typedef union
+{
+    uint32 Word;
+    struct
+    {
+        uint32  LSEON       :1;
+        uint32  LSERDY      :1;
+        uint32  LSEBYP      :1;
+        uint32  LSEMOD      :1;
+        uint32              :2;
+        uint32              :2;
+        uint32  RTC_SEL     :2;
+        uint32              :5;
+        uint32  RTCEN       :1;
+        uint32  BDRST       :1;
+    } Fields;
+} dtBDCR;
+
 typedef struct
 {
 	dtAHB1 	AHB1;
@@ -444,7 +462,7 @@ typedef struct
 	dtBusGroup ENR;
 	dtBusGroup LPENR;
 
-	uint32 BDRC;			//0x70
+	dtBDCR BDCR;			//0x70
 	uint32 CSR;				//0x74
 	uint32 :32;				//0x78
 	uint32 :32;				//0x7C
