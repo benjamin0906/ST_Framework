@@ -450,5 +450,6 @@ typedef enum
 
 extern void NVIC_EnableIRQ(dtIRQs IRQ);
 extern void NVIC_SetPriority(dtIRQs IRQ, uint8 IrqLevel);
+extern void NVIC_DisableIRQ(dtIRQs IRQ);
 
 #endif /* NVIC_NVIC_H_ */
