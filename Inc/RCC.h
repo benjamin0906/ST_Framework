@@ -111,7 +111,7 @@ typedef enum
 #endif
 #if defined(MCU_L433) || defined(MCU_L476)
 	RCC_GPIOH	= 39,
-#elif defined(MCU_F415)
+#elif defined(MCU_F415) || defined(MCU_F446)
 	RCC_OTGFS	= 39,
 #endif
 #if defined(MCU_G070) || defined(MCU_G071)
@@ -121,7 +121,7 @@ typedef enum
 #endif
 #if defined(MCU_G070) || defined(MCU_G071)
 	RCC_CRC		= 44,
-#elif defined(MCU_L476) || defined(MCU_F446)
+#elif defined(MCU_L476)
 	RCC_OTGFS	= 44,
 #endif
 #if defined(MCU_L433) || defined(MCU_L476)

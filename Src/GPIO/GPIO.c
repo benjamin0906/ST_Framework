@@ -101,6 +101,7 @@ static dtGPIO *const GPIOH = (dtGPIO*) &TestGPIOH;dtGPIO *
 /* ----------End of register definition section---------- */
 
 void GPIO_PinInit(dtGPIOs Gpio, dtGPIOConfig Config);
+void GPIO_PinDeinit(dtGPIOs Gpio);
 void GPIO_Set(dtGPIOs Gpio, dtPortValue Value);
 uint8 GPIO_Get(dtGPIOs Gpio);
 static inline dtGPIO* GetPort(dtGPIOs Gpio);
@@ -272,4 +273,20 @@ static inline dtGPIO* GetPort(dtGPIOs Gpio)
 		}
 	}
 	return Temp;
+}
+
+void GPIO_PinDeinit(dtGPIOs Gpio)
+{
+    uint32 FieldId = (Gpio & 0xF)<<1;
+    uint32 ClearMask = ~(3 << FieldId);
+    uint8 shifter = (FieldId-16)<<1;
+    uint32 AltFieldClearMask = ~(0xF << shifter);
+    dtGPIO *Temp = GetPort(Gpio);
+
+    Temp->MODER.Word &= ClearMask;
+    if(FieldId >= 16) Temp->AFR.AFRH.Word &= AltFieldClearMask;
+    else Temp->AFR.AFRL.Word &= AltFieldClearMask;
+    Temp->PUPDR.Word &= ClearMask;
+    Temp->OTYPER.Word &= ~(1 << (FieldId>>1));
+    Temp->OSPEEDER.Word &= ClearMask;
 }

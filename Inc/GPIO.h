@@ -260,6 +260,7 @@ typedef enum
 } dtPortValue;
 
 extern void GPIO_PinInit(dtGPIOs Gpio, dtGPIOConfig Config);
+extern void GPIO_PinDeinit(dtGPIOs Gpio);
 extern void GPIO_Set(dtGPIOs Gpio, dtPortValue Value);
 extern uint8 GPIO_Get(dtGPIOs Gpio);
 
