@@ -22,6 +22,7 @@ extern uint32 FloatToQ(uint8 *str, uint8 Q);
 extern uint8 NumToHexStr(uint32 Num, uint8 *str);
 extern void MemCpyRigth(uint8 *Src, uint8 *Dst, uint32 Length);
 extern uint8 UQNumToStr(uint32 Num, uint8 QRes, uint8 QRound, uint8 *Str);
+extern void Delay(uint32 Msec);
 
 #if defined(MCU_F446)
 extern float32 sqrt(float32 Number);

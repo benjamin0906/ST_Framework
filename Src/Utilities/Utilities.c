@@ -16,6 +16,7 @@ uint8 StrLen(const uint8 *const str);
 uint8 NumToHexStr(uint32 Num, uint8 *str);
 uint8 UQNumToStr(uint32 Num, uint8 QRes, uint8 QRound, uint8 *Str);
 uint32 FloatToQ(uint8 *str, uint8 Q);
+void Delay(uint32 Msec);
 
 float32 Power(uint8 Power, float32 Number)
 {
@@ -282,3 +283,9 @@ __asm(	".globl sqrt			\n"
 		"VSQRT.F32 s0, s0		\n"
 		"bx lr					\n");
 #endif
+
+void Delay(uint32 Msec)
+{
+    uint32 Time = GetTicks();
+    while(IsPassed(Time, Msec) == 0);
+}
