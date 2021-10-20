@@ -6,7 +6,6 @@
  */
 
 #include "types.h"
-#include "main.h"
 #include "Dabler.h"
 
 float32 Power(uint8 Power, float32 Number);
@@ -40,7 +39,7 @@ uint32 PwrUint32(uint8 Power, uint32 Number)
 uint32 IsPassed(uint32 TimeStamp, uint32 Limit)
 {
 	uint32 ret=0;
-	uint32 CurrentTicks = GetTicks();
+	uint32 CurrentTicks = SysTick_GetTicks();
 	uint32 PassedTime = CurrentTicks - TimeStamp;
 	if(TimeStamp > CurrentTicks) PassedTime = ~PassedTime;
 	if(PassedTime >= Limit) ret=CurrentTicks;
@@ -286,6 +285,6 @@ __asm(	".globl sqrt			\n"
 
 void Delay(uint32 Msec)
 {
-    uint32 Time = GetTicks();
+    uint32 Time = SysTick_GetTicks();
     while(IsPassed(Time, Msec) == 0);
 }
