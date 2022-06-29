@@ -6,7 +6,7 @@
  */
 
 #include "../GPT_TIM_Types.h"
-#include "../GPT_TIM_Ext_Types.h"
+#include "TIM5.h"
 
 static dtGPT1 *const TIM5 = (dtGPT1*)(0x40000C00);
 
