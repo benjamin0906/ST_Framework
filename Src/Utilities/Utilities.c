@@ -7,6 +7,7 @@
 
 #include "types.h"
 #include "Dabler.h"
+#include "SysTick_red.h"
 
 float32 Power(uint8 Power, float32 Number);
 uint32 IsPassed(uint32 TimeStamp, uint32 Limit);
@@ -258,7 +259,6 @@ uint8 UQNumToStr(uint32 Num, uint8 QRes, uint8 QRound, uint8 *Str)
 
 			Num &= Mask;
 		}
-		int8 shift;
 
 		uint8 Length = Dabler(WholePart, Str);
 
@@ -282,6 +282,22 @@ __asm(	".globl sqrt			\n"
 		"VSQRT.F32 s0, s0		\n"
 		"bx lr					\n");
 #endif
+
+__asm(  ".globl revArray        \n"
+        ".p2align 2             \n"
+        ".type sqrt, %function  \n"
+        "revArray:              \n"
+        "push {r2}              \n"
+        "revArrayCycle:         \n"
+        "cmp r1, 0              \n"
+        "ITT EQ                 \n"
+        "POPEQ {r2}             \n"
+        "bxeq lr                \n"
+        "LDMIA r0, {r2}         \n"
+        "rev r2, r2             \n"
+        "STMIA r0!, {r2}        \n"
+        "sub r1, r1, 1          \n"
+        "b revArrayCycle");
 
 void Delay(uint32 Msec)
 {

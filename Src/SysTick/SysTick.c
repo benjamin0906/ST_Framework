@@ -8,7 +8,7 @@
 #include "SysTick_Types.h"
 #include "NVIC.h"
 
-static dtSysTick *const SysTick = 0xE000E010;
+static dtSysTick *const SysTick = (dtSysTick*)0xE000E010;
 static uint32 Tick;
 
 void    SysTick_Init(uint32 ReloadValue);
