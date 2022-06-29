@@ -454,22 +454,22 @@ typedef enum
 	Core,
 } dtBus;
 
-enum
+enum eCrystalOrInternal
 {
 	Crystal		= 0,
 	Internal	= 1,
-} eCrystalOrInternal;
+};
 
-enum
+enum eAPBPresc
 {
 	APB_Presc1 = 0,
 	APB_Presc2 = 1,
 	APB_Presc4 = 2,
 	APB_Presc8 = 3,
 	APB_Presc16 = 4,
-} eAPBPresc;
+};
 
-enum
+enum eAHBPresc
 {
 	AHB_Presc1		= 0,
 	AHB_Presc2		= 1,
@@ -480,7 +480,7 @@ enum
 	AHB_Presc128	= 6,
 	AHB_Presc256	= 7,
 	AHB_Presc512	= 8,
-} eAHBPresc;
+};
 
 enum ePLL_QDiv
 {

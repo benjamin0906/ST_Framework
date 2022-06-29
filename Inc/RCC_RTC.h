@@ -10,13 +10,13 @@
 
 #include "types.h"
 
-enum
+enum eRTCClock
 {
 	RTCClock_No_clock = 0x0,	//No clock
 	RTCClock_LSE,
 	RTCClock_LSI,
 	RTCClock_HSE_div32,
-} eRTCClock;
+};
 
 typedef struct
 {

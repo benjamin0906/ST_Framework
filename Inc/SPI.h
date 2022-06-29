@@ -11,7 +11,7 @@
 #include "types.h"
 #include "GPIO.h"
 
-enum
+enum eClockDiv
 {
 	SpiDiv2 = 0,
 	SpiDiv4,
@@ -21,19 +21,19 @@ enum
 	SpiDiv64,
 	SpiDiv128,
 	SpiDiv256,
-} eClockDiv;
+};
 
-enum
+enum eDataSize
 {
 	Size8Bit	= 0,
 	Size16Bit,
-} eDataSize;
+};
 
-enum
+enum eLsbOrMsb
 {
 	Msb			= 0,
 	Lsb,
-} eLsbOrMsb;
+};
 
 typedef enum
 {
@@ -48,6 +48,8 @@ typedef struct
 	uint32 LsbOrMsb	:1;
 	uint32 CPOL		:1;
 	uint32 CHPA		:1;
+	uint32 TXDMA    :1;
+	uint32 RXDMA    :1;
 	uint32 Instance	:3;
 	dtGPIOs ChipSelectPin;
 } dtSpiConf;

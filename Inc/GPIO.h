@@ -200,7 +200,7 @@ typedef enum
 	PortK_15,
 } dtGPIOs;
 
-enum
+enum eGPIO_MODE
 {
 	Input = 0,
 	Output,
@@ -221,28 +221,28 @@ enum
 	Alt13,
 	Alt14,
 	Alt15,
-} eGPIO_MODE;
+};
 
-enum
+enum eGPIO_Type
 {
 	PushPull = 0,
 	OpenDrain,
-} eGPIO_Type;
+};
 
-enum
+enum eGPIO_Speed
 {
 	Low = 0,
 	Medium,
 	High,
 	VeryHigh,
-} eGPIO_Speed;
+};
 
-enum
+enum eGPIO_Pulling
 {
 	NoPull = 0,
 	PullUp,
 	PullDown,
-} eGPIO_Pulling;
+};
 
 typedef struct
 {
