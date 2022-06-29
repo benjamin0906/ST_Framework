@@ -8,7 +8,7 @@
 #include "DAC_Types.h"
 #include "DAC.h"
 
-static dtDAC *const DAC = 0x40007400;
+static dtDAC *const DAC = (dtDAC*)0x40007400;
 
 void DAC_Init(dtDACConf Config);
 
