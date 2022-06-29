@@ -141,6 +141,8 @@ void SPI_Init(dtSpiConf Config)
 
 	Cr2Temp.Fields.FRF = 0;
 	Cr2Temp.Fields.RXNEIE =1;
+	Cr2Temp.Fields.TXDMAEN = Config.TXDMA;
+    Cr2Temp.Fields.RXDMAEN = Config.RXDMA;
 
 	Instance->CR2 = Cr2Temp;
 	Instance->CR1 = Cr1Temp;

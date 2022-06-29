@@ -212,5 +212,7 @@ uint8 RTC_IsIntPending(dtRTCIntMask Mask)
 {
 #if defined(MCU_G071)
 	return (RTC->SR.Word & Mask) != 0;
+#else
+	return 0;
 #endif
 }
