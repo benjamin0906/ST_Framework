@@ -283,21 +283,21 @@ __asm(	".globl sqrt			\n"
 		"bx lr					\n");
 #endif
 
-__asm(  ".globl revArray        \n"
-        ".p2align 2             \n"
-        ".type sqrt, %function  \n"
-        "revArray:              \n"
-        "push {r2}              \n"
-        "revArrayCycle:         \n"
-        "cmp r1, 0              \n"
-        "ITT EQ                 \n"
-        "POPEQ {r2}             \n"
-        "bxeq lr                \n"
-        "LDMIA r0, {r2}         \n"
-        "rev r2, r2             \n"
-        "STMIA r0!, {r2}        \n"
-        "sub r1, r1, 1          \n"
-        "b revArrayCycle");
+__asm(  ".globl changeEndiannessArray       \n"
+        ".p2align 2                         \n"
+        ".type changeEndiannessArray, %function              \n"
+        "changeEndiannessArray:             \n"
+        "push {r2}                          \n"
+        "changeEndiannessArrayCycle:        \n"
+        "cmp r1, 0                          \n"
+        "ITT EQ                             \n"
+        "POPEQ {r2}                         \n"
+        "bxeq lr                            \n"
+        "LDMIA r0, {r2}                     \n"
+        "rev r2, r2                         \n"
+        "STMIA r0!, {r2}                    \n"
+        "sub r1, r1, 1                      \n"
+        "b changeEndiannessArrayCycle");
 
 void Delay(uint32 Msec)
 {

@@ -28,6 +28,6 @@ extern void Delay(uint32 Msec);
 extern float32 sqrt(float32 Number);
 #endif
 
-extern void revArray(uint32 *array, uint32 length);
+extern void changeEndiannessArray(uint32 *array, uint32 length);
 
 #endif /* UTILITIES_UTILITIES_H_ */
