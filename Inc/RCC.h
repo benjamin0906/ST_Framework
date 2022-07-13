@@ -510,6 +510,8 @@ typedef struct
 	uint32 APB1_Presc			:3;	//max 45MHz
 	uint32 AHB_Presc			:4;
 	uint32 PLL_QDiv				:4;
+	uint32 PLL_SAI_EN           :1;
+	uint32 PLL_SAI_Conf;
 	uint32 CrystalClockFreq;
 } dtRccInitConfig;
 

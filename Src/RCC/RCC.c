@@ -276,6 +276,13 @@ void RCC_ClockSet(dtRccInitConfig Config)
 #endif
 		while(RCC->CFGR.Fields.SWS != 2);
 #endif
+		if(Config.PLL_SAI_EN != 0)
+		{
+		    RCC->PLLSAICFGR = Config.PLL_SAI_Conf;
+		    RCC->CR.Fields.PLLSAION = 1;
+		    while(RCC->CR.Fields.PLLSAIRDY == 0);
+		    RCC->DCKCFGR2 = 0x08000000;
+		}
 	}
 }
 
