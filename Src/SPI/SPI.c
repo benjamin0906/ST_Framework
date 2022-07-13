@@ -171,8 +171,6 @@ void SPI_Send(uint8 Instance, uint8 *TxBuff, uint16 TxLength, uint8 *RxBuff, uin
 	else
 	{
 		GetSpiInstance(Instance)->DR.DR8 = 0;
-		if(DataInstance->Offset != 0) DataInstance->Offset--;
-		else if(DataInstance->RxLength != 0) DataInstance->RxLength--;
 	}
 }
 
