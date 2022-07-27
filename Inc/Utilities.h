@@ -30,4 +30,16 @@ extern float32 sqrt(float32 Number);
 
 extern void changeEndiannessArray(uint32 *array, uint32 length);
 
+#define STRINGIZING(x) #x
+
+#define saturateI32(inVar, outVar, satBit)      \
+    do                                          \
+    {                                           \
+        asm("sbfx %0, %1, 0, " STRINGIZING(24)  \
+            :"=r"(outVar)                       \
+            :"r"(inVar)                         \
+            :);                                 \
+    }                                           \
+    while(0);                                   \
+
 #endif /* UTILITIES_UTILITIES_H_ */
