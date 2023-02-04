@@ -8,6 +8,7 @@
 #ifndef INC_EXTI_H_
 #define INC_EXTI_H_
 
+#if defined(MCU_G070)
 typedef enum
 {
 	EXTI_Exti0,
@@ -72,5 +73,7 @@ extern void EXTI_LineSet(dtEXTILines Line, dtEXTIEdge EdgeType, dtEXTIPort PortT
 extern uint8 EXTI_RisingPending(dtEXTILines Line);
 extern uint8 EXTI_FallingPending(dtEXTILines Line);
 extern void EXTI_ClearPending(dtEXTILines Line);
+
+#endif
 
 #endif /* INC_EXTI_H_ */

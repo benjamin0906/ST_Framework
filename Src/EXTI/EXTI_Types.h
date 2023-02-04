@@ -10,6 +10,7 @@
 
 #include "types.h"
 
+#if defined(MCU_G070)
 typedef union
 {
 	uint32 Word;
@@ -49,5 +50,6 @@ typedef struct
 	uint32 IMR2;
 	uint32 EMR2;
 } dtEXTI;
+#endif
 
 #endif /* SRC_EXTI_EXTI_TYPES_H_ */

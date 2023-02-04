@@ -8,6 +8,7 @@
 #include "EXTI_Types.h"
 #include "EXTI.h"
 
+#if defined(MCU_G070)
 static dtEXTI *const EXTI = (dtEXTI*)0x40021800;
 
 void EXTI_LineSet(dtEXTILines Line, dtEXTIEdge EdgeType, dtEXTIPort PortType, dtEXTIMask ExtiMasks);
@@ -83,4 +84,30 @@ void EXTI_ClearPending(dtEXTILines Line)
 {
 	EXTI->GenConfEvents.FPR.Word |= (1 << Line);
 	EXTI->GenConfEvents.RPR.Word |= (1 << Line);
+}
+#endif
+
+void EXTI0_IRQHandler(void)
+{
+
+}
+
+void EXTI1_IRQHandler(void)
+{
+
+}
+
+void EXTI2_IRQHandler(void)
+{
+
+}
+
+void EXTI3_IRQHandler(void)
+{
+
+}
+
+void EXTI4_IRQHandler(void)
+{
+
 }
