@@ -105,10 +105,10 @@ void IExti_Config(uint8 ExtiLine, dtExtiConfig Config, void (*IrqHandler)(void))
     EXTI->RTSR &= ~(1<<ExtiLine);
     EXTI->FTSR &= ~(1<<ExtiLine);
 
-    EXTI->IMR &= ~(Config.InterruptMask<<ExtiLine);
-    EXTI->EMR &= ~(Config.EventMask<<ExtiLine);
-    EXTI->RTSR &= ~(Config.RisingEdgeTrigger<<ExtiLine);
-    EXTI->FTSR &= ~(Config.FallingEdgeTrigger<<ExtiLine);
+    EXTI->IMR |= (Config.InterruptMask<<ExtiLine);
+    EXTI->EMR |= (Config.EventMask<<ExtiLine);
+    EXTI->RTSR |= (Config.RisingEdgeTrigger<<ExtiLine);
+    EXTI->FTSR |= (Config.FallingEdgeTrigger<<ExtiLine);
 
     if(IrqHandler != 0)
     {
