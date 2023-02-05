@@ -23,9 +23,14 @@ extern uint8 NumToHexStr(uint32 Num, uint8 *str);
 extern void MemCpyRigth(uint8 *Src, uint8 *Dst, uint32 Length);
 extern uint8 UQNumToStr(uint32 Num, uint8 QRes, uint8 QRound, uint8 *Str);
 extern void Delay(uint32 Msec);
+extern void BubbleSort(uint32 *array, uint32 len);
 
 #if defined(MCU_F446)
 extern float32 sqrt(float32 Number);
+extern int64 multiplyArrays(int32 *Array1, int32 *Array2, uint32 length);
+extern void memcpy_reverse_8bit(void *src, void *dst, uint32 size);
+extern void memcpy_reverse_16bit(void *src, void *dst, uint32 size);
+extern void memcpy_reverse_32bit(void *src, void *dst, uint32 size);
 #endif
 
 extern void changeEndiannessArray(uint32 *array, uint32 length);

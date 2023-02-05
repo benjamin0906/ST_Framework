@@ -274,6 +274,25 @@ uint8 UQNumToStr(uint32 Num, uint8 QRes, uint8 QRound, uint8 *Str)
 	return ret;
 }
 
+void BubbleSort(uint32 *array, uint32 len)
+{
+    while(len >= 1)
+    {
+        uint32 i = 0;
+        while(i < (len-1))
+        {
+            if(array[i] > array[i+1])
+            {
+                uint32 t = array[i];
+                array[i] = array[i+1];
+                array[i+1] = t;
+            }
+            i++;
+        }
+        len--;
+    }
+}
+
 #if defined(MCU_F446)
 __asm(	".globl sqrt			\n"
 		".p2align 2				\n"
@@ -298,6 +317,71 @@ __asm(  ".globl changeEndiannessArray       \n"
         "STMIA r0!, {r2}                    \n"
         "sub r1, r1, 1                      \n"
         "b changeEndiannessArrayCycle");
+
+__asm(  ".globl multiplyArrays              \n"
+        ".p2align 2                         \n"
+        ".type multiplyArrays,  %function   \n"
+        "multiplyArrays:                    \n"
+        "push {r3,r4,r5,r6}                 \n"
+        "mov r3, #0                         \n"
+        "mov r4, #0                         \n"
+        "multiplyArrays_cycle:              \n"
+        "ldr r5, [r0], #4                   \n"
+        "ldr r6, [r1], #4                   \n"
+        "smlal r3, r4, r5, r6               \n"
+        "subs r2, r2, #1                     \n"
+        "bne multiplyArrays_cycle           \n"
+        "mov r0, r3                         \n"
+        "mov r1, r4                         \n"
+        "pop {r3,r4,r5,r6}                  \n"
+        "bx lr                              \n"
+
+);
+
+__asm(  ".globl memcpy_reverse_8bit             \n"
+        ".p2align 2                             \n"
+        ".type memcpy_reverse_8bit,  %function  \n"
+        "memcpy_reverse_8bit:                   \n"
+        "push {r3}                              \n"
+        "memcpy_reverse_8bit_cycle:             \n"
+        "subs r2, #1                            \n"
+        "ldrb r3, [r0, r2]                      \n"
+        "strb r3, [r1, r2]                      \n"
+        "bne memcpy_reverse_8bit_cycle          \n"
+        "pop {r3}                               \n"
+        "bx lr                                  \n"
+
+);
+
+__asm(  ".globl memcpy_reverse_16bit            \n"
+        ".p2align 2                             \n"
+        ".type memcpy_reverse_16bit,  %function \n"
+        "memcpy_reverse_16bit:                  \n"
+        "push {r3}                              \n"
+        "memcpy_reverse_16bit_cycle:            \n"
+        "subs r2, #1                            \n"
+        "ldrh r3, [r0, r2, LSL #1]              \n"
+        "strh r3, [r1, r2, LSL #1]              \n"
+        "bne memcpy_reverse_16bit_cycle         \n"
+        "pop {r3}                               \n"
+        "bx lr                                  \n"
+
+);
+
+__asm(  ".globl memcpy_reverse_32bit            \n"
+        ".p2align 2                             \n"
+        ".type memcpy_reverse_32bit,  %function \n"
+        "memcpy_reverse_32bit:                  \n"
+        "push {r3}                              \n"
+        "memcpy_reverse_32bit_cycle:            \n"
+        "subs r2, #1                            \n"
+        "ldr r3, [r0, r2, LSL #2]               \n"
+        "str r3, [r1, r2, LSL #2]               \n"
+        "bne memcpy_reverse_32bit_cycle         \n"
+        "pop {r3}                               \n"
+        "bx lr                                  \n"
+
+);
 
 void Delay(uint32 Msec)
 {
