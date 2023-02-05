@@ -74,6 +74,45 @@ extern uint8 EXTI_RisingPending(dtEXTILines Line);
 extern uint8 EXTI_FallingPending(dtEXTILines Line);
 extern void EXTI_ClearPending(dtEXTILines Line);
 
+#elif defined(MCU_F446)
+
+typedef struct
+{
+    uint8 InterruptMask     :1;
+    uint8 EventMask         :1;
+    uint8 RisingEdgeTrigger :1;
+    uint8 FallingEdgeTrigger:1;
+} dtExtiConfig;
+
+typedef enum
+{
+    ExtiChannel_GPIO0               = 0,
+    ExtiChannel_GPIO1,
+    ExtiChannel_GPIO2,
+    ExtiChannel_GPIO3,
+    ExtiChannel_GPIO4,
+    ExtiChannel_GPIO5,
+    ExtiChannel_GPIO6,
+    ExtiChannel_GPIO7,
+    ExtiChannel_GPIO8,
+    ExtiChannel_GPIO9,
+    ExtiChannel_GPIO10,
+    ExtiChannel_GPIO11,
+    ExtiChannel_GPIO12,
+    ExtiChannel_GPIO13,
+    ExtiChannel_GPIO14,
+    ExtiChannel_GPIO15,
+    ExtiChannel_PVD,
+    ExtiChannel_RtcAlarm,
+    ExtiChannel_UsbOtgFs,
+    ExtiChannel_UsbOtgHs            = 20,
+    ExtiChannel_RtcTamper_TimeStamp,
+    ExtiChannel_RtcWakeUp,
+} dtExtiChannel;
+
+extern void IExti_Config(uint8 ExtiLine, dtExtiConfig Config, void (*IrqHandler)(void));
+extern void IExti_ClearPending(uint8 ExtiLine);
+
 #endif
 
 #endif /* INC_EXTI_H_ */

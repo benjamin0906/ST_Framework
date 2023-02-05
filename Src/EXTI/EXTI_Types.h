@@ -50,6 +50,30 @@ typedef struct
 	uint32 IMR2;
 	uint32 EMR2;
 } dtEXTI;
+
+#elif defined(MCU_F446)
+
+typedef struct
+{
+    /* Interrupt mask register */
+    uint32 IMR;
+
+    /* Event mask register */
+    uint32 EMR;
+
+    /* Rising trigger selection register */
+    uint32 RTSR;
+
+    /* Falling trigger selection register */
+    uint32 FTSR;
+
+    /* Softwer interrupt event register */
+    uint32 SWIER;
+
+    /* Pending register */
+    uint32 PR;
+} dtEXTI;
+
 #endif
 
 #endif /* SRC_EXTI_EXTI_TYPES_H_ */
