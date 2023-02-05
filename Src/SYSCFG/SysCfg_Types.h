@@ -10,6 +10,7 @@
 
 #include "types.h"
 
+#if defined(MCU_L433)
 typedef struct
 {
 	uint32 Word;
@@ -56,5 +57,77 @@ typedef struct
 		uint32 WWDG	:1;
 	} Fields;
 } SYSCFG_ITLINE0;
+
+#elif defined(MCU_F446)
+
+typedef union
+{
+    uint32 Word;
+    struct
+    {
+        uint32 MEM_MODE :3;
+        uint32          :7;
+        uint32 SWP_FMC  :2;
+    };
+} dtSysCfg_MEMRMP;
+
+typedef union
+{
+    uint32 Word;
+    struct
+    {
+        uint32          :16;
+        uint32 ADC1CD2  :1;
+        uint32 ADC2CD2  :1;
+        uint32 ADC3CD2  :1;
+    };
+} dtSysCfg_PMC;
+
+typedef union
+{
+    uint32 Word;
+    struct
+    {
+        uint32 EXTIx0    :4;
+        uint32 EXTIx1    :4;
+        uint32 EXTIx2    :4;
+        uint32 EXTIx3    :4;
+    };
+} dtSysCfg_EXTICRx;
+
+typedef union
+{
+    uint32 Word;
+    struct
+    {
+        uint32 CMP_PD   :1;
+        uint32          :6;
+        uint32 READY    :1;
+    };
+} dtSysCfg_CMPCR;
+
+typedef union
+{
+    uint32 Word;
+    struct
+    {
+        uint32 FMPI2C1_SCL   :1;
+        uint32 FMPI2C1_SDA   :6;
+    };
+} dtSysCfg_CFGR;
+
+typedef struct
+{
+    dtSysCfg_MEMRMP MEMRMP;
+    dtSysCfg_PMC PMC;
+    dtSysCfg_EXTICRx EXTICR1;
+    dtSysCfg_EXTICRx EXTICR2;
+    dtSysCfg_EXTICRx EXTICR3;
+    dtSysCfg_EXTICRx EXTICR4;
+    dtSysCfg_CMPCR CMPCR;
+    dtSysCfg_CFGR CFGR;
+} dtSysCfg;
+
+#endif
 
 #endif /* SRC_SYSCFG_SYSCFG_TYPES_H_ */
