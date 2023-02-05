@@ -16,17 +16,17 @@ static dtDMAx *const DMA[2] = {(dtDMAx*)(0x40026000),(dtDMAx*)(0x40026400)};
 
 #define DISABLE()   do                                                  \
                     {                                                   \
-                        dtDMA_S0CR Temp = DMA[Instance]->CH[Ch].S0CR;   \
+                        dtDMA_S0CR Temp = DMA[Instance]->CH[DmaChannel].S0CR;   \
                         Temp.Field.EN = 0;                              \
-                        DMA[Instance]->CH[Ch].S0CR = Temp;              \
+                        DMA[Instance]->CH[DmaChannel].S0CR = Temp;              \
                     }                                                   \
                     while(0)
 
 #define ENABLE()    do                                                  \
                     {                                                   \
-                        dtDMA_S0CR Temp = DMA[Instance]->CH[Ch].S0CR;   \
+                        dtDMA_S0CR Temp = DMA[Instance]->CH[DmaChannel].S0CR;   \
                         Temp.Field.EN = 1;                              \
-                        DMA[Instance]->CH[Ch].S0CR = Temp;              \
+                        DMA[Instance]->CH[DmaChannel].S0CR = Temp;              \
                     }                                                   \
                     while(0)
 #define DMA_GET_OPTION(optionVar, option)   ((optionVar&DMA_##option##_MASK)>>DMA_##option##_PLACE)
@@ -34,9 +34,9 @@ static dtDMAx *const DMA[2] = {(dtDMAx*)(0x40026000),(dtDMAx*)(0x40026400)};
 #if defined(MCU_F446) || defined(MCU_L476)
 static void (*DMA_IntFunc[2][7])(uint8 Flags, uint32 Cntr);
 
-void DMA_Set(dtDMAInstance Instance, dtChannel Ch, uint32* MemAddr, uint32* PeripheralAddr, dtDMA_S0CR Config, uint8 IntPrio, void(IntFunc)(void));
-void DMA_Start(dtDMAInstance Instance, dtChannel Ch, uint16 Amount);
-void DMA_Stop(dtDMAInstance Instance, dtChannel Ch);
+void DMA_Set(dtDMAInstance Instance, dtChannel DmaChannel, uint32* MemAddr, uint32* PeripheralAddr, dtDMA_S0CR Config, uint8 IntPrio, void(IntFunc)(void));
+void DMA_Start(dtDMAInstance Instance, dtChannel DmaChannel, uint16 Amount);
+void DMA_Stop(dtDMAInstance Instance, dtChannel DmaChannel);
 uint8 DMA_GetStatus(dtChannel Ch);
 #endif
 
@@ -257,27 +257,27 @@ void DMA_Set(dtDMAInstance Instance, dtChannel Ch, uint32* MemAddr, uint32* Peri
 }
 
 #elif defined(MCU_F446)
-void DMA_Set(dtDMAInstance Instance, dtChannel Ch, uint32* MemAddr, uint32* PeripheralAddr, dtDMA_S0CR Config, uint8 IntPrio, void(IntFunc)(void))
+void DMA_Set(dtDMAInstance Instance, dtChannel DmaChannel, uint32* MemAddr, uint32* PeripheralAddr, dtDMA_S0CR Config, uint8 IntPrio, void(IntFunc)(void))
 {
     /* Disabling the stream, wait may be needed because and ongoing transaction */
-    while(DMA[Instance]->CH[Ch].S0CR.Word != 0) DMA[Instance]->CH[Ch].S0CR.Word = 0;
+    while(DMA[Instance]->CH[DmaChannel].S0CR.Word != 0) DMA[Instance]->CH[DmaChannel].S0CR.Word = 0;
 
     Config.Field.EN = 0;
 
     /* Setting the addressed */
-    DMA[Instance]->CH[Ch].PAR = (uint32)PeripheralAddr;
-    DMA[Instance]->CH[Ch].MAR0 = (uint32)MemAddr;
+    DMA[Instance]->CH[DmaChannel].PAR = (uint32)PeripheralAddr;
+    DMA[Instance]->CH[DmaChannel].MAR0 = (uint32)MemAddr;
 
     if(Config.Field.DMEIE || Config.Field.TEIE || Config.Field.HTIE || Config.Field.TCIE)
     {
         if(IntFunc != 0)
         {
-            DMA_IntFunc[Instance][Ch] = IntFunc;
+            DMA_IntFunc[Instance][DmaChannel] = IntFunc;
             uint8 IntPriority = IntPrio;
             dtIRQs IRQ = 0;
             if(Instance == DMA_1)
             {
-                switch(Ch)
+                switch(DmaChannel)
                 {
                 case Ch1:
                     IRQ = IRQ_DMA1_Stream0;
@@ -304,7 +304,7 @@ void DMA_Set(dtDMAInstance Instance, dtChannel Ch, uint32* MemAddr, uint32* Peri
             }
             else
             {
-                switch(Ch)
+                switch(DmaChannel)
                 {
                 case Ch1:
                     IRQ = IRQ_DMA2_Stream0;
@@ -334,7 +334,7 @@ void DMA_Set(dtDMAInstance Instance, dtChannel Ch, uint32* MemAddr, uint32* Peri
         }
     }
 
-    DMA[Instance]->CH[Ch].S0CR = Config;
+    DMA[Instance]->CH[DmaChannel].S0CR = Config;
 }
 #endif
 
@@ -347,10 +347,10 @@ void DMA_Start(dtDMAInstance Instance, dtChannel Ch, uint16 Amount)
 	DMA[Instance]->CH[Ch].CCR = Tccr;
 }
 #elif defined(MCU_F446)
-void DMA_Start(dtDMAInstance Instance, dtChannel Ch, uint16 Amount)
+void DMA_Start(dtDMAInstance Instance, dtChannel DmaChannel, uint16 Amount)
 {
     DISABLE();
-    DMA[Instance]->CH[Ch].S0NDTR.Word = Amount;
+    DMA[Instance]->CH[DmaChannel].S0NDTR.Word = Amount;
     ENABLE();
 }
 #endif
@@ -363,7 +363,7 @@ void DMA_Stop(dtDMAInstance Instance, dtChannel Ch)
 	DMA[Instance]->CH[Ch].CCR = Tccr;
 }
 #elif defined(MCU_F446)
-void DMA_Stop(dtDMAInstance Instance, dtChannel Ch)
+void DMA_Stop(dtDMAInstance Instance, dtChannel DmaChannel)
 {
     DISABLE();
 }

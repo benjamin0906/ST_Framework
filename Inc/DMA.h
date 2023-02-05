@@ -68,8 +68,9 @@ typedef enum
 #define DMA_CS14	14
 #define DMA_CS15	15
 
-extern void DMA_Set(dtDMAInstance Instance, dtChannel Ch, uint32* MemAddr, uint32* PeripheralAddr, dtDMA_S0CR Config, uint8 IntPrio, void(IntFunc)(void));
-extern void DMA_Start(dtDMAInstance Instance, dtChannel Ch, uint16 Amount);
-extern void DMA_Stop(dtDMAInstance Instance, dtChannel Ch);
+
+extern void DMA_Set(dtDMAInstance Instance, dtChannel DmaChannel, uint32* MemAddr, uint32* PeripheralAddr, dtDMA_S0CR Config, uint8 IntPrio, void(IntFunc)(void));
+extern void DMA_Start(dtDMAInstance Instance, dtChannel DmaChannel, uint16 Amount);
+extern void DMA_Stop(dtDMAInstance Instance, dtChannel DmaChannel);
 
 #endif /* ST_FRAMEWORK_SRC_DMA_DMA_H_ */
