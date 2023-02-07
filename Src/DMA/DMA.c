@@ -32,8 +32,9 @@ static dtDMAx *const DMA[2] = {(dtDMAx*)(0x40026000),(dtDMAx*)(0x40026400)};
 #define DMA_GET_OPTION(optionVar, option)   ((optionVar&DMA_##option##_MASK)>>DMA_##option##_PLACE)
 
 #if defined(MCU_F446) || defined(MCU_L476)
-static void (*DMA_IntFunc[2][7])(uint8 Flags, uint32 Cntr);
+static void (*DMA_IntFunc[2][8])(uint8 Flags, uint32 Cntr);
 
+void IDMA_Config(const dtDmaConfig *const Config, void (*IrqHandler)(uint8 Flags, uint32 NumOfData));
 void DMA_Set(dtDMAInstance Instance, dtDmaStream DmaChannel, uint32* MemAddr, uint32* PeripheralAddr, dtDMA_S0CR Config, uint8 IntPrio, void(IntFunc)(void));
 void DMA_Start(dtDMAInstance Instance, dtDmaStream DmaChannel, uint16 Amount);
 void DMA_Stop(dtDMAInstance Instance, dtDmaStream DmaChannel);
@@ -257,84 +258,40 @@ void DMA_Set(dtDMAInstance Instance, dtChannel Ch, uint32* MemAddr, uint32* Peri
 }
 
 #elif defined(MCU_F446)
-void DMA_Set(dtDMAInstance Instance, dtDmaStream DmaChannel, uint32* MemAddr, uint32* PeripheralAddr, dtDMA_S0CR Config, uint8 IntPrio, void(IntFunc)(void))
+void IDMA_Config(const dtDmaConfig *const Config, void (*IrqHandler)(uint8 Flags, uint32 NumOfData))
 {
-    /* Disabling the stream, wait may be needed because and ongoing transaction */
-    while(DMA[Instance]->CH[DmaChannel].S0CR.Word != 0) DMA[Instance]->CH[DmaChannel].S0CR.Word = 0;
-
-    Config.Field.EN = 0;
-
-    /* Setting the addressed */
-    DMA[Instance]->CH[DmaChannel].PAR = (uint32)PeripheralAddr;
-    DMA[Instance]->CH[DmaChannel].MAR0 = (uint32)MemAddr;
-
-    if(Config.Field.DMEIE || Config.Field.TEIE || Config.Field.HTIE || Config.Field.TCIE)
+    dtDMA_Channelx *streamPtr = &DMA[Config->Instance]->CH[Config->Stream];
+    dtDMA_S0CR      tCr = streamPtr->S0CR;
+    if(tCr.Field.EN == 0)
     {
-        if(IntFunc != 0)
-        {
-            DMA_IntFunc[Instance][DmaChannel] = IntFunc;
-            uint8 IntPriority = IntPrio;
-            dtIRQs IRQ = 0;
-            if(Instance == DMA_1)
-            {
-                switch(DmaChannel)
-                {
-                case DmaStream_1:
-                    IRQ = IRQ_DMA1_Stream0;
-                    break;
-                case DmaStream_2:
-                    IRQ = IRQ_DMA1_Stream1;
-                    break;
-                case DmaStream_3:
-                    IRQ = IRQ_DMA1_Stream2;
-                    break;
-                case DmaStream_4:
-                    IRQ = IRQ_DMA1_Stream3;
-                    break;
-                case DmaStream_5:
-                    IRQ = IRQ_DMA1_Stream4;
-                    break;
-                case DmaStream_6:
-                    IRQ = IRQ_DMA1_Stream5;
-                    break;
-                case DmaStream_7:
-                    IRQ = IRQ_DMA1_Stream6;
-                    break;
-                }
-            }
-            else
-            {
-                switch(DmaChannel)
-                {
-                case DmaStream_1:
-                    IRQ = IRQ_DMA2_Stream0;
-                    break;
-                case DmaStream_2:
-                    IRQ = IRQ_DMA2_Stream1;
-                    break;
-                case DmaStream_3:
-                    IRQ = IRQ_DMA2_Stream2;
-                    break;
-                case DmaStream_4:
-                    IRQ = IRQ_DMA2_Stream3;
-                    break;
-                case DmaStream_5:
-                    IRQ = IRQ_DMA2_Stream4;
-                    break;
-                case DmaStream_6:
-                    IRQ = IRQ_DMA2_Stream5;
-                    break;
-                case DmaStream_7:
-                    IRQ = IRQ_DMA2_Stream6;
-                    break;
-                }
-            }
-            NVIC_SetPriority(IRQ, IntPriority);
-            NVIC_EnableIRQ(IRQ);
-        }
-    }
+        dtDMA_S0CR tStreamConfReg = {.Word = 0};
 
-    DMA[Instance]->CH[DmaChannel].S0CR = Config;
+        /* Setting the memory addresses */
+        streamPtr->PAR = Config->PerPtr;
+        streamPtr->MAR0 = Config->Mem0Ptr;
+        streamPtr->MAR1 = Config->Mem1Ptr;
+
+        /* If both of the memory pointer is valid it means double buffer mode is needed */
+        tStreamConfReg.Field.DBM = (Config->Mem0Ptr != 0) && (Config->Mem1Ptr != 0);
+
+        tStreamConfReg.Field.CHSEL  = Config->RequestChannel;
+        tStreamConfReg.Field.PL     = Config->Priority;
+        tStreamConfReg.Field.MSIZE  = Config->MemoryDataSize;
+        tStreamConfReg.Field.PSIZE  = Config->PeripheralDataSize;
+        tStreamConfReg.Field.MINC   = Config->MemAddrInc;
+        tStreamConfReg.Field.PINC   = Config->PerAddrInc;
+        tStreamConfReg.Field.CIRC   = Config->CircularMode;
+        tStreamConfReg.Field.DIR    = Config->TransferDirection;
+
+        /* If there is an IRQ handler the IRQ shall be enabled */
+        if(IrqHandler != 0)
+        {
+            tStreamConfReg.Field.TCIE = 1;
+            DMA_IntFunc[Config->Instance][Config->Stream] = IrqHandler;
+        }
+
+        streamPtr->S0CR = tStreamConfReg;
+    }
 }
 #endif
 

@@ -31,7 +31,29 @@ typedef enum
 
 typedef struct
 {
+    dtDMAInstance   Instance;
+    dtDmaStream     Stream;
+    void*           Mem0Ptr;
+    void*           Mem1Ptr;
+    void*           PerPtr;
+    uint8           RequestChannel      :3;
+    uint8           Priority            :2;
 
+    /* 0b00: byte; 0b01: half-word; 0b10: word */
+    uint8           MemoryDataSize      :2;
+
+    /* 0b00: byte; 0b01: half-word; 0b10: word */
+    uint8           PeripheralDataSize  :2;
+
+    /* 0b0: Address is fixed; 0b1: Address is incremented after transfer */
+    uint8           MemAddrInc          :1;
+
+    /* 0b0: Address is fixed; 0b1: Address is incremented after transfer */
+    uint8           PerAddrInc          :1;
+    uint8           CircularMode        :1;
+
+    /* 0b00: pripheral-to-memory; 0b01: memory-to-peripheral; 0b10: memory-to-memory */
+    uint8           TransferDirection   :2;
 } dtDmaConfig;
 
 #define DMA_PER2MEM         0
@@ -74,8 +96,7 @@ typedef struct
 #define DMA_CS14	14
 #define DMA_CS15	15
 
-
-extern void DMA_Set(dtDMAInstance Instance, dtDmaStream DmaChannel, uint32* MemAddr, uint32* PeripheralAddr, dtDMA_S0CR Config, uint8 IntPrio, void(IntFunc)(void));
+extern void IDMA_Config(const dtDmaConfig *const Config, void (*IrqHandler)(uint8 Flags, uint32 NumOfData));
 extern void DMA_Start(dtDMAInstance Instance, dtDmaStream DmaChannel, uint16 Amount);
 extern void DMA_Stop(dtDMAInstance Instance, dtDmaStream DmaChannel);
 
