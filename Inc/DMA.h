@@ -19,14 +19,20 @@ typedef enum
 
 typedef enum
 {
-	Ch1,
-	Ch2,
-	Ch3,
-	Ch4,
-	Ch5,
-	Ch6,
-	Ch7,
-} dtChannel;
+	DmaStream_0,
+	DmaStream_1,
+	DmaStream_2,
+	DmaStream_3,
+	DmaStream_4,
+	DmaStream_5,
+	DmaStream_6,
+    DmaStream_7,
+} dtDmaStream;
+
+typedef struct
+{
+
+} dtDmaConfig;
 
 #define DMA_PER2MEM         0
 #define DMA_MEM2PER         1
@@ -69,8 +75,8 @@ typedef enum
 #define DMA_CS15	15
 
 
-extern void DMA_Set(dtDMAInstance Instance, dtChannel DmaChannel, uint32* MemAddr, uint32* PeripheralAddr, dtDMA_S0CR Config, uint8 IntPrio, void(IntFunc)(void));
-extern void DMA_Start(dtDMAInstance Instance, dtChannel DmaChannel, uint16 Amount);
-extern void DMA_Stop(dtDMAInstance Instance, dtChannel DmaChannel);
+extern void DMA_Set(dtDMAInstance Instance, dtDmaStream DmaChannel, uint32* MemAddr, uint32* PeripheralAddr, dtDMA_S0CR Config, uint8 IntPrio, void(IntFunc)(void));
+extern void DMA_Start(dtDMAInstance Instance, dtDmaStream DmaChannel, uint16 Amount);
+extern void DMA_Stop(dtDMAInstance Instance, dtDmaStream DmaChannel);
 
 #endif /* ST_FRAMEWORK_SRC_DMA_DMA_H_ */

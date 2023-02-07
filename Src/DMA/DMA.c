@@ -34,10 +34,10 @@ static dtDMAx *const DMA[2] = {(dtDMAx*)(0x40026000),(dtDMAx*)(0x40026400)};
 #if defined(MCU_F446) || defined(MCU_L476)
 static void (*DMA_IntFunc[2][7])(uint8 Flags, uint32 Cntr);
 
-void DMA_Set(dtDMAInstance Instance, dtChannel DmaChannel, uint32* MemAddr, uint32* PeripheralAddr, dtDMA_S0CR Config, uint8 IntPrio, void(IntFunc)(void));
-void DMA_Start(dtDMAInstance Instance, dtChannel DmaChannel, uint16 Amount);
-void DMA_Stop(dtDMAInstance Instance, dtChannel DmaChannel);
-uint8 DMA_GetStatus(dtChannel Ch);
+void DMA_Set(dtDMAInstance Instance, dtDmaStream DmaChannel, uint32* MemAddr, uint32* PeripheralAddr, dtDMA_S0CR Config, uint8 IntPrio, void(IntFunc)(void));
+void DMA_Start(dtDMAInstance Instance, dtDmaStream DmaChannel, uint16 Amount);
+void DMA_Stop(dtDMAInstance Instance, dtDmaStream DmaChannel);
+uint8 DMA_GetStatus(dtDmaStream Ch);
 #endif
 
 #if defined(MCU_L476)
@@ -70,49 +70,49 @@ void DMA_Set(dtDMAInstance Instance, dtChannel Ch, uint32* MemAddr, uint32* Peri
 			{
 				switch(Ch)
 				{
-				case Ch1:
+				case DmaStream_1:
 #if defined(MCU_F446)
 					IRQ = IRQ_DMA1_Stream0;
 #elif defined(MCU_L476)
 					IRQ = IRQ_DMA_CH1;
 #endif
 					break;
-				case Ch2:
+				case DmaStream_2:
 #if defined(MCU_F446)
 					IRQ = IRQ_DMA1_Stream1;
 #elif defined(MCU_L476)
                     IRQ = IRQ_DMA_CH2;
 #endif
 					break;
-				case Ch3:
+				case DmaStream_3:
 #if defined(MCU_F446)
 					IRQ = IRQ_DMA1_Stream2;
 #elif defined(MCU_L476)
                     IRQ = IRQ_DMA_CH3;
 #endif
 					break;
-				case Ch4:
+				case DmaStream_4:
 #if defined(MCU_F446)
 					IRQ = IRQ_DMA1_Stream3;
 #elif defined(MCU_L476)
                     IRQ = IRQ_DMA_CH4;
 #endif
 					break;
-				case Ch5:
+				case DmaStream_5:
 #if defined(MCU_F446)
 					IRQ = IRQ_DMA1_Stream4;
 #elif defined(MCU_L476)
                     IRQ = IRQ_DMA_CH5;
 #endif
 					break;
-				case Ch6:
+				case DmaStream_6:
 #if defined(MCU_F446)
 					IRQ = IRQ_DMA1_Stream5;
 #elif defined(MCU_L476)
                     IRQ = IRQ_DMA_CH6;
 #endif
 					break;
-				case Ch7:
+				case DmaStream_7:
 #if defined(MCU_F446)
 					IRQ = IRQ_DMA1_Stream6;
 #elif defined(MCU_L476)
@@ -125,49 +125,49 @@ void DMA_Set(dtDMAInstance Instance, dtChannel Ch, uint32* MemAddr, uint32* Peri
 			{
 				switch(Ch)
 				{
-				case Ch1:
+				case DmaStream_1:
 #if defined(MCU_F446)
 					IRQ = IRQ_DMA2_Stream0;
 #elif defined(MCU_L476)
                     IRQ = IRQ_DMA2_CH1;
 #endif
 					break;
-				case Ch2:
+				case DmaStream_2:
 #if defined(MCU_F446)
 					IRQ = IRQ_DMA2_Stream1;
 #elif defined(MCU_L476)
                     IRQ = IRQ_DMA2_CH2;
 #endif
 					break;
-				case Ch3:
+				case DmaStream_3:
 #if defined(MCU_F446)
 					IRQ = IRQ_DMA2_Stream2;
 #elif defined(MCU_L476)
                     IRQ = IRQ_DMA2_CH3;
 #endif
 					break;
-				case Ch4:
+				case DmaStream_4:
 #if defined(MCU_F446)
 					IRQ = IRQ_DMA2_Stream3;
 #elif defined(MCU_L476)
                     IRQ = IRQ_DMA2_CH4;
 #endif
 					break;
-				case Ch5:
+				case DmaStream_5:
 #if defined(MCU_F446)
 					IRQ = IRQ_DMA2_Stream4;
 #elif defined(MCU_L476)
                     IRQ = IRQ_DMA2_CH5;
 #endif
 					break;
-				case Ch6:
+				case DmaStream_6:
 #if defined(MCU_F446)
 					IRQ = IRQ_DMA2_Stream5;
 #elif defined(MCU_L476)
                     IRQ = IRQ_DMA2_CH6;
 #endif
 					break;
-				case Ch7:
+				case DmaStream_7:
 #if defined(MCU_F446)
 					IRQ = IRQ_DMA2_Stream6;
 #elif defined(MCU_L476)
@@ -257,7 +257,7 @@ void DMA_Set(dtDMAInstance Instance, dtChannel Ch, uint32* MemAddr, uint32* Peri
 }
 
 #elif defined(MCU_F446)
-void DMA_Set(dtDMAInstance Instance, dtChannel DmaChannel, uint32* MemAddr, uint32* PeripheralAddr, dtDMA_S0CR Config, uint8 IntPrio, void(IntFunc)(void))
+void DMA_Set(dtDMAInstance Instance, dtDmaStream DmaChannel, uint32* MemAddr, uint32* PeripheralAddr, dtDMA_S0CR Config, uint8 IntPrio, void(IntFunc)(void))
 {
     /* Disabling the stream, wait may be needed because and ongoing transaction */
     while(DMA[Instance]->CH[DmaChannel].S0CR.Word != 0) DMA[Instance]->CH[DmaChannel].S0CR.Word = 0;
@@ -279,25 +279,25 @@ void DMA_Set(dtDMAInstance Instance, dtChannel DmaChannel, uint32* MemAddr, uint
             {
                 switch(DmaChannel)
                 {
-                case Ch1:
+                case DmaStream_1:
                     IRQ = IRQ_DMA1_Stream0;
                     break;
-                case Ch2:
+                case DmaStream_2:
                     IRQ = IRQ_DMA1_Stream1;
                     break;
-                case Ch3:
+                case DmaStream_3:
                     IRQ = IRQ_DMA1_Stream2;
                     break;
-                case Ch4:
+                case DmaStream_4:
                     IRQ = IRQ_DMA1_Stream3;
                     break;
-                case Ch5:
+                case DmaStream_5:
                     IRQ = IRQ_DMA1_Stream4;
                     break;
-                case Ch6:
+                case DmaStream_6:
                     IRQ = IRQ_DMA1_Stream5;
                     break;
-                case Ch7:
+                case DmaStream_7:
                     IRQ = IRQ_DMA1_Stream6;
                     break;
                 }
@@ -306,25 +306,25 @@ void DMA_Set(dtDMAInstance Instance, dtChannel DmaChannel, uint32* MemAddr, uint
             {
                 switch(DmaChannel)
                 {
-                case Ch1:
+                case DmaStream_1:
                     IRQ = IRQ_DMA2_Stream0;
                     break;
-                case Ch2:
+                case DmaStream_2:
                     IRQ = IRQ_DMA2_Stream1;
                     break;
-                case Ch3:
+                case DmaStream_3:
                     IRQ = IRQ_DMA2_Stream2;
                     break;
-                case Ch4:
+                case DmaStream_4:
                     IRQ = IRQ_DMA2_Stream3;
                     break;
-                case Ch5:
+                case DmaStream_5:
                     IRQ = IRQ_DMA2_Stream4;
                     break;
-                case Ch6:
+                case DmaStream_6:
                     IRQ = IRQ_DMA2_Stream5;
                     break;
-                case Ch7:
+                case DmaStream_7:
                     IRQ = IRQ_DMA2_Stream6;
                     break;
                 }
@@ -347,7 +347,7 @@ void DMA_Start(dtDMAInstance Instance, dtChannel Ch, uint16 Amount)
 	DMA[Instance]->CH[Ch].CCR = Tccr;
 }
 #elif defined(MCU_F446)
-void DMA_Start(dtDMAInstance Instance, dtChannel DmaChannel, uint16 Amount)
+void DMA_Start(dtDMAInstance Instance, dtDmaStream DmaChannel, uint16 Amount)
 {
     DISABLE();
     DMA[Instance]->CH[DmaChannel].S0NDTR.Word = Amount;
@@ -363,7 +363,7 @@ void DMA_Stop(dtDMAInstance Instance, dtChannel Ch)
 	DMA[Instance]->CH[Ch].CCR = Tccr;
 }
 #elif defined(MCU_F446)
-void DMA_Stop(dtDMAInstance Instance, dtChannel DmaChannel)
+void DMA_Stop(dtDMAInstance Instance, dtDmaStream DmaChannel)
 {
     DISABLE();
 }
