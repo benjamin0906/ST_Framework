@@ -307,6 +307,33 @@ void DMA_Start(dtDMAInstance Instance, dtChannel Ch, uint16 Amount)
 void DMA_Start(dtDMAInstance Instance, dtDmaStream DmaChannel, uint16 Amount)
 {
     DISABLE();
+    switch(DmaChannel)
+    {
+        case DmaStream_0:
+            DMA[Instance]->LIFCR.Word = (0x3D << 0);
+            break;
+        case DmaStream_1:
+            DMA[Instance]->LIFCR.Word = (0x3D << 6);
+            break;
+        case DmaStream_2:
+            DMA[Instance]->LIFCR.Word = (0x3D << 16);
+            break;
+        case DmaStream_3:
+            DMA[Instance]->LIFCR.Word = (0x3D << 22);
+            break;
+        case DmaStream_4:
+            DMA[Instance]->HIFCR.Word = (0x3D << 0);
+            break;
+        case DmaStream_5:
+            DMA[Instance]->HIFCR.Word = (0x3D << 6);
+            break;
+        case DmaStream_6:
+            DMA[Instance]->HIFCR.Word = (0x3D << 16);
+            break;
+        case DmaStream_7:
+            DMA[Instance]->HIFCR.Word = (0x3D << 22);
+            break;
+    }
     DMA[Instance]->CH[DmaChannel].S0NDTR.Word = Amount;
     ENABLE();
 }
@@ -402,81 +429,97 @@ void DMA2_CH7_IRQHandler(void)
 #elif defined(MCU_F446)
 void DMA1_Stream0_IRQHandler(void)
 {
-    if(DMA_IntFunc[0][0] != 0) (*DMA_IntFunc[0][0])(DMA[0]->LISR.Word&0x3F, DMA[0]->CH[0].S0NDTR.Word);
+    if(DMA_IntFunc[0][0] != 0) (*DMA_IntFunc[0][0])((DMA[0]->LISR.Word >> 0) & 0x3F, DMA[0]->CH[0].S0NDTR.Word);
+    DMA[0]->LIFCR.Word = (0x3D << 0);
 }
 
 void DMA1_Stream1_IRQHandler(void)
 {
-    if(DMA_IntFunc[0][1] != 0) (*DMA_IntFunc[0][1])(DMA[0]->LISR.Word&0xFC>>6, DMA[0]->CH[1].S0NDTR.Word);
+    if(DMA_IntFunc[0][1] != 0) (*DMA_IntFunc[0][1])((DMA[0]->LISR.Word >> 6) & 0x3F, DMA[0]->CH[1].S0NDTR.Word);
+    DMA[0]->LIFCR.Word = (0x3D << 6);
 }
 
 void DMA1_Stream2_IRQHandler(void)
 {
-    if(DMA_IntFunc[0][2] != 0) (*DMA_IntFunc[0][2])(DMA[0]->LISR.Word&0x3F00>>16, DMA[0]->CH[2].S0NDTR.Word);
+    if(DMA_IntFunc[0][2] != 0) (*DMA_IntFunc[0][2])((DMA[0]->LISR.Word >> 16) & 0x3F, DMA[0]->CH[2].S0NDTR.Word);
+    DMA[0]->LIFCR.Word = (0x3D << 16);
 }
 
 void DMA1_Stream3_IRQHandler(void)
 {
-    if(DMA_IntFunc[0][3] != 0) (*DMA_IntFunc[0][3])(DMA[0]->LISR.Word&0xFC00>>22, DMA[0]->CH[3].S0NDTR.Word);
+    if(DMA_IntFunc[0][3] != 0) (*DMA_IntFunc[0][3])((DMA[0]->LISR.Word >> 22) & 0x3F, DMA[0]->CH[3].S0NDTR.Word);
+    DMA[0]->LIFCR.Word = (0x3D << 22);
 }
 
 void DMA1_Stream4_IRQHandler(void)
 {
-    if(DMA_IntFunc[0][4] != 0) (*DMA_IntFunc[0][4])(DMA[0]->HISR.Word&0x3F, DMA[0]->CH[4].S0NDTR.Word);
+    if(DMA_IntFunc[0][4] != 0) (*DMA_IntFunc[0][4])((DMA[0]->HISR.Word >> 0) & 0x3F, DMA[0]->CH[4].S0NDTR.Word);
+    DMA[0]->HIFCR.Word = (0x3D << 0);
 }
 
 void DMA1_Stream5_IRQHandler(void)
 {
-    if(DMA_IntFunc[0][5] != 0) (*DMA_IntFunc[0][5])(DMA[0]->HISR.Word&0xFC>>6, DMA[0]->CH[5].S0NDTR.Word);
+    if(DMA_IntFunc[0][5] != 0) (*DMA_IntFunc[0][5])((DMA[0]->HISR.Word >> 6) & 0x3F, DMA[0]->CH[5].S0NDTR.Word);
+    DMA[0]->HIFCR.Word = (0x3D << 6);
 }
 
 void DMA1_Stream6_IRQHandler(void)
 {
-    if(DMA_IntFunc[0][6] != 0) (*DMA_IntFunc[0][6])(DMA[0]->HISR.Word&0x3F00>>16, DMA[0]->CH[6].S0NDTR.Word);
+    if(DMA_IntFunc[0][6] != 0) (*DMA_IntFunc[0][6])((DMA[0]->HISR.Word >> 16) & 0x3F, DMA[0]->CH[6].S0NDTR.Word);
+    DMA[0]->HIFCR.Word = (0x3D << 16);
 }
 
 void DMA1_Stream7_IRQHandler(void)
 {
-    if(DMA_IntFunc[0][7] != 0) (*DMA_IntFunc[0][7])(DMA[0]->HISR.Word&0xFC00>>22, DMA[0]->CH[7].S0NDTR.Word);
+    if(DMA_IntFunc[0][7] != 0) (*DMA_IntFunc[0][7])((DMA[0]->HISR.Word >> 22) & 0x3F, DMA[0]->CH[7].S0NDTR.Word);
+    DMA[0]->HIFCR.Word = (0x3D << 22);
 }
 
 void DMA2_Stream0_IRQHandler(void)
 {
-    if(DMA_IntFunc[1][0] != 0) (*DMA_IntFunc[1][0])(DMA[1]->LISR.Word&0x3F, DMA[1]->CH[0].S0NDTR.Word);
+    if(DMA_IntFunc[1][0] != 0) (*DMA_IntFunc[1][0])((DMA[0]->LISR.Word >> 0) & 0x3F, DMA[0]->CH[0].S0NDTR.Word);
+    DMA[1]->LIFCR.Word = (0x3D << 0);
 }
 
 void DMA2_Stream1_IRQHandler(void)
 {
-    if(DMA_IntFunc[1][1] != 0) (*DMA_IntFunc[1][1])(DMA[1]->LISR.Word&0xFC>>6, DMA[1]->CH[1].S0NDTR.Word);
+    if(DMA_IntFunc[1][1] != 0) (*DMA_IntFunc[1][1])((DMA[0]->LISR.Word >> 6) & 0x3F, DMA[0]->CH[1].S0NDTR.Word);
+    DMA[1]->LIFCR.Word = (0x3D << 6);
 }
 
 void DMA2_Stream2_IRQHandler(void)
 {
-    if(DMA_IntFunc[1][2] != 0) (*DMA_IntFunc[1][2])(DMA[1]->LISR.Word&0x3F00>>16, DMA[1]->CH[2].S0NDTR.Word);
+    if(DMA_IntFunc[1][2] != 0) (*DMA_IntFunc[1][2])((DMA[0]->LISR.Word >> 16) & 0x3F, DMA[0]->CH[2].S0NDTR.Word);
+    DMA[1]->LIFCR.Word = (0x3D << 16);
 }
 
 void DMA2_Stream3_IRQHandler(void)
 {
-    if(DMA_IntFunc[1][3] != 0) (*DMA_IntFunc[1][3])(DMA[1]->LISR.Word&0xFC00>>22, DMA[1]->CH[3].S0NDTR.Word);
+    if(DMA_IntFunc[1][3] != 0) (*DMA_IntFunc[1][3])((DMA[0]->LISR.Word >> 22) & 0x3F, DMA[0]->CH[3].S0NDTR.Word);
+    DMA[1]->LIFCR.Word = (0x3D << 22);
 }
 
 void DMA2_Stream4_IRQHandler(void)
 {
-    if(DMA_IntFunc[1][4] != 0) (*DMA_IntFunc[1][4])(DMA[1]->HISR.Word&0x3F, DMA[1]->CH[4].S0NDTR.Word);
+    if(DMA_IntFunc[1][4] != 0) (*DMA_IntFunc[1][4])((DMA[0]->HISR.Word >> 0) & 0x3F, DMA[0]->CH[4].S0NDTR.Word);
+    DMA[1]->HIFCR.Word = (0x3D << 0);
 }
 
 void DMA2_Stream5_IRQHandler(void)
 {
-    if(DMA_IntFunc[1][5] != 0) (*DMA_IntFunc[1][5])(DMA[1]->HISR.Word&0xFC>>6, DMA[1]->CH[5].S0NDTR.Word);
+    if(DMA_IntFunc[1][5] != 0) (*DMA_IntFunc[1][5])((DMA[0]->HISR.Word >> 6) & 0x3F, DMA[0]->CH[5].S0NDTR.Word);
+    DMA[1]->HIFCR.Word = (0x3D << 6);
 }
 
 void DMA2_Stream6_IRQHandler(void)
 {
-    if(DMA_IntFunc[1][6] != 0) (*DMA_IntFunc[1][6])(DMA[1]->HISR.Word&0x3F00>>16, DMA[1]->CH[6].S0NDTR.Word);
+    if(DMA_IntFunc[1][6] != 0) (*DMA_IntFunc[1][6])((DMA[0]->HISR.Word >> 16) & 0x3F, DMA[0]->CH[6].S0NDTR.Word);
+    DMA[1]->HIFCR.Word = (0x3D << 16);
 }
 
 void DMA2_Stream7_IRQHandler(void)
 {
-    if(DMA_IntFunc[1][7] != 0) (*DMA_IntFunc[1][7])(DMA[1]->HISR.Word&0xFC00>>22, DMA[1]->CH[7].S0NDTR.Word);
+    if(DMA_IntFunc[1][7] != 0) (*DMA_IntFunc[1][7])((DMA[0]->HISR.Word >> 22) & 0x3F, DMA[0]->CH[7].S0NDTR.Word);
+    DMA[1]->HIFCR.Word = (0x3D << 22);
 }
 #endif

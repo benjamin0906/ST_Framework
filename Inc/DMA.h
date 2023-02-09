@@ -11,22 +11,34 @@
 #include "types.h"
 #include "DMA_ExtTypes.h"
 
+#define DMA_1                       0
+#define DMA_2                       1
+
+#define DmaStream_0                 0
+#define DmaStream_1                 1
+#define DmaStream_2                 2
+#define DmaStream_3                 3
+#define DmaStream_4                 4
+#define DmaStream_5                 5
+#define DmaStream_6                 6
+#define DmaStream_7                 7
+
 typedef enum
 {
-	DMA_1,
-	DMA_2,
+	DMA_Instance_1 = 0,
+	DMA_Instance_2 = 1,
 } dtDMAInstance;
 
 typedef enum
 {
-	DmaStream_0,
-	DmaStream_1,
-	DmaStream_2,
-	DmaStream_3,
-	DmaStream_4,
-	DmaStream_5,
-	DmaStream_6,
-    DmaStream_7,
+	DmaStream_0_,
+	DmaStream_1_,
+	DmaStream_2_,
+	DmaStream_3_,
+	DmaStream_4_,
+	DmaStream_5_,
+	DmaStream_6_,
+    DmaStream_7_,
 } dtDmaStream;
 
 typedef struct
