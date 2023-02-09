@@ -48,12 +48,13 @@ typedef struct
 	uint32 LsbOrMsb	:1;
 	uint32 CPOL		:1;
 	uint32 CHPA		:1;
-	uint32 TXDMA    :1;
-	uint32 RXDMA    :1;
 	uint32 Instance	:3;
 	dtGPIOs ChipSelectPin;
 } dtSpiConf;
 
+extern void ISPI_Init(dtSpiConf Config);
+extern void ISPI_Send(uint8 Instance, uint8 *TxBuff, uint16 TxLength);
+extern dtSpStatus ISPI_GetData(uint8 Instance, uint8 *RxBuff, uint16 RxLength);
 extern void SPI_Init(dtSpiConf Config);
 extern void SPI_Send(uint8 Instance, uint8 *TxBuff, uint16 TxLength, uint8 *RxBuff, uint16 RxLength, uint8 Offset);
 extern dtSpStatus SPI_Status(uint8 Instance);
