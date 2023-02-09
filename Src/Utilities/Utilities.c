@@ -383,6 +383,18 @@ __asm(  ".globl memcpy_reverse_32bit            \n"
 
 );
 
+__asm(  ".globl memset_32bit                    \n"
+        ".p2align 2                             \n"
+        ".type memset_32bit,  %function         \n"
+        "memset_32bit:                          \n"
+        "memset_32bit_cycle:                    \n"
+        "subs r2, #1                            \n"
+        "str r1, [r0, r2, LSL #2]               \n"
+        "bne memset_32bit_cycle                 \n"
+        "bx lr                                  \n"
+
+);
+
 void Delay(uint32 Msec)
 {
     uint32 Time = SysTick_GetTicks();

@@ -31,6 +31,7 @@ extern int64 multiplyArrays(int32 *Array1, int32 *Array2, uint32 length);
 extern void memcpy_reverse_8bit(void *src, void *dst, uint32 size);
 extern void memcpy_reverse_16bit(void *src, void *dst, uint32 size);
 extern void memcpy_reverse_32bit(void *src, void *dst, uint32 size);
+extern void memset_32bit(void *array, uint32 value, uint32 size);
 #endif
 
 extern void changeEndiannessArray(uint32 *array, uint32 length);
