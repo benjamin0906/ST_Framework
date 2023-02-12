@@ -38,6 +38,7 @@ void IDMA_Config(const dtDmaConfig *const Config, void (*IrqHandler)(uint8 Flags
 void DMA_Set(dtDMAInstance Instance, dtDmaStream DmaChannel, uint32* MemAddr, uint32* PeripheralAddr, dtDMA_S0CR Config, uint8 IntPrio, void(IntFunc)(void));
 void DMA_Start(dtDMAInstance Instance, dtDmaStream DmaChannel, uint16 Amount);
 void DMA_StartWithNew(dtDMAInstance Instance, dtDmaStream DmaChannel, uint16 Amount, void *Peripheral_Src, void *Memory_Dst);
+uint8 IDMA_IsFree(dtDMAInstance Instance, dtDmaStream DmaChannel);
 void DMA_Stop(dtDMAInstance Instance, dtDmaStream DmaChannel);
 uint8 DMA_GetStatus(dtDmaStream Ch);
 #endif
@@ -375,6 +376,10 @@ void DMA_StartWithNew(dtDMAInstance Instance, dtDmaStream DmaChannel, uint16 Amo
     ENABLE();
 }
 
+uint8 IDMA_IsFree(dtDMAInstance Instance, dtDmaStream DmaChannel)
+{
+    return DMA[Instance]->CH[DmaChannel].S0CR.Field.EN;
+}
 #endif
 
 #if defined(MCU_L476)
