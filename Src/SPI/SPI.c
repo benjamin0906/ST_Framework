@@ -11,128 +11,6 @@
 #include "NVIC.h"
 #include "config.h"
 
-#if SPI_USAGE_MODE == DMA_MODE
-    #if SPI_1 == MODULE_ON
-        #if SPI_1_DMA_RX_INSTANCE == 0
-            #define SPI_1_IRQ_NAME_FIRST_PART DMA1
-        #elif SPI_1_DMA_RX_INSTANCE == 1
-            #define SPI_1_IRQ_NAME_FIRST_PART DMA2
-        #else
-        #error "Wrong DMA instance for SPI 1"
-        #endif
-        #if SPI_1_DMA_RX_STREAM == DmaStream_0
-            #define SPI_1_IRQ_NAME_SEC_PART Stream0
-        #elif SPI_1_DMA_RX_STREAM == DmaStream_1
-            #define SPI_1_IRQ_NAME_SEC_PART Stream1
-        #elif SPI_1_DMA_RX_STREAM == DmaStream_2
-            #define SPI_1_IRQ_NAME_SEC_PART Stream2
-        #elif SPI_1_DMA_RX_STREAM == DmaStream_3
-            #define SPI_1_IRQ_NAME_SEC_PART Stream3
-        #elif SPI_1_DMA_RX_STREAM == DmaStream_4
-            #define SPI_1_IRQ_NAME_SEC_PART Stream4
-        #elif SPI_1_DMA_RX_STREAM == DmaStream_5
-            #define SPI_1_IRQ_NAME_SEC_PART Stream5
-        #elif SPI_1_DMA_RX_STREAM == DmaStream_6
-            #define SPI_1_IRQ_NAME_SEC_PART Stream6
-        #elif SPI_1_DMA_RX_STREAM == DmaStream_7
-            #define SPI_1_IRQ_NAME_SEC_PART Stream7
-        #else
-        #error "Wrong DMA stream for SPI 1"
-        #endif
-    #endif
-
-    #if SPI_2 == MODULE_ON
-        #if SPI_2_DMA_RX_INSTANCE == DMA_1
-            #define SPI_2_IRQ_NAME_FIRST_PART DMA1
-        #elif SPI_2_DMA_RX_INSTANCE == DMA_2
-            #define SPI_2_IRQ_NAME_FIRST_PART DMA2
-        #else
-        #error "Wrong DMA instance for SPI 2"
-        #endif
-        #if SPI_2_DMA_RX_STREAM == DmaStream_0
-            #define SPI_2_IRQ_NAME_SEC_PART Stream0
-        #elif SPI_2_DMA_RX_STREAM == DmaStream_1
-            #define SPI_2_IRQ_NAME_SEC_PART Stream1
-        #elif SPI_2_DMA_RX_STREAM == DmaStream_2
-            #define SPI_2_IRQ_NAME_SEC_PART Stream2
-        #elif SPI_2_DMA_RX_STREAM == DmaStream_3
-            #define SPI_2_IRQ_NAME_SEC_PART Stream3
-        #elif SPI_2_DMA_RX_STREAM == DmaStream_4
-            #define SPI_2_IRQ_NAME_SEC_PART Stream4
-        #elif SPI_2_DMA_RX_STREAM == DmaStream_5
-            #define SPI_2_IRQ_NAME_SEC_PART Stream5
-        #elif SPI_2_DMA_RX_STREAM == DmaStream_6
-            #define SPI_2_IRQ_NAME_SEC_PART Stream6
-        #elif SPI_2_DMA_RX_STREAM == DmaStream_7
-            #define SPI_2_IRQ_NAME_SEC_PART Stream7
-        #else
-        #error "Wrong DMA stream for SPI 2"
-        #endif
-    #endif
-
-#if SPI_3 == MODULE_ON
-        #if SPI_3_DMA_RX_INSTANCE == DMA_1
-            #define SPI_3_IRQ_NAME_FIRST_PART DMA1
-        #elif SPI_3_DMA_RX_INSTANCE == DMA_2
-            #define SPI_3_IRQ_NAME_FIRST_PART DMA2
-        #else
-        #error "Wrong DMA instance for SPI 3"
-        #endif
-        #if SPI_3_DMA_RX_STREAM == DmaStream_0
-            #define SPI_3_IRQ_NAME_SEC_PART Stream0
-        #elif SPI_3_DMA_RX_STREAM == DmaStream_1
-            #define SPI_3_IRQ_NAME_SEC_PART Stream1
-        #elif SPI_3_DMA_RX_STREAM == DmaStream_2
-            #define SPI_3_IRQ_NAME_SEC_PART Stream2
-        #elif SPI_3_DMA_RX_STREAM == DmaStream_3
-            #define SPI_3_IRQ_NAME_SEC_PART Stream3
-        #elif SPI_3_DMA_RX_STREAM == DmaStream_4
-            #define SPI_3_IRQ_NAME_SEC_PART Stream4
-        #elif SPI_3_DMA_RX_STREAM == DmaStream_5
-            #define SPI_3_IRQ_NAME_SEC_PART Stream5
-        #elif SPI_3_DMA_RX_STREAM == DmaStream_6
-            #define SPI_3_IRQ_NAME_SEC_PART Stream6
-        #elif SPI_3_DMA_RX_STREAM == DmaStream_7
-            #define SPI_3_IRQ_NAME_SEC_PART Stream7
-        #else
-        #error "Wrong DMA stream for SPI 3"
-        #endif
-    #endif
-
-#if SPI_4 == MODULE_ON
-        #if SPI_4_DMA_RX_INSTANCE == DMA_1
-            #define SPI_4_IRQ_NAME_FIRST_PART DMA1
-        #elif SPI_4_DMA_RX_INSTANCE == DMA_2
-            #define SPI_4_IRQ_NAME_FIRST_PART DMA2
-        #else
-        #error "Wrong DMA instance for SPI 4"
-        #endif
-        #if SPI_4_DMA_RX_STREAM == DmaStream_0
-            #define SPI_4_IRQ_NAME_SEC_PART Stream0
-        #elif SPI_4_DMA_RX_STREAM == DmaStream_1
-            #define SPI_4_IRQ_NAME_SEC_PART Stream1
-        #elif SPI_4_DMA_RX_STREAM == DmaStream_2
-            #define SPI_4_IRQ_NAME_SEC_PART Stream2
-        #elif SPI_4_DMA_RX_STREAM == DmaStream_3
-            #define SPI_4_IRQ_NAME_SEC_PART Stream3
-        #elif SPI_4_DMA_RX_STREAM == DmaStream_4
-            #define SPI_4_IRQ_NAME_SEC_PART Stream4
-        #elif SPI_4_DMA_RX_STREAM == DmaStream_5
-            #define SPI_4_IRQ_NAME_SEC_PART Stream5
-        #elif SPI_4_DMA_RX_STREAM == DmaStream_6
-            #define SPI_4_IRQ_NAME_SEC_PART Stream3
-        #elif SPI_4_DMA_RX_STREAM == DmaStream_7
-            #define SPI_4_IRQ_NAME_SEC_PART Stream7
-        #else
-        #error "Wrong DMA stream for SPI 4"
-        #endif
-    #endif
-#endif
-
-#define CREATE_IRQ_NAME(first, sec) IRQ_##first##_##sec
-#define CREATE_PRE_IRQ_NAME(first, sec)  CREATE_IRQ_NAME(first, sec)
-#define SPI_x_DMA_IRQ(x) CREATE_PRE_IRQ_NAME(SPI_##x##_IRQ_NAME_FIRST_PART, SPI_##x##_IRQ_NAME_SEC_PART)
-
 #if defined(MCU_F410) || defined(MCU_F446) || defined(MCU_L433) || defined(MCU_G070) || defined(MCU_G071) || defined(MCU_F415) || defined(MCU_L476)
 static dtSPI_I2S *const SPI1 = (dtSPI_I2S*)(0x40013000);
 static dtSpiData SPI1Data;
@@ -431,7 +309,6 @@ void ISPI_Init(dtSpiConf Config)
             DmaCfg.Mem0Ptr          = Spi1DmaRxBuffer;
             DmaCfg.RequestChannel   = SPI_1_DMA_RX_REQ_CH;
             IDMA_Config(&DmaCfg, SPI1_DmaIrqHandler);
-            NVIC_EnableIRQ(SPI_x_DMA_IRQ(1));
             break;
 #endif
 #if SPI_2 == MODULE_ON
@@ -450,7 +327,6 @@ void ISPI_Init(dtSpiConf Config)
             DmaCfg.Mem0Ptr          = Spi1DmaRxBuffer;
             DmaCfg.RequestChannel   = SPI_2_DMA_RX_REQ_CH;
             IDMA_Config(&DmaCfg, SPI2_DmaIrqHandler);
-            NVIC_EnableIRQ(SPI_x_DMA_IRQ(2));
             break;
 #endif
 #if SPI_3 == MODULE_ON
@@ -469,7 +345,6 @@ void ISPI_Init(dtSpiConf Config)
             DmaCfg.Mem0Ptr          = Spi3DmaRxBuffer;
             DmaCfg.RequestChannel   = SPI_3_DMA_RX_REQ_CH;
             IDMA_Config(&DmaCfg, SPI3_DmaIrqHandler);
-            NVIC_EnableIRQ(SPI_x_DMA_IRQ(3));
             break;
 #endif
 #if SPI_4 == MODULE_ON
@@ -488,7 +363,6 @@ void ISPI_Init(dtSpiConf Config)
             DmaCfg.Mem0Ptr          = Spi4DmaRxBuffer;
             DmaCfg.RequestChannel   = SPI_4_DMA_RX_REQ_CH;
             IDMA_Config(&DmaCfg, SPI4_DmaIrqHandler);
-            NVIC_EnableIRQ(SPI_x_DMA_IRQ(4));
             break;
 #endif
         default:
