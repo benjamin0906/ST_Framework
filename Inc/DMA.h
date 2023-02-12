@@ -11,8 +11,8 @@
 #include "types.h"
 #include "DMA_ExtTypes.h"
 
-#define DMA_1                       0
-#define DMA_2                       1
+#define DMA1                        0
+#define DMA2                        1
 
 #define DmaStream_0                 0
 #define DmaStream_1                 1
@@ -22,6 +22,15 @@
 #define DmaStream_5                 5
 #define DmaStream_6                 6
 #define DmaStream_7                 7
+
+#define Stream0                 0
+#define Stream1                 1
+#define Stream2                 2
+#define Stream3                 3
+#define Stream4                 4
+#define Stream5                 5
+#define Stream6                 6
+#define Stream7                 7
 
 typedef enum
 {

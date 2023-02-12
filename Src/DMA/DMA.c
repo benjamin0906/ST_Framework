@@ -67,7 +67,7 @@ void DMA_Set(dtDMAInstance Instance, dtChannel Ch, uint32* MemAddr, uint32* Peri
 			DMA_IntFunc[Instance][Ch] = IntFunc;
 			uint8 IntPriority = options >> DMA_INT_PRIO_FIELD;
 			dtIRQs IRQ = 0;
-			if(Instance == DMA_1)
+			if(Instance == DMA1)
 			{
 				switch(Ch)
 				{
