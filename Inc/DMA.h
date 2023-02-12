@@ -119,7 +119,7 @@ typedef struct
 
 extern void IDMA_Config(const dtDmaConfig *const Config, void (*IrqHandler)(uint8 Flags, uint32 NumOfData));
 extern void DMA_Start(dtDMAInstance Instance, dtDmaStream DmaChannel, uint16 Amount);
-extern void DMA_StartWithNew(dtDMAInstance Instance, dtDmaStream DmaChannel, void *Peripheral_Src, void *Memory_Dst);
+extern void DMA_StartWithNew(dtDMAInstance Instance, dtDmaStream DmaChannel, uint16 Amount, void *Peripheral_Src, void *Memory_Dst);
 extern void DMA_Stop(dtDMAInstance Instance, dtDmaStream DmaChannel);
 
 #endif /* ST_FRAMEWORK_SRC_DMA_DMA_H_ */

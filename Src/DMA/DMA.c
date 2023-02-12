@@ -37,7 +37,7 @@ static void (*DMA_IntFunc[2][8])(uint8 Flags, uint32 Cntr);
 void IDMA_Config(const dtDmaConfig *const Config, void (*IrqHandler)(uint8 Flags, uint32 NumOfData));
 void DMA_Set(dtDMAInstance Instance, dtDmaStream DmaChannel, uint32* MemAddr, uint32* PeripheralAddr, dtDMA_S0CR Config, uint8 IntPrio, void(IntFunc)(void));
 void DMA_Start(dtDMAInstance Instance, dtDmaStream DmaChannel, uint16 Amount);
-void DMA_StartWithNew(dtDMAInstance Instance, dtDmaStream DmaChannel, void *Peripheral_Src, void *Memory_Dst);
+void DMA_StartWithNew(dtDMAInstance Instance, dtDmaStream DmaChannel, uint16 Amount, void *Peripheral_Src, void *Memory_Dst);
 void DMA_Stop(dtDMAInstance Instance, dtDmaStream DmaChannel);
 uint8 DMA_GetStatus(dtDmaStream Ch);
 #endif
@@ -339,11 +339,12 @@ void DMA_Start(dtDMAInstance Instance, dtDmaStream DmaChannel, uint16 Amount)
     ENABLE();
 }
 
-void DMA_StartWithNew(dtDMAInstance Instance, dtDmaStream DmaChannel, void *Peripheral_Src, void *Memory_Dst)
+void DMA_StartWithNew(dtDMAInstance Instance, dtDmaStream DmaChannel, uint16 Amount, void *Peripheral_Src, void *Memory_Dst)
 {
     DISABLE();
     DMA[Instance]->CH[DmaChannel].PAR = Peripheral_Src;
     DMA[Instance]->CH[DmaChannel].MAR0 = Memory_Dst;
+    DMA[Instance]->CH[DmaChannel].S0NDTR.Word = Amount;
     switch(DmaChannel)
     {
         case DmaStream_0:
