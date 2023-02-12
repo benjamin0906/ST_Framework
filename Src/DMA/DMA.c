@@ -37,6 +37,7 @@ static void (*DMA_IntFunc[2][8])(uint8 Flags, uint32 Cntr);
 void IDMA_Config(const dtDmaConfig *const Config, void (*IrqHandler)(uint8 Flags, uint32 NumOfData));
 void DMA_Set(dtDMAInstance Instance, dtDmaStream DmaChannel, uint32* MemAddr, uint32* PeripheralAddr, dtDMA_S0CR Config, uint8 IntPrio, void(IntFunc)(void));
 void DMA_Start(dtDMAInstance Instance, dtDmaStream DmaChannel, uint16 Amount);
+void DMA_StartWithNew(dtDMAInstance Instance, dtDmaStream DmaChannel, void *Peripheral_Src, void *Memory_Dst);
 void DMA_Stop(dtDMAInstance Instance, dtDmaStream DmaChannel);
 uint8 DMA_GetStatus(dtDmaStream Ch);
 #endif
@@ -337,6 +338,42 @@ void DMA_Start(dtDMAInstance Instance, dtDmaStream DmaChannel, uint16 Amount)
     DMA[Instance]->CH[DmaChannel].S0NDTR.Word = Amount;
     ENABLE();
 }
+
+void DMA_StartWithNew(dtDMAInstance Instance, dtDmaStream DmaChannel, void *Peripheral_Src, void *Memory_Dst)
+{
+    DISABLE();
+    DMA[Instance]->CH[DmaChannel].PAR = Peripheral_Src;
+    DMA[Instance]->CH[DmaChannel].MAR0 = Memory_Dst;
+    switch(DmaChannel)
+    {
+        case DmaStream_0:
+            DMA[Instance]->LIFCR.Word = (0x3D << 0);
+            break;
+        case DmaStream_1:
+            DMA[Instance]->LIFCR.Word = (0x3D << 6);
+            break;
+        case DmaStream_2:
+            DMA[Instance]->LIFCR.Word = (0x3D << 16);
+            break;
+        case DmaStream_3:
+            DMA[Instance]->LIFCR.Word = (0x3D << 22);
+            break;
+        case DmaStream_4:
+            DMA[Instance]->HIFCR.Word = (0x3D << 0);
+            break;
+        case DmaStream_5:
+            DMA[Instance]->HIFCR.Word = (0x3D << 6);
+            break;
+        case DmaStream_6:
+            DMA[Instance]->HIFCR.Word = (0x3D << 16);
+            break;
+        case DmaStream_7:
+            DMA[Instance]->HIFCR.Word = (0x3D << 22);
+            break;
+    }
+    ENABLE();
+}
+
 #endif
 
 #if defined(MCU_L476)
