@@ -378,7 +378,8 @@ void DMA_StartWithNew(dtDMAInstance Instance, dtDmaStream DmaChannel, uint16 Amo
 
 uint8 IDMA_IsFree(dtDMAInstance Instance, dtDmaStream DmaChannel)
 {
-    return DMA[Instance]->CH[DmaChannel].S0CR.Field.EN;
+    dtDMA_S0CR temp = DMA[Instance]->CH[DmaChannel].S0CR;
+    return temp.Field.EN == 0;
 }
 #endif
 

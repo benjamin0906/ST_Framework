@@ -39,6 +39,7 @@ typedef enum
 {
 	SpiIdle,
 	SpiInProgress,
+	SpiDataAvailable,
 } dtSpStatus;
 
 typedef struct
@@ -56,7 +57,6 @@ extern void ISPI_Init(dtSpiConf Config);
 extern void ISPI_Send(uint8 Instance, uint8 *TxBuff, uint16 TxLength);
 extern dtSpStatus ISPI_GetData(uint8 Instance, uint8 *RxBuff, uint16 RxLength);
 extern void SPI_Init(dtSpiConf Config);
-extern void SPI_Send(uint8 Instance, uint8 *TxBuff, uint16 TxLength, uint8 *RxBuff, uint16 RxLength, uint8 Offset);
-extern dtSpStatus SPI_Status(uint8 Instance);
+extern dtSpStatus ISPI_GetStatus(uint8 Instance);
 
 #endif /* ST_FRAMEWORK_SRC_SPI_SPI_H_ */

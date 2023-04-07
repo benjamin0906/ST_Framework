@@ -114,7 +114,7 @@ void SPI4_DmaIrqHandler(uint8 Flags, uint32 NumofData);
 #endif
 
 void ISPI_Init(dtSpiConf Config);
-void SPI_Send(uint8 Instance, uint8 *TxBuff, uint16 TxLength, uint8 *RxBuff, uint16 RxLength, uint8 Offset);
+dtSpStatus ISPI_GetStatus(uint8 Instance);
 dtSpiData* GetDataOfInstance(uint8 instance);
 dtSPI_I2S* GetSpiInstance(uint8 instance);
 
@@ -415,8 +415,9 @@ void ISPI_Send(uint8 Instance, uint8 *TxBuff, uint16 TxLength)
 
 dtSpStatus ISPI_GetData(uint8 Instance, uint8 *RxBuff, uint16 RxLength)
 {
-    if((RxBuff != 0) && (GetDataOfInstance(Instance)->Status == SpiIdle))
+    if((RxBuff != 0) && (GetDataOfInstance(Instance)->Status == SpiDataAvailable))
     {
+        GetDataOfInstance(Instance)->Status = SpiIdle;
         switch(Instance)
         {
     #if SPI_1 == MODULE_ON
@@ -446,33 +447,10 @@ dtSpStatus ISPI_GetData(uint8 Instance, uint8 *RxBuff, uint16 RxLength)
     return GetDataOfInstance(Instance)->Status;
 }
 
-/*void SPI_Send(uint8 Instance, uint8 *TxBuff, uint16 TxLength, uint8 *RxBuff, uint16 RxLength, uint8 Offset)
-{
-	GPIO_Set(GetDataOfInstance(Instance)->ChipSelectPin, Clear);
-	dtSpiData *DataInstance = GetDataOfInstance(Instance);
-	DataInstance->Status 			= SpiInProgress;
-	DataInstance->Offset 			= Offset;
-	DataInstance->TxBuffPointer 	= TxBuff;
-	DataInstance->RxBuffPointer 	= RxBuff;
-	DataInstance->TxLength			= TxLength;
-	DataInstance->RxLength			= RxLength;
-	DataInstance->Indexer			= 0;
-	if((DataInstance->TxBuffPointer != 0) && (DataInstance->TxLength != 0))
-	{
-		GetSpiInstance(Instance)->DR.DR8 = *DataInstance->TxBuffPointer;
-		DataInstance->TxBuffPointer++;
-		DataInstance->TxLength--;
-	}
-	else
-	{
-		GetSpiInstance(Instance)->DR.DR8 = 0;
-	}
-}*/
-
-/*dtSpStatus SPI_Status(uint8 Instance)
+dtSpStatus ISPI_GetStatus(uint8 Instance)
 {
 	return GetDataOfInstance(Instance)->Status;
-}*/
+}
 
 #if defined(MCU_F410) || defined(MCU_F446) ||  defined(MCU_G071) || defined(MCU_F415)
 void SPI1_IRQHandler(void)
@@ -511,11 +489,13 @@ void SPI1_IRQHandler(void)
 
 #if SPI_USAGE_MODE == DMA_MODE
 
+uint32 prev;
+
 #if SPI_1 == MODULE_ON
 void SPI1_DmaIrqHandler(uint8 Flags, uint32 NumofData)
 {
     GPIO_Set(GetDataOfInstance(1)->ChipSelectPin, Set);
-    GetDataOfInstance(1)->Status = SpiIdle;
+    GetDataOfInstance(1)->Status = SpiDataAvailable;
 }
 #endif
 
@@ -530,7 +510,7 @@ void SPI2_DmaIrqHandler(uint8 Flags, uint32 NumofData)
 void SPI3_DmaIrqHandler(uint8 Flags, uint32 NumofData)
 {
     GPIO_Set(GetDataOfInstance(3)->ChipSelectPin, Set);
-    GetDataOfInstance(3)->Status = SpiIdle;
+    GetDataOfInstance(3)->Status = SpiDataAvailable;
 }
 #endif
 
