@@ -41,4 +41,10 @@ typedef struct
 	uint32 DayUnits		:4;
 } dtDate;
 
+typedef enum
+{
+    E_OK,
+    E_NOT_OK
+} Std_ReturnType;
+
 #endif /* TYPES_H_ */

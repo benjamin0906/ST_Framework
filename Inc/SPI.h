@@ -55,7 +55,7 @@ typedef struct
 
 extern void ISPI_Init(dtSpiConf Config);
 extern void ISPI_Send(uint8 Instance, uint8 *TxBuff, uint16 TxLength);
-extern dtSpStatus ISPI_GetData(uint8 Instance, uint8 *RxBuff, uint16 RxLength);
+extern Std_ReturnType ISPI_GetData(uint8 Instance, uint8 *RxBuff, uint16 RxLength);
 extern void SPI_Init(dtSpiConf Config);
 extern dtSpStatus ISPI_GetStatus(uint8 Instance);
 

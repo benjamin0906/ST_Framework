@@ -413,11 +413,13 @@ void ISPI_Send(uint8 Instance, uint8 *TxBuff, uint16 TxLength)
     }
 }
 
-dtSpStatus ISPI_GetData(uint8 Instance, uint8 *RxBuff, uint16 RxLength)
+Std_ReturnType ISPI_GetData(uint8 Instance, uint8 *RxBuff, uint16 RxLength)
 {
+    Std_ReturnType ret = E_NOT_OK;
     if((RxBuff != 0) && (GetDataOfInstance(Instance)->Status == SpiDataAvailable))
     {
         GetDataOfInstance(Instance)->Status = SpiIdle;
+        ret = E_OK;
         switch(Instance)
         {
     #if SPI_1 == MODULE_ON
@@ -441,10 +443,11 @@ dtSpStatus ISPI_GetData(uint8 Instance, uint8 *RxBuff, uint16 RxLength)
                 break;
     #endif
             default:
+                ret = E_NOT_OK;
                 break;
         }
     }
-    return GetDataOfInstance(Instance)->Status;
+    return ret;
 }
 
 dtSpStatus ISPI_GetStatus(uint8 Instance)
