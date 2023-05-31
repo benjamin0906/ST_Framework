@@ -44,7 +44,9 @@ typedef struct
 typedef enum
 {
     E_OK,
-    E_NOT_OK
+    E_NOT_OK,
+    E_NULL_PTR,
+    E_NO_DATA
 } Std_ReturnType;
 
 #endif /* TYPES_H_ */
