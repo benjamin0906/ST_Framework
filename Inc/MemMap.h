@@ -139,9 +139,7 @@ typedef struct
     uint32  AIRCR;  //0x0C
     dtSCR   SCR;    //0x10
     uint32  CCR;    //0x14
-    uint32  SHPR1;  //0x18
-    uint32  SHPR2;  //0x1C
-    uint32  SHPR3;  //0x20
+    uint32  SHPR[3];//0x18..0x20
 } dtSCB;
 
 extern dtISER *const ISER;
