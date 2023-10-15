@@ -6,20 +6,12 @@
  */
 
 #include "Core_Types.h"
+#include "MemMap.h"
 
-dtSCB *const SCB = (dtSCB*)0xE000ED00;
-
-inline void Core_SleepDeepSet(void);
-inline void Core_SleepDeepClear(void);
-
-void Core_SleepDeepSet(void)
-{
-	dtSCR TempSCR = SCB->SCR;
-	TempSCR.Fields.SLEEPDEEP = 1;
-	SCB->SCR = TempSCR;
-}
-
-void Core_SleepDeepClear(void)
-{
-	SCB->SCR.Fields.SLEEPDEEP = 0;
-}
+__asm(  ".globl CoreI_SetPsp            \n"
+        ".p2align 2                     \n"
+        ".type CoreI_SetPsp, %function  \n"
+        "CoreI_SetPsp:                  \n"
+        "msr.w PSP, r0                  \n"
+        "isb                            \n"
+        "bx lr                          \n");

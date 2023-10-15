@@ -12,6 +12,15 @@
 
 typedef enum
 {
+#if defined(MCU_F446) || defined(MCU_L476)
+    EXC_SVCall          = -5,
+#endif
+#if defined(MCU_F446) || defined(MCU_L476)
+    EXC_PendSV          = -2,
+#endif
+#if defined(MCU_F446) || defined(MCU_L476)
+    EXC_SysTick         = -1,
+#endif
 #if defined(MCU_F446) || defined(MCU_G070) || defined(MCU_F410) || defined(MCU_L433) || defined(MCU_G071) || defined(MCU_F415) || defined(MCU_L476)
 	IRQ_WWDG 			= 0,
 #endif
