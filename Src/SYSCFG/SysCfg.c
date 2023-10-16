@@ -7,6 +7,7 @@
 #include "SysCfg_Types.h"
 #include "SysCfg.h"
 
+#if defined(MCU_L433)
 static dtSysCfg* const SysCfg = (dtSysCfg*)(0x40013800);
 
 void ISysCfg_SetExti(uint8 ExtiNum, dtSysCfgExtiConf ExtiConf);
@@ -31,3 +32,4 @@ void ISysCfg_SetExti(uint8 ExtiNum, dtSysCfgExtiConf ExtiConf)
             break;
     }
 }
+#endif
