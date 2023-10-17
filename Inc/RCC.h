@@ -446,7 +446,7 @@ typedef enum
 {
 	APB1_Peripheral,
 	APB1_Timer,
-#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_F415)
+#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_F415) || defined(MCU_L476)
 	APB2_Peripheral,
 	APB2_Timer,
 #endif

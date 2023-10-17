@@ -33,7 +33,7 @@ static dtRCC *const RCC = (dtRCC*)&TestRCC;
 #define PLL_INPUT_FREQ_MAX	2000000
 #define PLL_VCO_FREQ_MIN	100000000
 #define PLL_VCO_FREQ_MAX	432000000
-#define INTERNAL_CLOCK_FREQ	16000000
+#define HSI_CLOCK_FREQUENCY	16000000
 
 #elif defined(MCU_F415)
 #define DIVIDER_M_MIN	2
@@ -59,7 +59,7 @@ static dtRCC *const RCC = (dtRCC*)&TestRCC;
 #define PLL_INPUT_FREQ_MAX	16000000
 #define PLL_VCO_FREQ_MIN	64000000
 #define PLL_VCO_FREQ_MAX	344000000
-#define INTERNAL_CLOCK_FREQ	16000000
+#define HSI_CLOCK_FREQUENCY	16000000
 
 #elif defined(MCU_G070) || defined(MCU_G071)
 #define DIVIDER_M_MIN	1
@@ -87,12 +87,24 @@ static dtRCC *const RCC = (dtRCC*)&TestRCC;
 #define INTERNAL_CLOCK_FREQ	16000000
 #endif
 
+#ifndef EXTERNAL_OSC_FREQUENCY
+#define EXTERNAL_OSC_FREQUENCY 0
+#endif
+
+#if defined(MCU_L476)
+const uint16 MsiFrequencies100kHz[12] = {1, 2, 4, 8, 10, 20, 40, 80, 160, 240, 320, 480};
+const uint8 AhbPrescalerShiftingValue[8] = {1, 2, 3, 4, 6, 7, 8, 9};
+const uint8 Apb1PrescalerShiftValues[4] = {1, 2, 3, 4};
+const uint8 Apb2PrescalerShiftValues[4] = {1, 2, 3, 4};
+#endif
+
 uint32 ClockFreq = 2000000;
 
 void RCC_ClockEnable(dtRCCClock Clock, dtRCCClockSets Value);
 void RCC_ClockInit(void);
 uint32 RCC_GetClock(dtBus Bus);
 void RCC_RTCDomainConfig(dtRCCRtcConfig Config);
+static inline uint32 RCC_PllFreq(void);
 
 void RCC_ClockEnable(dtRCCClock Clock, dtRCCClockSets Value)
 {
@@ -134,7 +146,7 @@ void RCC_ClockSet(dtRccInitConfig Config)
 	uint16 DividerR;
 #endif
 	uint32 CalculatedClock;
-	uint32 BaseFreq = INTERNAL_CLOCK_FREQ;
+	uint32 BaseFreq = HSI_CLOCK_FREQUENCY;
 	if(Config.CrystalOrInternal == Crystal) BaseFreq = Config.CrystalClockFreq;
 
 	for(DividerM = DIVIDER_M_MIN; (DividerM <= DIVIDER_M_MAX) && (Result == 0); DividerM++)
@@ -286,6 +298,30 @@ void RCC_ClockSet(dtRccInitConfig Config)
 	}
 }
 
+static inline uint32 RCC_PllFreq(void)
+{
+    uint32 PllOutput = 0;
+    switch(RCC->PLLCFGR.Fields.PLLSRC)
+    {
+        case 0x0:
+            /* No clock */
+            break;
+        case 0x1:
+            PllOutput = MsiFrequencies100kHz[RCC->CR.Fields.MSIRANGE]*100000;
+            break;
+        case 0x2:
+            PllOutput = HSI_CLOCK_FREQUENCY;
+            break;
+        case 0x3:
+            PllOutput = EXTERNAL_OSC_FREQUENCY;
+            break;
+    }
+    PllOutput*=RCC->PLLCFGR.Fields.PLLN;
+    PllOutput /= RCC->PLLCFGR.Fields.PLLM+1;
+    PllOutput /= 2+ (RCC->PLLCFGR.Fields.PLLR << 2);
+    return PllOutput;
+}
+
 uint32 RCC_GetClock(dtBus Bus)
 {
 	uint32 ret = 0;
@@ -300,42 +336,68 @@ uint32 RCC_GetClock(dtBus Bus)
 	uint32 APB2Clock;
 #endif
 
-	if(RCC->CFGR.Fields.HPRE >= 0x8)
+	uint32 SysClock;
+	uint32 AhbClock;
+	uint32 Apb1Clock;
+	uint32 Apb2Clock;
+	switch(RCC->CFGR.Fields.SWS)
 	{
-		AHBPresc = 1 << ((RCC->CFGR.Fields.HPRE & 0x7) + 1);
-		if(RCC->CFGR.Fields.HPRE >= 0xC) AHBPresc <<= 1;
+	    case 0x0:
+#if defined(MCU_L476)
+	        /* MSI is selected */
+	        SysClock = MsiFrequencies100kHz[RCC->CR.Fields.MSIRANGE]*100000;
+#endif
+	        break;
+	    case 0x1:
+#if defined(MCU_L476)
+	        /* HSI16 is selected */
+	        SysClock = HSI_CLOCK_FREQUENCY;
+#endif
+	        break;
+	    case 0x2:
+#if defined(MCU_L476)
+	        /* HSE is selected */
+	        SysClock = EXTERNAL_OSC_FREQUENCY;
+#endif
+	        break;
+	    case 0x3:
+	    {
+#if defined(MCU_L476)
+	        /* PLL is selected */
+	        SysClock = RCC_PllFreq();
+#endif
+	    }
+	        break;
 	}
-#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_F415)
-	if(RCC->CFGR.Fields.PPRE2 >= 0x4) APB2Presc = 1 << ((RCC->CFGR.Fields.PPRE2 & 0x3) + 1);
-	if(RCC->CFGR.Fields.PPRE1 >= 0x4) APB1Presc = 1 << ((RCC->CFGR.Fields.PPRE1 & 0x3) + 1);
-#elif defined(MCU_G070) || defined(MCU_G071)
-	if(RCC->CFGR.Fields.PPRE >= 0x4) APB1Presc = 1 << ((RCC->CFGR.Fields.PPRE & 0x3) + 1);
-#endif
-	AHBClock = ClockFreq/AHBPresc;
-	APB1Clock = AHBClock/APB1Presc;
-#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_F415)
-	APB2Clock = AHBClock/APB2Presc;
-#endif
 
-	if(Bus == APB1_Timer)
+	if((RCC->CFGR.Fields.HPRE & 0x8) == 0) AhbClock = SysClock;
+	else AhbClock = SysClock >> AhbPrescalerShiftingValue[RCC->CFGR.Fields.HPRE & 0x8];
+	if((RCC->CFGR.Fields.PPRE1 & 0x4) == 0) Apb1Clock = AhbClock;
+	else Apb1Clock = AhbClock >> Apb1PrescalerShiftValues[RCC->CFGR.Fields.PPRE1 & 0x4];
+    if((RCC->CFGR.Fields.PPRE2 & 0x4) == 0) Apb2Clock = AhbClock;
+    else Apb2Clock = AhbClock >> Apb1PrescalerShiftValues[RCC->CFGR.Fields.PPRE2 & 0x4];
+
+	switch(Bus)
 	{
-		ret = APB1Clock;
-		if(APB1Presc != 1) ret *= 2;
+	    case Core:
+	    case AHB:
+	        return AhbClock;
+	        break;
+	    case APB1_Peripheral:
+	        return Apb1Clock;
+	        break;
+	    case APB1_Timer:
+	        return (AhbClock == Apb1Clock) ? Apb1Clock : Apb1Clock*2;
+	        break;
+	    case APB2_Peripheral:
+            return Apb2Clock;
+	        break;
+	    case APB2_Timer:
+	        return (AhbClock == Apb2Clock) ? Apb2Clock : Apb2Clock*2;
+	        break;
+	    default:
+	        return 0xffffffff;
 	}
-#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_F415)
-	else if(Bus == APB2_Timer)
-	{
-		ret = APB2Clock;
-		if(APB2Presc != 1) ret *= 2;
-	}
-#endif
-	else if(Bus == APB1_Peripheral) ret = APB1Clock;
-#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_F415)
-	else if(Bus == APB2_Peripheral) ret = APB2Clock;
-#endif
-	else if(Bus == AHB) ret = AHBClock;
-	else if(Bus == Core) ret = ClockFreq;
-	return ret;
 }
 
 void RCC_RTCDomainConfig(dtRCCRtcConfig Config)
