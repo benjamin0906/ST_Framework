@@ -324,18 +324,6 @@ static inline uint32 RCC_PllFreq(void)
 
 uint32 RCC_GetClock(dtBus Bus)
 {
-	uint32 ret = 0;
-	uint16 AHBPresc = 1;
-	uint8 APB1Presc = 1;
-#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_F415)
-	uint8 APB2Presc = 1;
-#endif
-	uint32 AHBClock;
-	uint32 APB1Clock;
-#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_F415)
-	uint32 APB2Clock;
-#endif
-
 	uint32 SysClock;
 	uint32 AhbClock;
 	uint32 Apb1Clock;
