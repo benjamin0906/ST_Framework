@@ -11,7 +11,7 @@
 
 void NVIC_EnableIRQ(dtIRQs IRQ);
 void NVIC_DisableIRQ(dtIRQs IRQ);
-void NVIC_SetPriority(dtIRQs IRQ, uint8 IrqLevel);
+void NVIC_SetPriority(dtIRQs IRQ, uint8 Priority);
 
 void NVIC_EnableIRQ(dtIRQs IRQ)
 {
@@ -27,23 +27,19 @@ void NVIC_DisableIRQ(dtIRQs IRQ)
     ICER->ICER[IserIndex] |= 1<<IserBit;
 }
 
-void NVIC_SetPriority(dtIRQs IRQ, uint8 IrqLevel)
+void NVIC_SetPriority(dtIRQs IRQ, uint8 Priority)
 {
     if(IRQ < 0)
     {
-        switch(IRQ)
-        {
-            case EXC_SysTick:
-                SCB->SHPR3 &= 0x00FFFFFF;
-                SCB->SHPR3 |= (IrqLevel << 24);
-                break;
-            case EXC_PendSV:
-                SCB->SHPR3 &= 0xFF00FFFF;
-                SCB->SHPR3 |= (IrqLevel << 16);
-                break;
-            case EXC_SVCall:
-                break;
-        }
+        IRQ += 16;
+        /* Zeroing the section before write,
+         * the index shall have one less value because the first 4 exception
+         * cannot be modified */
+        SCB->SHPR[(IRQ>>2) -1] &= (uint32)~(0xFF <<  (8 * (IRQ & 0x3)));
+        SCB->SHPR[(IRQ>>2) -1] |= (uint32)( ( ( Priority << (8 - NVIC_PRIO_BITS) ) & 0xFF) <<  (8 * (IRQ & 0x3)));
     }
-    else IPR->PRI[IRQ] = IrqLevel;
+    else
+    {
+        IPR->PRI[IRQ] = (uint8)( ( ( Priority << (8 - NVIC_PRIO_BITS) ) & 0xFF) <<  (8 * (IRQ & 0x3)));
+    }
 }
