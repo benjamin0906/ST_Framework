@@ -122,6 +122,22 @@ typedef union
     uint32 Word;
     struct
     {
+        uint32 VECTRESET    :1;
+        uint32 VECTCLRACTIVE:1;
+        uint32 SYSRESETREQ  :1;
+        uint32              :5;
+        uint32 PRIGROUP     :3;
+        uint32              :4;
+        uint32 ENDIANNESS   :1;
+        uint32 VECTKEY      :16;
+    } Fields;
+} dtAIRCR;
+
+typedef union
+{
+    uint32 Word;
+    struct
+    {
         uint32              :1;
         uint32 SLEEPONEXIT  :1;
         uint32 SLEEPDEEP    :1;
@@ -136,7 +152,7 @@ typedef struct
     uint32  CPUID;  //0x00
     dtICSR  ICSR;   //0x04
     uint32 :32;     //0x08
-    uint32  AIRCR;  //0x0C
+    dtAIRCR AIRCR;  //0x0C
     dtSCR   SCR;    //0x10
     uint32  CCR;    //0x14
     uint32  SHPR[3];//0x18..0x20
