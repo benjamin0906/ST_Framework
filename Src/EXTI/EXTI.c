@@ -87,9 +87,6 @@ void EXTI_ClearPending(dtEXTILines Line)
 }
 
 #elif defined(MCU_F446)
-
-#endif
-
 static dtEXTI *const EXTI = (dtEXTI*) {0x40013C00};
 static void (*IrqHandlers[23])(void);
 
@@ -177,4 +174,7 @@ void RTC_WKUP_IRQHandler(void)
 {
 
 }
+#endif
+
+
 
