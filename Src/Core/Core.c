@@ -15,3 +15,12 @@ __asm(  ".globl CoreI_SetPsp            \n"
         "msr.w PSP, r0                  \n"
         "isb                            \n"
         "bx lr                          \n");
+
+void Core_SystemReset(void)
+{
+    dtAIRCR temp = SCB->AIRCR;
+    temp.Fields.SYSRESETREQ = 1;
+    temp.Fields.VECTKEY = 0x05FA;
+    SCB->AIRCR = temp;
+    while(1);
+}

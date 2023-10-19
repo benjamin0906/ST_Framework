@@ -46,13 +46,7 @@ asm(    "push {r0}              \n"             \
         "pop {r0}"\
 );
 
-#define CORE_RESET()\
-        do\
-        {\
-            dtAIRCR temp = SCB->AIRCR;\
-            temp.Fields.SYSRESETREQ = 1;\
-            SCB->AIRCR = temp;\
-        } while(0);
+void Core_SystemReset(void);
 
 extern void CoreI_SetPsp(uint32*);
 
