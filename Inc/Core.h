@@ -8,7 +8,8 @@
 #ifndef INC_CORE_H_
 #define INC_CORE_H_
 
-#include "Core_Types.h"
+#include "MemMap.h"
+#include "FieldHelper.h"
 
 #define UNFOLD(x)  #x
 #define _UNFOLD(a) UNFOLD(a)
