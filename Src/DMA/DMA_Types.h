@@ -189,7 +189,7 @@ typedef struct
     dtDMA_Channelx  CH[8];
 } dtDMAx;
 
-#elif
+#elif defined(MCU_L476)
 typedef union
 {
 	struct
@@ -330,13 +330,13 @@ typedef struct
 	uint32 CPAR;
 	uint32 CMAR;
 	uint32 :32;
-} dtDesc;
+} dtDMA_ChannelDesc;
 
 typedef struct
 {
 	dtISR ISR;
 	dtIFCR ICFR;
-	dtDesc CH[7];
+	dtDMA_ChannelDesc CH[7];
 	uint32 :32;//0x94
 	uint32 :32;//0x98
 	uint32 :32;//0x9C

@@ -32,6 +32,13 @@
 #define Stream6                 6
 #define Stream7                 7
 
+#if defined(MCU_F446)
+#define MEMPTR_COUNT 2
+#elif defined(MCU_L476)
+#define MEMPTR_COUNT 1
+#define MEM2MEM_OPTION (STD_ON)
+#endif
+
 typedef enum
 {
 	DMA_Instance_1 = 0,
@@ -54,8 +61,12 @@ typedef struct
 {
     dtDMAInstance   Instance;
     dtDmaStream     Stream;
+#if MEMPTR_COUNT == 1
+    void*           MemPtr;
+#elif MEMPTR_COUNT == 2
     void*           Mem0Ptr;
     void*           Mem1Ptr;
+#endif
     void*           PerPtr;
     uint8           RequestChannel      :3;
     uint8           Priority            :2;

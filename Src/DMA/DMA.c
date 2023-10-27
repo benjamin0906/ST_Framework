@@ -14,6 +14,7 @@ static dtDMAx *const DMA[2] = {(dtDMAx*)(0x40020000),(dtDMAx*)(0x40020400)};
 static dtDMAx *const DMA[2] = {(dtDMAx*)(0x40026000),(dtDMAx*)(0x40026400)};
 #endif
 
+#if defined(MCU_F446)
 #define DISABLE()   do                                                  \
                     {                                                   \
                         dtDMA_S0CR Temp = DMA[Instance]->CH[DmaChannel].S0CR;   \
@@ -29,6 +30,23 @@ static dtDMAx *const DMA[2] = {(dtDMAx*)(0x40026000),(dtDMAx*)(0x40026400)};
                         DMA[Instance]->CH[DmaChannel].S0CR = Temp;              \
                     }                                                   \
                     while(0)
+#elif defined(MCU_L476)
+#define DISABLE()   do                                                  \
+                    {                                                   \
+                        dtDMA_CCRx Temp = DMA[Instance]->CH[DmaChannel].CCR;   \
+                        Temp.Field.EN = 0;                              \
+                        DMA[Instance]->CH[DmaChannel].CCR = Temp;              \
+                    }                                                   \
+                    while(0)
+
+#define ENABLE()    do                                                  \
+                    {                                                   \
+                        dtDMA_CCRx Temp = DMA[Instance]->CH[DmaChannel].CCR;   \
+                        Temp.Field.EN = 1;                              \
+                        DMA[Instance]->CH[DmaChannel].CCR = Temp;              \
+                    }                                                   \
+                    while(0)
+#endif
 #define DMA_GET_OPTION(optionVar, option)   ((optionVar&DMA_##option##_MASK)>>DMA_##option##_PLACE)
 
 #if defined(MCU_F446) || defined(MCU_L476)
@@ -43,7 +61,7 @@ void DMA_Stop(dtDMAInstance Instance, dtDmaStream DmaChannel);
 uint8 DMA_GetStatus(dtDmaStream Ch);
 #endif
 
-#if defined(MCU_L476)
+#if defined(MCU_L476) && 0
 
 void DMA_Set(dtDMAInstance Instance, dtChannel Ch, uint32* MemAddr, uint32* PeripheralAddr, uint32 options, void(IntFunc)(void))
 {
@@ -258,10 +276,11 @@ void DMA_Set(dtDMAInstance Instance, dtChannel Ch, uint32* MemAddr, uint32* Peri
 	DMA[Instance]->CSELR.Word &= ~(0xF<<(Ch<<2));
 	DMA[Instance]->CSELR.Word |= (options & 0xF)<<(Ch<<2);
 }
+#endif
 
-#elif defined(MCU_F446)
 void IDMA_Config(const dtDmaConfig *const Config, void (*IrqHandler)(uint8 Flags, uint32 NumOfData))
 {
+#if defined(MCU_F446)
     dtDMA_Channelx *streamPtr = &DMA[Config->Instance]->CH[Config->Stream];
     dtDMA_S0CR      tCr = streamPtr->S0CR;
     if(tCr.Field.EN == 0)
@@ -294,21 +313,45 @@ void IDMA_Config(const dtDmaConfig *const Config, void (*IrqHandler)(uint8 Flags
 
         streamPtr->S0CR = tStreamConfReg;
     }
-}
-#endif
+#elif defined(MCU_L476)
+    dtDMA_ChannelDesc *descriptorPtr = &DMA[Config->Instance]->CH[Config->Stream];
+    dtDMA_CCRx streamCfgReg = descriptorPtr->CCR;
 
-#if defined(MCU_L476)
-void DMA_Start(dtDMAInstance Instance, dtChannel Ch, uint16 Amount)
-{
-	dtDMA_CCRx Tccr = DMA[Instance]->CH[Ch].CCR;
-	DMA[Instance]->CH[Ch].CNDTR.Word = Amount;
-	Tccr.Field.EN = 1;
-	DMA[Instance]->CH[Ch].CCR = Tccr;
+    if(streamCfgReg.Field.EN == 0)
+    {
+        streamCfgReg.Word = 0;
+
+        /* Setting memory addresses */
+        descriptorPtr->CPAR = Config->PerPtr;
+        descriptorPtr->CMAR = Config->MemPtr;
+
+        DMA[Config->Instance]->CSELR.Word &= ~((uint32) 0xF << (Config->Stream << 2));
+        DMA[Config->Instance]->CSELR.Word |= ((uint32) Config->RequestChannel << (Config->Stream << 2));
+        streamCfgReg.Field.PL       = Config->Priority;
+        streamCfgReg.Field.MSIZE    = Config->MemoryDataSize;
+        streamCfgReg.Field.PSIZE    = Config->PeripheralDataSize;
+        streamCfgReg.Field.MINC     = Config->MemAddrInc;
+        streamCfgReg.Field.PINC     = Config->PerAddrInc;
+        streamCfgReg.Field.CIRC     = Config->CircularMode;
+        streamCfgReg.Field.DIR      = Config->TransferDirection & 1;
+        streamCfgReg.Field.MEM2MEM  = (Config->TransferDirection & 2) != 0;
+
+        /* If there is an IRQ handler the IRQ shall be enabled */
+        if(IrqHandler != 0)
+        {
+            streamCfgReg.Field.TCIE = 1;
+            DMA_IntFunc[Config->Instance][Config->Stream] = IrqHandler;
+        }
+
+        descriptorPtr->CCR = streamCfgReg;
+    }
+#endif
 }
-#elif defined(MCU_F446)
+
 void DMA_Start(dtDMAInstance Instance, dtDmaStream DmaChannel, uint16 Amount)
 {
     DISABLE();
+#if defined(MCU_F446)
     switch(DmaChannel)
     {
         case DmaStream_0:
@@ -337,12 +380,20 @@ void DMA_Start(dtDMAInstance Instance, dtDmaStream DmaChannel, uint16 Amount)
             break;
     }
     DMA[Instance]->CH[DmaChannel].S0NDTR.Word = Amount;
+#elif defined(MCU_L476)
+    /* Clearing every flag related to the current channel */
+    DMA[Instance]->ICFR.Word |= (uint32) 0xF << (DmaChannel << 2);
+
+    /* Adding the number of transactions */
+    DMA[Instance]->CH[DmaChannel].CNDTR.Word = Amount;
+#endif
     ENABLE();
 }
 
 void DMA_StartWithNew(dtDMAInstance Instance, dtDmaStream DmaChannel, uint16 Amount, void *Peripheral_Src, void *Memory_Dst)
 {
     DISABLE();
+#if defined(MCU_F446)
     DMA[Instance]->CH[DmaChannel].PAR = Peripheral_Src;
     DMA[Instance]->CH[DmaChannel].MAR0 = Memory_Dst;
     DMA[Instance]->CH[DmaChannel].S0NDTR.Word = Amount;
@@ -373,29 +424,39 @@ void DMA_StartWithNew(dtDMAInstance Instance, dtDmaStream DmaChannel, uint16 Amo
             DMA[Instance]->HIFCR.Word = (0x3D << 22);
             break;
     }
+#elif defined(MCU_L476)
+    /* Setting memory addresses */
+    DMA[Instance]->CH[DmaChannel].CPAR = Peripheral_Src;
+    DMA[Instance]->CH[DmaChannel].CMAR = Memory_Dst;
+
+    /* Adding the number of transactions */
+    DMA[Instance]->CH[DmaChannel].CNDTR.Word = Amount;
+
+    /* Clearing every flag related to the current channel */
+    DMA[Instance]->ICFR.Word |= (uint32) 0xF << (DmaChannel << 2);
+#endif
     ENABLE();
 }
 
 uint8 IDMA_IsFree(dtDMAInstance Instance, dtDmaStream DmaChannel)
 {
+#if defined(MCU_F446)
+    /* EN is cleared on end of transfer */
     dtDMA_S0CR temp = DMA[Instance]->CH[DmaChannel].S0CR;
     return temp.Field.EN == 0;
-}
+#elif defined(MCU_L476)
+    /* EN is cleared by SW or if DMA error occurs, if a transfer is finished the counter is zero */
+    dtDMA_CCRx tempCCR = DMA[Instance]->CH[DmaChannel].CCR;
+    dtCNDTRx tempCNDTR = DMA[Instance]->CH[DmaChannel].CNDTR;
+    return (tempCCR.Field.EN == 0) || (tempCNDTR.Field.NDT == 0);
 #endif
-
-#if defined(MCU_L476)
-void DMA_Stop(dtDMAInstance Instance, dtChannel Ch)
-{
-	dtDMA_CCRx Tccr = DMA[Instance]->CH[Ch].CCR;
-	Tccr.Field.EN = 0;
-	DMA[Instance]->CH[Ch].CCR = Tccr;
 }
-#elif defined(MCU_F446)
+
+
 void DMA_Stop(dtDMAInstance Instance, dtDmaStream DmaChannel)
 {
     DISABLE();
 }
-#endif
 
 
 #if defined(MCU_L476)
