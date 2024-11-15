@@ -12,9 +12,8 @@
 #include "Flash.h"
 #include "config.h"
 
-#ifndef HSI_CLOCK_FREQUENCY
-#define HSI_CLOCK_FREQUENCY 0
-#warning "HSI_CLOCK_FREQUENCY is not defined"
+#if defined(MCU_G070)
+#define HSI_CLOCK_FREQUENCY 16000000
 #endif
 
 #ifndef MODULE_TEST
@@ -104,13 +103,79 @@ const uint8 Apb1PrescalerShiftValues[4] = {1, 2, 3, 4};
 const uint8 Apb2PrescalerShiftValues[4] = {1, 2, 3, 4};
 #endif
 
-uint32 ClockFreq = 2000000;
-
 void RCC_ClockEnable(dtRCCClock Clock, dtRCCClockSets Value);
-void RCC_ClockInit(void);
 uint32 RCC_GetClock(dtBus Bus);
 void RCC_RTCDomainConfig(dtRCCRtcConfig Config);
 static inline uint32 RCC_PllFreq(void);
+void RCC_ClockSet(dtRccInitConfig Config);
+Std_ReturnType RCC_ClockTreeInit(const dtRccClockTreeCfg config);
+
+Std_ReturnType RCC_ClockTreeInit(const dtRccClockTreeCfg config)
+{
+	uint32 sysClock = 0;
+
+	/* Clock Init */
+	if(     (config.SysClockCfg == SysClock_HSE)            //if system clock is from external
+        ||  (config.PllCfg.Fields.PLLSRC == PLL_SRC_HSE)    //if pll is from external
+		||  (config.RtcClockSel == RTC_SRC_HSE32)           //if RTC is from external
+		||  (config.UsbClockSel == USB_SRC_HSE)             //if USB is from external
+		)
+	{
+		RCC->CR.Fields.HSEON = 1;
+		while(RCC->CR.Fields.HSERDY == 0);
+	}
+	else
+	{
+		RCC->CR.Fields.HSION = 1;
+		while(RCC->CR.Fields.HSIRDY == 0);
+	}
+
+	/* PLL init */
+	if(     (config.SysClockCfg == SysClock_PLL)
+        ||  (config.UsbClockSel == USB_SRC_PLLQ)
+		||  (config.AdcClockSel == ADC_SRC_PLL)
+		||  (config.I2SClockSel == I2S_SRC_PLL)
+		)
+	{
+		RCC->PLLCFGR = config.PllCfg;
+		RCC->CR.Fields.PLLON = 1;
+		while(RCC->CR.Fields.PLLRDY == 0);
+	}
+
+	switch(config.SysClockCfg)
+	{
+	case SysClock_HSI:
+		sysClock = HSI_CLOCK_FREQUENCY;
+		break;
+	case SysClock_HSE:
+#if defined(HSE_CLOCK_FREQUENCY)
+		sysClock = HSE_CLOCK_FREQUENCY
+#else
+		sysClock = 0;
+#endif
+		break;
+	case SysClock_PLL:
+		sysClock = RCC_GetClock(PllRClock);
+		break;
+	case SysClock_LSI:
+		break;
+	case SysClock_LSE:
+		break;
+	}
+
+#if defined(MCU_G070) || defined(MCU_G071)
+		if(sysClock <= 16000000) Pwr_SetVos(2);
+		else Pwr_SetVos(1);
+		Flash_SetLatency(sysClock);
+#endif
+	/* AHB init */
+	RCC->CFGR.Fields.HPRE = config.AhbPrescaler;
+	RCC->CFGR.Fields.PPRE = config.ApbPrescaler;
+
+	RCC->CCIPR.Fields.ADCSEL = config.AdcClockSel;
+	RCC->CCIPR.Fields.USART1SEL = config.UsartClockSel;
+	RCC->CCIPR.Fields.USART2SEL = config.UsartClockSel;
+}
 
 void RCC_ClockEnable(dtRCCClock Clock, dtRCCClockSets Value)
 {
@@ -146,6 +211,7 @@ void RCC_ClockSet(dtRccInitConfig Config)
 	uint8 Result = 0;
 	uint16 DividerM;
 	uint16 MultiplierN;
+	uint32 ClockFreq;
 #if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_F415)
 	uint16 DividerP;
 #elif defined(MCU_G070) || defined(MCU_G071) || defined(MCU_L476)
@@ -332,77 +398,87 @@ static inline uint32 RCC_PllFreq(void)
     return PllOutput;
 }
 
-uint32 RCC_GetClock(dtBus Bus)
+uint32 RCC_GetClock(dtBus bus)
 {
-	uint32 SysClock;
-	uint32 AhbClock;
-	uint32 Apb1Clock;
-	uint32 Apb2Clock;
-	switch(RCC->CFGR.Fields.SWS)
+	uint32 ret = 0;
+	switch(bus)
 	{
-	    case 0x0:
-#if defined(MCU_L476)
-	        /* MSI is selected */
-	        SysClock = MsiFrequencies100kHz[RCC->CR.Fields.MSIRANGE]*100000;
+	case HsiClock:
+		ret = HSI_CLOCK_FREQUENCY;
+		break;
+	case HseClock:
+#if defined (HSE_CLOCK_FREQUENCY)
+		ret = HSE_CLOCK_FREQUENCY;
 #endif
-	        break;
-	    case 0x1:
-#if defined(MCU_L476)
-	        /* HSI16 is selected */
-	        SysClock = HSI_CLOCK_FREQUENCY;
+		break;
+	case PllRClock:
+		if(RCC->PLLCFGR.Fields.PLLSRC == PLL_SRC_HSI)
+		{
+			ret = HSI_CLOCK_FREQUENCY;
+		}
+		else if(RCC->PLLCFGR.Fields.PLLSRC == PLL_SRC_HSE)
+		{
+#if defined (HSE_CLOCK_FREQUENCY)
+			ret = HSE_CLOCK_FREQUENCY;
 #endif
-	        break;
-	    case 0x2:
-#if defined(MCU_L476)
-	        /* HSE is selected */
-	        SysClock = EXTERNAL_OSC_FREQUENCY;
+		}
+		ret *= RCC->PLLCFGR.Fields.PLLN;
+		ret /= (RCC->PLLCFGR.Fields.PLLM + 1);
+		ret /= (RCC->PLLCFGR.Fields.PLLR + 1);
+		break;
+	case AhbClock:
+		ret = RCC_GetClock(SysClock);
+		if((RCC->CFGR.Fields.HPRE & 0x8) != 0)
+		{
+			ret >>= (RCC->CFGR.Fields.HPRE & 0x7);
+			ret >>= 1;
+			if((RCC->CFGR.Fields.HPRE & 0x4) != 0)
+			{
+				ret >>= 1;
+			}
+		}
+		break;
+	case ApbClock:
+		ret = RCC_GetClock(AhbClock);
+		if((RCC->CFGR.Fields.PPRE & 0x4) != 0)
+		{
+			ret >>= 1;
+			ret >>= (RCC->CFGR.Fields.PPRE & 0x3);
+		}
+		break;
+	case ApbTimClock:
+		ret = RCC_GetClock(ApbClock);
+		if((RCC->CFGR.Fields.PPRE & 0x4) == 0)
+		{
+			ret <<= 1;
+		}
+		break;
+	case SysClock:
+		switch(RCC->CFGR.Fields.SWS)
+		{
+		case 0x0: //HSI selected as system clock
+			ret = HSI_CLOCK_FREQUENCY;
+			break;
+		case 0x1: //HSE selected as system clock
+#if defined (HSE_CLOCK_FREQUENCY)
+		    ret = HSE_CLOCK_FREQUENCY;
 #endif
-	        break;
-	    case 0x3:
-	    {
-#if defined(MCU_L476)
-	        /* PLL is selected */
-	        SysClock = RCC_PllFreq();
-#endif
-	    }
-	        break;
+			break;
+		case 0x2: //PLL selected as system clock
+			ret = RCC_GetClock(PllRClock);
+			break;
+		case 0x3: //LSI selected as system clock
+			break;
+		case 0x4: //LSE selected as system clock
+			break;
+		}
+		break;
+	case SysTickClock:
+		ret = RCC_GetClock(AhbClock);
+		ret >>= 3;
+		break;
 	}
-
-	if((RCC->CFGR.Fields.HPRE & 0x8) == 0) AhbClock = SysClock;
-#if defined(MCU_L476)
-	else AhbClock = SysClock >> AhbPrescalerShiftingValue[RCC->CFGR.Fields.HPRE & 0x8];
-#endif
-#if defined(MCU_F410) || defined(MCU_F446) || defined(MCU_F415) || defined(MCU_L433) || defined(MCU_L476)
-	if((RCC->CFGR.Fields.PPRE1 & 0x4) == 0) Apb1Clock = AhbClock;
-	else Apb1Clock = AhbClock >> Apb1PrescalerShiftValues[RCC->CFGR.Fields.PPRE1 & 0x4];
-
-    if((RCC->CFGR.Fields.PPRE2 & 0x4) == 0) Apb2Clock = AhbClock;
-    else Apb2Clock = AhbClock >> Apb1PrescalerShiftValues[RCC->CFGR.Fields.PPRE2 & 0x4];
-#endif
-
-	switch(Bus)
-	{
-	    case Core:
-	    case AHB:
-	        return AhbClock;
-	        break;
-	    case APB1_Peripheral:
-	        return Apb1Clock;
-	        break;
-	    case APB1_Timer:
-	        return (AhbClock == Apb1Clock) ? Apb1Clock : Apb1Clock*2;
-	        break;
-#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_F415) || defined(MCU_L476)
-	    case APB2_Peripheral:
-            return Apb2Clock;
-	        break;
-	    case APB2_Timer:
-	        return (AhbClock == Apb2Clock) ? Apb2Clock : Apb2Clock*2;
-	        break;
-#endif
-	    default:
-	        return 0xffffffff;
-	}
+	return ret;
 }
 
 void RCC_RTCDomainConfig(dtRCCRtcConfig Config)

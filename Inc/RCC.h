@@ -9,6 +9,7 @@
 #define RCC_RCC_H_
 
 #include "types.h"
+#include "../Src/RCC/RCC_Types.h"
 
 #if defined(MCU_F446) || defined(MCU_G070) || defined(MCU_F410) || defined(MCU_L433) || defined(MCU_G071) || defined(MCU_F415) || defined(MCU_L476)
 typedef enum
@@ -447,14 +448,18 @@ typedef enum
 
 typedef enum
 {
-	APB1_Peripheral,
-	APB1_Timer,
+	HsiClock,
+	HseClock,
+	PllRClock,
+	ApbClock,
+	ApbTimClock,
 #if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_F415) || defined(MCU_L476)
 	APB2_Peripheral,
 	APB2_Timer,
 #endif
-	AHB,
-	Core,
+	AhbClock,
+	SysClock,
+	SysTickClock,
 } dtBus;
 
 enum eCrystalOrInternal
@@ -517,6 +522,51 @@ typedef struct
 	uint32 PLL_SAI_Conf;
 	uint32 CrystalClockFreq;
 } dtRccInitConfig;
+
+#define PLL_SRC_NONE 0
+#define PLL_SRC_HSI 2
+#define PLL_SRC_HSE 3
+
+#define RTC_SRC_NONE 0
+#define RTC_SRC_LSE 1
+#define RTC_SRC_LSI 2
+#define RTC_SRC_HSE32 3
+
+#define USB_SRC_PLLQ 1
+#define USB_SRC_HSE 2
+
+#define I2S_SRC_SYS 0
+#define I2S_SRC_PLL 1
+#define I2S_SRC_HSI 2
+#define I2S_SRC_EXT 3
+
+#define ADC_SRC_SYS 0
+#define ADC_SRC_PLL 1
+#define ADC_SRC_HSI 2
+
+typedef enum eRccSysClockCfg
+{
+	SysClock_HSI,
+	SysClock_HSE,
+	SysClock_PLL,
+	SysClock_LSI,
+	SysClock_LSE,
+} dtRccSysClockCfg;
+
+typedef struct RccClockTreeCfg
+{
+	dtRccSysClockCfg SysClockCfg;
+	dtPLLCFGR PllCfg;
+	uint8 AhbPrescaler :4;
+	uint8 ApbPrescaler :4;
+	uint8 UsartClockSel :2;
+	uint8 I2CClockSel: 2;
+	uint8 AdcClockSel: 2;
+	uint8 RtcClockSel: 2;
+	uint8 UsbClockSel: 1;
+	uint8 I2SClockSel: 2;
+
+} dtRccClockTreeCfg;
 
 extern void RCC_ClockEnable(dtRCCClock Clock, dtRCCClockSets Value);
 extern void RCC_ClockSet(dtRccInitConfig Config);

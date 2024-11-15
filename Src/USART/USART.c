@@ -85,7 +85,7 @@ void USART_Init(dtUSARTInstance Instance, dtUSARTConfig Config)
 	/* Set stopbits */
 	USART[Instance]->CR2.Fields.STOP = Config.StopBits;
 
-	uint32 USARTClock = RCC_GetClock(APB1_Peripheral);
+	uint32 USARTClock = RCC_GetClock(ApbClock);
 	int32 BaudDiff = 0x7FFFFFFF;
 	uint8 SamplingLooper;
 	for(SamplingLooper = 0; SamplingLooper < 2; SamplingLooper++)
