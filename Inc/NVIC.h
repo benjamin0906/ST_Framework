@@ -10,6 +10,7 @@
 
 #include "types.h"
 
+#if defined(MCU_F446) || defined(MCU_G070) || defined(MCU_F410) || defined(MCU_L433) || defined(MCU_G071) || defined(MCU_F415) || defined(MCU_L476)
 typedef enum
 {
 #if defined(MCU_F446) || defined(MCU_L476)
@@ -460,5 +461,6 @@ typedef enum
 extern void NVIC_EnableIRQ(dtIRQs IRQ);
 extern void NVIC_SetPriority(dtIRQs IRQ, uint8 IrqLevel);
 extern void NVIC_DisableIRQ(dtIRQs IRQ);
+#endif
 
 #endif /* NVIC_NVIC_H_ */

@@ -12,6 +12,8 @@
 #include "RCC.h"
 #include "config.h"
 
+#if defined(MCU_F446) || defined(MCU_G070) || defined(MCU_F410) || defined(MCU_L433) || defined(MCU_G071) || defined(MCU_F415) || defined(MCU_L476)
+
 static dtI2C *const I2C[2] = {(dtI2C*)0x40005400,
 						(dtI2C*)0x40005800};
 
@@ -264,3 +266,6 @@ void I2C2_EV_IRQHandler(void)
 			}
 		}
 }
+#else
+#warning "NO CPU IS DEFINED"
+#endif

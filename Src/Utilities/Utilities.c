@@ -301,7 +301,7 @@ __asm(	".globl sqrt			\n"
 		"VSQRT.F32 s0, s0		\n"
 		"bx lr					\n");
 #endif
-
+#if defined(MCU_F446) || defined(MCU_G070) || defined(MCU_F410) || defined(MCU_L433) || defined(MCU_G071) || defined(MCU_F415) || defined(MCU_L476)
 __asm(  ".globl changeEndiannessArray       \n"
         ".p2align 2                         \n"
         ".type changeEndiannessArray, %function              \n"
@@ -394,6 +394,9 @@ __asm(  ".globl memset_32bit                    \n"
         "bx lr                                  \n"
 
 );
+#else
+#warning "NP CPU IS DEFINED"
+#endif
 
 void Delay(uint32 Msec)
 {

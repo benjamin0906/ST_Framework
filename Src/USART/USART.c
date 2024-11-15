@@ -10,6 +10,7 @@
 #include "RCC.h"
 #include "NVIC.h"
 
+#if defined(MCU_F446) || defined(MCU_G070) || defined(MCU_F410) || defined(MCU_L433) || defined(MCU_G071) || defined(MCU_F415) || defined(MCU_L476)
 #if defined(MCU_G070) || defined(MCU_G071)
 /* Not every USART instances has the same features. USART1 and 2 have full functionality but USART 3 and 4 have only basic functionality */
 /* The registers of the module can only be accessed 32 bit operations */
@@ -416,4 +417,7 @@ void USART3_USART4_LPUART1_IRQHandler(void)
 	}
 	if(USART[2]->ISR.Fields.ORE != 0) USART[2]->ICR.Fields.ORECF = 1;
 }
+#endif
+#else
+#warning "NO CPU IS DEFINED"
 #endif

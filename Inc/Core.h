@@ -16,7 +16,7 @@
 
 #define N_PRIV  1
 #define SPSEL   2
-
+#if defined(MCU_F446) || defined(MCU_G070) || defined(MCU_F410) || defined(MCU_L433) || defined(MCU_G071) || defined(MCU_F415) || defined(MCU_L476)
 #define CORE_TRIGGER_PENDSV()   asm("orr %1, %0, " _UNFOLD(CORE_ICSR_PENDSVSET_MASK) "\n"\
                                     : "=r" (SCB->ICSR) \
                                     :"r" (SCB->ICSR));
@@ -50,5 +50,8 @@ asm(    "push {r0}              \n"             \
 void Core_SystemReset(void);
 
 extern void CoreI_SetPsp(uint32*);
+#else
+#warning "NO CPU IS DEFINED"
+#endif
 
 #endif /* INC_CORE_H_ */

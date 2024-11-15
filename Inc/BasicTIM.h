@@ -9,7 +9,7 @@
 #define BASICTIM_BASICTIM_H_
 
 #include "types.h"
-
+#if defined(MCU_F446) || defined(MCU_G070) || defined(MCU_F410) || defined(MCU_L433) || defined(MCU_G071) || defined(MCU_F415) || defined(MCU_L476)
 typedef enum
 {
 #if defined(MCU_F410) || defined(MCU_G070) || defined(MCU_L433) || defined(MCU_G071) || defined(MCU_F446) || defined(MCU_F415) || defined(MCU_L476)
@@ -39,3 +39,6 @@ extern void BasicTIM_SetAR(dtBTimId Id, uint16 Value);
 extern void BasicTIM_Update(dtBTimId Id);
 
 #endif /* BASICTIM_BASICTIM_H_ */
+#else
+#warning "NO CPU IS DEFINED"
+#endif

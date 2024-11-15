@@ -15,7 +15,7 @@ static dtPwr *const Pwr = (dtPwr*)(0x40007000);
 #include "TestEnv.h"
 static dtPwr *const Pwr = (dtPwr*)&TestPwr;
 #endif
-
+#if defined(MCU_F446) || defined(MCU_G070) || defined(MCU_F410) || defined(MCU_L433) || defined(MCU_G071) || defined(MCU_F415) || defined(MCU_L476)
 void Pwr_SetVos(uint8 mode);
 uint8 Pwr_GetVos(void);
 void Pwr_LowPowerMode(dtLowPwrModes Mode);
@@ -66,3 +66,6 @@ void Pwr_LowPowerMode(dtLowPwrModes Mode)
 	Pwr->CR = TempCr;
 #endif
 }
+#else
+#warning "NO CPU IS DEFINED"
+#endif

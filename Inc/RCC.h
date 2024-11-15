@@ -10,6 +10,7 @@
 
 #include "types.h"
 
+#if defined(MCU_F446) || defined(MCU_G070) || defined(MCU_F410) || defined(MCU_L433) || defined(MCU_G071) || defined(MCU_F415) || defined(MCU_L476)
 typedef enum
 {
 #if defined(MCU_F410) || defined(MCU_F446) || defined(MCU_G070) || defined(MCU_G071) || defined(MCU_F415)
@@ -433,6 +434,8 @@ typedef enum
 #endif
 } dtRCCClock;
 
+
+
 typedef enum
 {
 	Enable = 0,
@@ -518,5 +521,6 @@ typedef struct
 extern void RCC_ClockEnable(dtRCCClock Clock, dtRCCClockSets Value);
 extern void RCC_ClockSet(dtRccInitConfig Config);
 extern uint32 RCC_GetClock(dtBus Bus);
+#endif
 
 #endif /* RCC_RCC_H_ */

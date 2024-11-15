@@ -28,7 +28,7 @@ static dtBasicTIM *const BTIMs[2] = {	(dtBasicTIM*)(&TestBasicTIM6), (dtBasicTIM
 #endif
 static void (*IrqPtrs[2])(void);
 #endif
-
+#if defined(MCU_F446) || defined(MCU_G070) || defined(MCU_F410) || defined(MCU_L433) || defined(MCU_G071) || defined(MCU_F415) || defined(MCU_L476)
 void BasicTIM_Set(dtBTimId Id, dtBasicTimConfig Config, void (*IrqPtr)(void));
 
 void BasicTIM_Set(dtBTimId Id, dtBasicTimConfig Config, void (*IrqPtr)(void))
@@ -134,3 +134,6 @@ void TIM7_IRQHandler(void)
 	BTIMs[TIM7]->SR.Fields.UIF = 0;
 	if(IrqPtrs[TIM7] != 0) IrqPtrs[TIM7]();
 }
+#else
+#warning "NO CPU IS DEFINED"
+#endif

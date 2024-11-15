@@ -8,7 +8,7 @@
 #include "ADC_Types.h"
 #include "ADC.h"
 #include "NVIC.h"
-
+#if defined(MCU_F446) || defined(MCU_G070) || defined(MCU_F410) || defined(MCU_L433) || defined(MCU_G071) || defined(MCU_F415) || defined(MCU_L476)
 static dtADC *const ADC = (dtADC*)(0x40012400);
 static void (*DataHandler)(uint16);
 
@@ -242,3 +242,6 @@ void ADC_COMP_IRQHandler(void)
 	/* Clearing the flag which caused the interrupt */
 	ADC->ISR = ClearFlag;
 }
+#else
+#warning "NO CPU IS DEFINED"
+#endif

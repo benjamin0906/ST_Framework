@@ -22,6 +22,7 @@ static dtRCC *const RCC = (dtRCC*) (0x40023800);
 static dtRCC *const RCC = (dtRCC*)&TestRCC;
 #endif
 
+#if defined(MCU_F446) || defined(MCU_G070) || defined(MCU_F410) || defined(MCU_L433) || defined(MCU_G071) || defined(MCU_F415) || defined(MCU_L476)
 #if defined(MCU_F446) || defined(MCU_F410)
 #define DIVIDER_M_MIN	2
 #define DIVIDER_M_MAX	63
@@ -393,3 +394,6 @@ void RCC_RTCDomainConfig(dtRCCRtcConfig Config)
 	RCC->BDCR.Fields.RTC_SEL = Config.RTCClock;
 	RCC->BDCR.Fields.RTCEN = Config.RTCClockEnable;
 }
+#else
+#warning "NO CPU IS DEFINED"
+#endif

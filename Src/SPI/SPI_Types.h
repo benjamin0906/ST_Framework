@@ -11,6 +11,7 @@
 #include "types.h"
 #include "SPI.h"
 
+#if defined(MCU_F446) || defined(MCU_G070) || defined(MCU_F410) || defined(MCU_L433) || defined(MCU_G071) || defined(MCU_F415) || defined(MCU_L476)
 #if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_F415)
 typedef union
 {
@@ -259,5 +260,8 @@ typedef struct
 	uint32 Indexer;
 	dtGPIOs ChipSelectPin;
 } dtSpiData;
+#else
+#warning "NO CPU IS DEFINED"
+#endif
 
 #endif /* SPI_SPI_TYPES_H_ */
