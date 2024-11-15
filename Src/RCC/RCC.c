@@ -108,9 +108,9 @@ uint32 RCC_GetClock(dtBus Bus);
 void RCC_RTCDomainConfig(dtRCCRtcConfig Config);
 static inline uint32 RCC_PllFreq(void);
 void RCC_ClockSet(dtRccInitConfig Config);
-Std_ReturnType RCC_ClockTreeInit(const dtRccClockTreeCfg config);
+void RCC_ClockTreeInit(const dtRccClockTreeCfg config);
 
-Std_ReturnType RCC_ClockTreeInit(const dtRccClockTreeCfg config)
+void RCC_ClockTreeInit(const dtRccClockTreeCfg config)
 {
 	uint32 sysClock = 0;
 

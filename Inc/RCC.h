@@ -571,6 +571,7 @@ typedef struct RccClockTreeCfg
 extern void RCC_ClockEnable(dtRCCClock Clock, dtRCCClockSets Value);
 extern void RCC_ClockSet(dtRccInitConfig Config);
 extern uint32 RCC_GetClock(dtBus Bus);
+extern void RCC_ClockTreeInit(const dtRccClockTreeCfg config);
 #endif
 
 #endif /* RCC_RCC_H_ */
