@@ -172,6 +172,9 @@ void RCC_ClockTreeInit(const dtRccClockTreeCfg config)
 	RCC->CFGR.Fields.HPRE = config.AhbPrescaler;
 	RCC->CFGR.Fields.PPRE = config.ApbPrescaler;
 
+	RCC->CFGR.Fields.SW = config.SysClockCfg;
+	while(RCC->CFGR.Fields.SWS != config.SysClockCfg);
+
 	RCC->CCIPR.Fields.ADCSEL = config.AdcClockSel;
 	RCC->CCIPR.Fields.USART1SEL = config.UsartClockSel;
 	RCC->CCIPR.Fields.USART2SEL = config.UsartClockSel;
@@ -448,7 +451,7 @@ uint32 RCC_GetClock(dtBus bus)
 		break;
 	case ApbTimClock:
 		ret = RCC_GetClock(ApbClock);
-		if((RCC->CFGR.Fields.PPRE & 0x4) == 0)
+		if((RCC->CFGR.Fields.PPRE & 0x4) != 0)
 		{
 			ret <<= 1;
 		}
