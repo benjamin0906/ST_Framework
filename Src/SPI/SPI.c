@@ -40,7 +40,7 @@ static dtSpiData SPI6Data;
 
 #if SPI_USAGE_MODE == DMA_MODE
 
-#if (SPI_1 == STD_ON)
+#if defined(SPI_1) && (SPI_1 == STD_ON)
 #if SPI_1_DMA_TX_BUFFER_WIDTH == DATA_WIDTH_32_BIT
 uint32 Spi1DmaTxBuffer[SPI_1_DMA_TX_BUFFER_SIZE];
 #elif SPI_1_DMA_TX_BUFFER_WIDTH == DATA_WIDTH_16_BIT
@@ -58,7 +58,7 @@ uint8 Spi1DmaRxBuffer[SPI_1_DMA_RX_BUFFER_SIZE];
 void SPI1_DmaIrqHandler(uint8 Flags, uint32 NumofData);
 #endif
 
-#if SPI_2 == STD_ON
+#if defined(SPI_2) && SPI_2 == STD_ON
 #if SPI_2_DMA_TX_BUFFER_WIDTH == DATA_WIDTH_32_BIT
 uint32 Spi2DmaTxBuffer[SPI_2_DMA_TX_BUFFER_SIZE];
 #elif SPI_2_TX_DMA_BUFFER_WIDTH == DATA_WIDTH_16_BIT
@@ -76,7 +76,7 @@ uint8 Spi2DmaRxBuffer[SPI_2_DMA_RX_BUFFER_SIZE];
 void SPI2_DmaIrqHandler(uint8 Flags, uint32 NumofData);
 #endif
 
-#if SPI_3 == STD_ON
+#if defined(SPI_3) && SPI_3 == STD_ON
 #if SPI_3_DMA_TX_BUFFER_WIDTH == DATA_WIDTH_32_BIT
 uint32 Spi3DmaTxBuffer[SPI_3_DMA_TX_BUFFER_SIZE] = {0x11223344, 0x55667788};
 #elif SPI_3_DMA_TX_BUFFER_WIDTH == DATA_WIDTH_16_BIT
@@ -94,7 +94,7 @@ uint8 Spi3DmaRxBuffer[SPI_3_DMA_RX_BUFFER_SIZE];
 void SPI3_DmaIrqHandler(uint8 Flags, uint32 NumofData);
 #endif
 
-#if SPI_4 == STD_ON
+#if defined(SPI_4) && SPI_4 == STD_ON
 #if SPI_4_DMA_TX_BUFFER_WIDTH == DATA_WIDTH_32_BIT
 uint32 Spi4DmaTxBuffer[SPI_4_DMA_TX_BUFFER_SIZE];
 #elif SPI_4_DMA_TX_BUFFER_WIDTH == DATA_WIDTH_16_BIT
@@ -379,7 +379,7 @@ void ISPI_Send(uint8 Instance, uint8 *TxBuff, uint16 TxLength)
     GPIO_Set(GetDataOfInstance(Instance)->ChipSelectPin, Clear);
     switch(Instance)
     {
-#if SPI_1 == STD_ON
+#if defined(SPI_1) && (SPI_1 == STD_ON)
         case 1:
             if(TxBuff != 0) memcpy_reverse_8bit(TxBuff, Spi1DmaTxBuffer, TxLength);
             else memset_32bit(Spi1DmaTxBuffer, 0, TxLength);
@@ -387,7 +387,7 @@ void ISPI_Send(uint8 Instance, uint8 *TxBuff, uint16 TxLength)
             DMA_Start(SPI_1_DMA_TX_INSTANCE, SPI_1_DMA_TX_STREAM, TxLength);
             break;
 #endif
-#if SPI_2 == STD_ON
+#if defined(SPI_2) && (SPI_2 == STD_ON)
         case 2:
             if(TxBuff != 0) memcpy_reverse_8bit(TxBuff, Spi2DmaTxBuffer, TxLength);
             else memset_32bit(Spi2DmaTxBuffer, 0, TxLength);
@@ -395,7 +395,7 @@ void ISPI_Send(uint8 Instance, uint8 *TxBuff, uint16 TxLength)
             DMA_Start(SPI_2_DMA_TX_INSTANCE, SPI_2_DMA_TX_STREAM, TxLength);
             break;
 #endif
-#if SPI_3 == STD_ON
+#if defined(SPI_3) && (SPI_3 == STD_ON)
         case 3:
             if(TxBuff != 0) memcpy_reverse_8bit(TxBuff, Spi3DmaTxBuffer, TxLength);
             else memset_32bit(Spi3DmaTxBuffer, 0, TxLength);
@@ -403,7 +403,7 @@ void ISPI_Send(uint8 Instance, uint8 *TxBuff, uint16 TxLength)
             DMA_Start(SPI_3_DMA_TX_INSTANCE, SPI_3_DMA_TX_STREAM, TxLength);
             break;
 #endif
-#if SPI_4 == STD_ON
+#if defined(SPI_4) && (SPI_4 == STD_ON)
         case 4:
             if(TxBuff != 0) memcpy_reverse_8bit(TxBuff, Spi4DmaTxBuffer, TxLength);
             else memset_32bit(Spi4DmaTxBuffer, 0, TxLength);
@@ -425,22 +425,22 @@ Std_ReturnType ISPI_GetData(uint8 Instance, uint8 *RxBuff, uint16 RxLength)
         ret = E_OK;
         switch(Instance)
         {
-    #if SPI_1 == STD_ON
+    #if defined(SPI_1) && (SPI_1 == STD_ON)
             case 1:
                 memcpy_reverse_8bit(Spi1DmaRxBuffer, RxBuff, RxLength);
                 break;
     #endif
-    #if SPI_2 == STD_ON
+    #if defined(SPI_2) && (SPI_2 == STD_ON)
             case 2:
                 memcpy_reverse_8bit(Spi2DmaRxBuffer, RxBuff, RxLength);
                 break;
     #endif
-    #if SPI_3 == STD_ON
+    #if defined(SPI_3) && (SPI_3 == STD_ON)
             case 3:
                 memcpy_reverse_8bit(Spi3DmaRxBuffer, RxBuff, RxLength);
                 break;
     #endif
-    #if SPI_4 == STD_ON
+    #if defined(SPI_4) && (SPI_4 == STD_ON)
             case 4:
                 memcpy_reverse_8bit(Spi4DmaRxBuffer, RxBuff, RxLength);
                 break;

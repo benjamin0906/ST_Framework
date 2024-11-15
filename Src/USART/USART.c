@@ -397,6 +397,7 @@ void USART2_IRQHandler(void)
 #endif
 
 #if defined(MCU_G070) || defined(MCU_G071)
+#if defined(USART3_TX_FIFO_SIZE) && defined(USART3_RX_FIFO_SIZE)
 void USART3_USART4_LPUART1_IRQHandler(void)
 {
 	if((USART[2]->CR1.Fields.TXFNFIE != 0) && (USART[2]->ISR.Fields.TXFNF != 0))
@@ -417,6 +418,7 @@ void USART3_USART4_LPUART1_IRQHandler(void)
 	}
 	if(USART[2]->ISR.Fields.ORE != 0) USART[2]->ICR.Fields.ORECF = 1;
 }
+#endif
 #endif
 #else
 #warning "NO CPU IS DEFINED"

@@ -12,6 +12,11 @@
 #include "Flash.h"
 #include "config.h"
 
+#ifndef HSI_CLOCK_FREQUENCY
+#define HSI_CLOCK_FREQUENCY 0
+#warning "HSI_CLOCK_FREQUENCY is not defined"
+#endif
+
 #ifndef MODULE_TEST
 #if defined(MCU_L476) || defined(MCU_G070) || defined(MCU_L433) || defined(MCU_G071)
 static dtRCC *const RCC = (dtRCC*) (0x40021000);
@@ -288,6 +293,7 @@ void RCC_ClockSet(dtRccInitConfig Config)
 		RCC->CFGR.Fields.SWS = 2;
 #endif
 		while(RCC->CFGR.Fields.SWS != 2);
+#if defined(MCU_L433) || defined(MCU_L476)
 		if(Config.PLL_SAI_EN != 0)
         {
             RCC->PLLSAI1CFGR.Word = Config.PLL_SAI_Conf;
@@ -295,6 +301,7 @@ void RCC_ClockSet(dtRccInitConfig Config)
             while(RCC->CR.Fields.PLLSAI1RDY == 0);
             RCC->DCKCFGR2 = 0x08000000;
         }
+#endif
 #endif
 	}
 }
@@ -308,7 +315,9 @@ static inline uint32 RCC_PllFreq(void)
             /* No clock */
             break;
         case 0x1:
+#if defined(MCU_L476) || defined(MCU_L433)
             PllOutput = MsiFrequencies100kHz[RCC->CR.Fields.MSIRANGE]*100000;
+#endif
             break;
         case 0x2:
             PllOutput = HSI_CLOCK_FREQUENCY;
@@ -360,11 +369,16 @@ uint32 RCC_GetClock(dtBus Bus)
 	}
 
 	if((RCC->CFGR.Fields.HPRE & 0x8) == 0) AhbClock = SysClock;
+#if defined(MCU_L476)
 	else AhbClock = SysClock >> AhbPrescalerShiftingValue[RCC->CFGR.Fields.HPRE & 0x8];
+#endif
+#if defined(MCU_F410) || defined(MCU_F446) || defined(MCU_F415) || defined(MCU_L433) || defined(MCU_L476)
 	if((RCC->CFGR.Fields.PPRE1 & 0x4) == 0) Apb1Clock = AhbClock;
 	else Apb1Clock = AhbClock >> Apb1PrescalerShiftValues[RCC->CFGR.Fields.PPRE1 & 0x4];
+
     if((RCC->CFGR.Fields.PPRE2 & 0x4) == 0) Apb2Clock = AhbClock;
     else Apb2Clock = AhbClock >> Apb1PrescalerShiftValues[RCC->CFGR.Fields.PPRE2 & 0x4];
+#endif
 
 	switch(Bus)
 	{
@@ -378,12 +392,14 @@ uint32 RCC_GetClock(dtBus Bus)
 	    case APB1_Timer:
 	        return (AhbClock == Apb1Clock) ? Apb1Clock : Apb1Clock*2;
 	        break;
+#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_F415) || defined(MCU_L476)
 	    case APB2_Peripheral:
             return Apb2Clock;
 	        break;
 	    case APB2_Timer:
 	        return (AhbClock == Apb2Clock) ? Apb2Clock : Apb2Clock*2;
 	        break;
+#endif
 	    default:
 	        return 0xffffffff;
 	}

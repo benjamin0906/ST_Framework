@@ -301,7 +301,8 @@ __asm(	".globl sqrt			\n"
 		"VSQRT.F32 s0, s0		\n"
 		"bx lr					\n");
 #endif
-#if defined(MCU_F446) || defined(MCU_G070) || defined(MCU_F410) || defined(MCU_L433) || defined(MCU_G071) || defined(MCU_F415) || defined(MCU_L476)
+
+#if defined(MCU_F446) ||  defined(MCU_F410) || defined(MCU_L433) || defined(MCU_G071) || defined(MCU_F415) || defined(MCU_L476)
 __asm(  ".globl changeEndiannessArray       \n"
         ".p2align 2                         \n"
         ".type changeEndiannessArray, %function              \n"
@@ -317,7 +318,8 @@ __asm(  ".globl changeEndiannessArray       \n"
         "STMIA r0!, {r2}                    \n"
         "sub r1, r1, 1                      \n"
         "b changeEndiannessArrayCycle");
-
+#endif
+#if defined(MCU_F446) ||  defined(MCU_F410) || defined(MCU_L433) || defined(MCU_G071) || defined(MCU_F415) || defined(MCU_L476)
 __asm(  ".globl multiplyArrays              \n"
         ".p2align 2                         \n"
         ".type multiplyArrays,  %function   \n"
@@ -337,7 +339,9 @@ __asm(  ".globl multiplyArrays              \n"
         "bx lr                              \n"
 
 );
+#endif
 
+#if defined(MCU_F446) ||  defined(MCU_F410) || defined(MCU_L433) || defined(MCU_G071) || defined(MCU_F415) || defined(MCU_L476)
 __asm(  ".globl memcpy_reverse_8bit             \n"
         ".p2align 2                             \n"
         ".type memcpy_reverse_8bit,  %function  \n"
@@ -352,7 +356,9 @@ __asm(  ".globl memcpy_reverse_8bit             \n"
         "bx lr                                  \n"
 
 );
+#endif
 
+#if defined(MCU_F446) ||  defined(MCU_F410) || defined(MCU_L433) || defined(MCU_G071) || defined(MCU_F415) || defined(MCU_L476)
 __asm(  ".globl memcpy_reverse_16bit            \n"
         ".p2align 2                             \n"
         ".type memcpy_reverse_16bit,  %function \n"
@@ -367,7 +373,9 @@ __asm(  ".globl memcpy_reverse_16bit            \n"
         "bx lr                                  \n"
 
 );
+#endif
 
+#if defined(MCU_F446) ||  defined(MCU_F410) || defined(MCU_L433) || defined(MCU_G071) || defined(MCU_F415) || defined(MCU_L476)
 __asm(  ".globl memcpy_reverse_32bit            \n"
         ".p2align 2                             \n"
         ".type memcpy_reverse_32bit,  %function \n"
@@ -382,7 +390,9 @@ __asm(  ".globl memcpy_reverse_32bit            \n"
         "bx lr                                  \n"
 
 );
+#endif
 
+#if defined(MCU_F446) ||  defined(MCU_F410) || defined(MCU_L433) || defined(MCU_G071) || defined(MCU_F415) || defined(MCU_L476)
 __asm(  ".globl memset_32bit                    \n"
         ".p2align 2                             \n"
         ".type memset_32bit,  %function         \n"
@@ -394,8 +404,6 @@ __asm(  ".globl memset_32bit                    \n"
         "bx lr                                  \n"
 
 );
-#else
-#warning "NP CPU IS DEFINED"
 #endif
 
 void Delay(uint32 Msec)

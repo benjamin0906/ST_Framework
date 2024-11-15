@@ -10,7 +10,7 @@
 #include "RCC_RTC.h"
 #include "Pwr_RTC.h"
 
-#if defined(MCU_F446) || defined(MCU_G070) || defined(MCU_F410) || defined(MCU_L433) || defined(MCU_G071) || defined(MCU_F415) || defined(MCU_L476)
+#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_L433) || defined(MCU_G071) || defined(MCU_F415) || defined(MCU_L476)
 static dtRTC *const RTC = (dtRTC*)0x40002800;
 
 void RTC_Init(dtRTCConfig Config);

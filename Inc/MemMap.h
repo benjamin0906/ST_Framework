@@ -15,6 +15,8 @@
 /* defining the number of used priority bits */
 #if defined(MCU_L476) | defined(MCU_F446)
 #define NVIC_PRIO_BITS  4
+#elif defined(MCU_G070)
+#define NVIC_PRIO_BITS  2
 #endif
 
 extern dtISER *const ISER;

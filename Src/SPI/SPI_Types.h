@@ -233,7 +233,9 @@ typedef struct
 	dtCR1	CR1;
 	dtCR2	CR2;
 	dtSR	SR;
+#if defined(MCU_G071) || defined(MCU_L476) || defined(MCU_F446)
 	dtSPI_DR	DR;
+#endif
 	uint16	:16;
 	uint16	CRCPOLY;
 	uint16	:16;
