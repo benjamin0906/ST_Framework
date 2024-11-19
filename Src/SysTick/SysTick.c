@@ -34,12 +34,15 @@ void    SysTick_Handler(void);
  */
 void SysTick_Init(uint32 ReloadValue)
 {
-    SysTick->CSR.Word = 0;
+	dtSYST_CSR tCSR = {.Word = 0};
+
     SysTick->RVR = ReloadValue;
     SysTick->CVR = 0;
-    SysTick->CSR.Fields.Tickinit = 1;
-    SysTick->CSR.Fields.ClkSource = 1;
-    SysTick->CSR.Fields.Enable = 1;
+    tCSR.Fields.Tickinit = 1;
+    tCSR.Fields.ClkSource = 1;
+    tCSR.Fields.Enable = 1;
+
+    SysTick->CSR = tCSR;
 }
 
 #if (OS_IS_USED == STD_OFF)
