@@ -55,10 +55,10 @@ static dtUSART4Data USART4Data;
 #endif
 
 void USART_Init(dtUSARTInstance Instance, dtUSARTConfig Config);
-void USART_Send(dtUSARTInstance Instance, uint8 *Data, uint8 DataSize);
+void USART_Send(dtUSARTInstance Instance, const uint8 *Data, uint8 DataSize);
 uint8 USART_GetTxFifoFreeSize(dtUSARTInstance Instance);
 uint8 USART_GetRxFifoFilledSize(dtUSARTInstance Instance);
-uint8 USART_GetRxData(dtUSARTInstance Instance);
+uint8 USART_GetRxData(dtUSARTInstance Instance, uint8 *const outPtr);
 void USART_Disable(dtUSARTInstance Instance);
 uint8 USART_Transmitting(dtUSARTInstance Instance);
 
@@ -170,7 +170,7 @@ void USART_Init(dtUSARTInstance Instance, dtUSARTConfig Config)
 #endif
 }
 
-void USART_Send(dtUSARTInstance Instance, uint8 *Data, uint8 DataSize)
+void USART_Send(dtUSARTInstance Instance, const uint8 *Data, uint8 DataSize)
 {
 #if defined(MCU_G070) || defined(MCU_G071)
 	if(DataSize > 0)
@@ -187,7 +187,7 @@ void USART_Send(dtUSARTInstance Instance, uint8 *Data, uint8 DataSize)
 			while(Data < EndIndex)
 			{
 				USART3Data.TxFiFo[USART3Data.TxWriteIndex++] = *Data++;
-				USART3Data.TxWriteIndex &= USART3_TX_FIFO_SIZE;
+				USART3Data.TxWriteIndex &= USART1_TX_FIFO_SIZE;
 			}
 			USART[Instance]->CR1.Fields.TXFNFIE = 1;
 		}
@@ -237,7 +237,7 @@ void USART_Send(dtUSARTInstance Instance, uint8 *Data, uint8 DataSize)
 #endif
 }
 
-uint8 USART_GetRxData(dtUSARTInstance Instance)
+uint8 USART_GetRxData(dtUSARTInstance Instance, uint8 *const outPtr)
 {
 	uint8 ret = 0;
 #if defined(MCU_G070) || defined(MCU_G071)
@@ -265,8 +265,12 @@ uint8 USART_GetRxData(dtUSARTInstance Instance)
 #if defined(USART3_TX_FIFO_SIZE) && defined(USART3_RX_FIFO_SIZE)
 		if(USART3Data.RxReadIndex != USART3Data.RxWriteIndex)
 		{
-			ret = USART3Data.RxFiFo[USART3Data.RxReadIndex++];
-			USART3Data.RxReadIndex &= USART3_RX_FIFO_SIZE;
+			ret = 1;
+			if(outPtr != 0)
+			{
+				*outPtr = USART3Data.RxFiFo[USART3Data.RxReadIndex++];
+				USART3Data.RxReadIndex &= USART3_RX_FIFO_SIZE;
+			}
 		}
 #endif
 		break;

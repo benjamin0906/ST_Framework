@@ -41,10 +41,10 @@ typedef struct
 } dtUSARTConfig;
 
 extern void USART_Init(dtUSARTInstance Instance, dtUSARTConfig Config);
-extern void USART_Send(dtUSARTInstance Instance, uint8 *Data, uint8 DataSize);
+extern void USART_Send(dtUSARTInstance Instance, const uint8 *Data, uint8 DataSize);
 extern uint8 USART_GetTxFifoFreeSize(dtUSARTInstance Instance);
 extern uint8 USART_GetRxFifoFilledSize(dtUSARTInstance Instance);
-extern uint8 USART_GetRxData(dtUSARTInstance Instance);
+extern uint8 USART_GetRxData(dtUSARTInstance Instance, uint8 *const outPtr);
 extern void USART_Disable(dtUSARTInstance Instance);
 extern uint8 USART_Transmitting(dtUSARTInstance Instance);
 
