@@ -46,7 +46,8 @@ typedef enum
     E_OK,
     E_NOT_OK,
     E_NULL_PTR,
-    E_NO_DATA
+    E_NO_DATA,
+	E_TIMEOUT
 } Std_ReturnType;
 
 #endif /* TYPES_H_ */
