@@ -212,7 +212,8 @@ void USART_Send(dtUSARTInstance Instance, const uint8 *Data, uint8 DataSize)
 			/* Fill the buffer with the data */
 			while(Data < EndIndex)
 			{
-				USART3Data.TxFiFo[USART3Data.TxWriteIndex++] = *Data++;
+				USART3Data.TxFiFo[USART3Data.TxWriteIndex++] = *Data;
+				Data++;
 				USART3Data.TxWriteIndex &= USART3_TX_FIFO_SIZE;
 			}
 			USART_CR1_SET_BIT(Instance, CR1_BIT_TXFNFIE);
