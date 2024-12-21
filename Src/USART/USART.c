@@ -257,8 +257,12 @@ uint8 USART_GetRxData(dtUSARTInstance Instance, uint8 *const outPtr)
 #if defined(USART2_TX_FIFO_SIZE) && defined(USART2_RX_FIFO_SIZE)
 		if(USART2Data.RxReadIndex != USART2Data.RxWriteIndex)
 		{
-			ret = USART2Data.RxFiFo[USART2Data.RxReadIndex++];
-			USART2Data.RxReadIndex &= USART2_RX_FIFO_SIZE;
+			ret = 1;
+			if(outPtr != 0)
+			{
+				*outPtr = USART2Data.RxFiFo[USART2Data.RxReadIndex++];
+				USART2Data.RxReadIndex &= USART2_RX_FIFO_SIZE;
+			}
 		}
 #endif
 		break;
@@ -378,7 +382,8 @@ uint8 USART_Transmitting(dtUSARTInstance Instance)
 #endif
 }
 
-#if defined(MCU_G071)
+#if defined(MCU_G070) || defined(MCU_G071)
+#if defined(USART2_TX_FIFO_SIZE) && defined(USART2_RX_FIFO_SIZE)
 void USART2_IRQHandler(void)
 {
 	if((USART[1]->CR1.Fields.TXFNFIE != 0) && (USART[1]->ISR.Fields.TXFNF != 0))
@@ -399,6 +404,7 @@ void USART2_IRQHandler(void)
 	}
 	if(USART[1]->ISR.Fields.ORE != 0) USART[1]->ICR.Fields.ORECF = 1;
 }
+#endif
 #endif
 
 #if defined(MCU_G070) || defined(MCU_G071)

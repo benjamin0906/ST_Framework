@@ -222,6 +222,43 @@ void MemCpyRigth(uint8 *Src, uint8 *Dst, uint32 Length)
 	}
 }
 
+uint8 FixPNumToStr(uint32 num, uint8 qRes, uint8 fractionalDigits, uint8 *const str)
+{
+	uint32 tNum = 0;
+    uint32 whole;
+	uint8 ret = 0;
+	uint8 looper = fractionalDigits;
+
+	if(qRes > 0)
+	{
+		tNum = 1 << (qRes-1);
+		while(looper > 0)
+		{
+			tNum /= 10;
+			looper --;
+		}
+	}
+
+	tNum += num;
+	whole = tNum >> qRes;
+
+    ret += Dabler(whole, &str[ret]);
+
+    if(fractionalDigits > 0)
+    {
+    	str[ret++] = '.';
+    	while(fractionalDigits > 0)
+		{
+			tNum -= (whole << qRes);
+			tNum *= 10;
+			whole = tNum >> qRes;
+			str[ret++] = '0' + whole;
+			fractionalDigits--;
+		}
+    }
+    return ret;
+}
+
 uint8 UQNumToStr(uint32 Num, uint8 QRes, uint8 QRound, uint8 *Str)
 {
 	uint32 WholePart = Num >> QRes;

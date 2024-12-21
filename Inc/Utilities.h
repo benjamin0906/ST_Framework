@@ -24,6 +24,7 @@ extern void MemCpyRigth(uint8 *Src, uint8 *Dst, uint32 Length);
 extern uint8 UQNumToStr(uint32 Num, uint8 QRes, uint8 QRound, uint8 *Str);
 extern void Delay(uint32 Msec);
 extern void BubbleSort(uint32 *array, uint32 len);
+extern uint8 FixPNumToStr(uint32 num, uint8 qRes, uint8 fractionalDigits, uint8 *const str);
 
 #if defined(MCU_F446)
 extern float32 sqrt(float32 Number);
