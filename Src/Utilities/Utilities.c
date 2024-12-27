@@ -98,6 +98,12 @@ uint8 NumToHexStr(uint32 Num, uint8 *str)
 uint32 DecStrToNum32(uint8 *str)
 {
 	uint32 ret = 0;
+
+	/* Ignoring the leading zeros */
+	while((*str != 0) && (*str == '0'))
+	{
+		str++;
+	}
 	while((*str != 0) && (*str >= '0') && (*str <= '9'))
 	{
 		ret *= 10;
@@ -165,8 +171,8 @@ uint8 DecStrToNum(uint8 *str, uint8 *num)
 uint32 FloatToQ(uint8 *str, uint8 Q)
 {
 	uint8 PointIndex;
-	uint32 Cmpr = 5;
-	uint32 Fract = 0;
+	uint64 Cmpr = 5;
+	uint64 Fract = 0;
 	uint32 Num = 0;
 
 	/* Getting the whole part */
@@ -182,7 +188,7 @@ uint32 FloatToQ(uint8 *str, uint8 Q)
 	while(Q>0)
 	{
 		Q--;
-		if(*str != 0)
+		if((*str >= '0') && (*str <= '9'))
 		{
 			Fract += *str - '0';
 			str++;
