@@ -17,6 +17,19 @@ uint8 NumToHexStr(uint32 Num, uint8 *str);
 uint8 UQNumToStr(uint32 Num, uint8 QRes, uint8 QRound, uint8 *Str);
 uint32 FloatToQ(uint8 *str, uint8 Q);
 void Delay(uint32 Msec);
+uint8 memEq(uint8 *ptr1, uint8 *ptr2, uint8 size);
+
+
+uint8 memEq(uint8 *ptr1, uint8 *ptr2, uint8 size)
+{
+	while((size > 0) && (*ptr1 == *ptr2))
+	{
+		ptr1++;
+		ptr2++;
+		size--;
+	}
+	return (size == 0);
+}
 
 float32 Power(uint8 Power, float32 Number)
 {
