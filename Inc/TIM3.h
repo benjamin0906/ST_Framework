@@ -27,7 +27,7 @@ enum eOCMode
     ForceActive,
     Pwm1,
     Pwm2,
-};
+} dtOutputCompareMode;
 
 enum eOcPolarity
 {

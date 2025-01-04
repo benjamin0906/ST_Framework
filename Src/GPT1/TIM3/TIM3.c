@@ -15,48 +15,81 @@ void TIM3_SetValue(dtGPT1SetTypes Type, uint32 Value);
 
 void TIM3_Init(dtGPT1Config Config)
 {
+	dtCR1 tCR1 = {.Word = 0};
+	dtARR tARR = {.Word = 0};
+	dtPSC tPSC = {.Word = 0};
 	TIM3->CR1.Word = 0;
-	TIM3->CR1.Fields.CMS = 0;
-	TIM3->CR1.Fields.ARPE = 1;
-	TIM3->CR1.Fields.DIR = Config.Direction;
 
-	TIM3->ARR.Word = Config.ARR;
-	TIM3->PSC.Word = Config.Presc;
+	tCR1.Word = 0;
+	tCR1.Fields.CMS = 0;
+	tCR1.Fields.ARPE = 1;
+	tCR1.Fields.DIR = Config.Direction;
+	tCR1.Fields.CEN = 1;
+
+	tARR.Word = Config.ARR;
+	tPSC.Word = Config.Presc;
 
 	switch(Config.Mode)
 	{
 	case Timer:
 		break;
 	case Oc1:
-		TIM3->CCMR1.Out_Fields.CC1S = 0;
-		TIM3->CCMR1.Out_Fields.OC1PE = 1;
-		TIM3->CCMR1.Out_Fields.OC1M = Config.OCMode;
-		TIM3->CCER.Fields.CC1P = Config.OcPolarity;
-		TIM3->CCER.Fields.CC1E = 1;
+	{
+		dtCCMR1 tCCMR1 = {.Word = 0};
+		dtCCER tCCER = {.Word = 0};
+		tCCMR1.Out_Fields.CC1S = 0;
+		tCCMR1.Out_Fields.OC1PE = 1;
+		tCCMR1.Out_Fields.OC1M = Config.OCMode;
+		tCCER.Fields.CC1P = Config.OcPolarity;
+		tCCER.Fields.CC1E = 1;
+		TIM3->CCMR1 = tCCMR1;
+		TIM3->CCER = tCCER;
+	}
+
 		break;
 	case Oc2:
-		TIM3->CCMR1.Out_Fields.CC2S = 0;
-		TIM3->CCMR1.Out_Fields.OC2PE = 1;
-		TIM3->CCMR1.Out_Fields.OC2M = Config.OCMode;
-		TIM3->CCER.Fields.CC2P = Config.OcPolarity;
-		TIM3->CCER.Fields.CC2E = 1;
+	{
+		dtCCMR1 tCCMR1 = {.Word = 0};
+		dtCCER tCCER = {.Word = 0};
+		tCCMR1.Out_Fields.CC2S = 0;
+		tCCMR1.Out_Fields.OC2PE = 1;
+		tCCMR1.Out_Fields.OC2M = Config.OCMode;
+		tCCER.Fields.CC2P = Config.OcPolarity;
+		tCCER.Fields.CC2E = 1;
+		TIM3->CCMR1 = tCCMR1;
+		TIM3->CCER = tCCER;
+	}
 		break;
 	case Oc3:
-		TIM3->CCMR2.Out_Fields.CC3S = 0;
-		TIM3->CCMR2.Out_Fields.OC3PE = 1;
-		TIM3->CCMR2.Out_Fields.OC3M = Config.OCMode;
-		TIM3->CCER.Fields.CC3P = Config.OcPolarity;
-		TIM3->CCER.Fields.CC3E = 1;
-		break;
-	case Oc4:
-		TIM3->CCMR2.Out_Fields.CC4S = 0;
-		TIM3->CCMR2.Out_Fields.OC4PE = 1;
-		TIM3->CCMR2.Out_Fields.OC4M = Config.OCMode;
-		TIM3->CCER.Fields.CC4P = Config.OcPolarity;
-		TIM3->CCER.Fields.CC4E = 1;
+	{
+		dtCCMR2 tCCMR2 = {.Word = 0};
+		dtCCER tCCER = {.Word = 0};
+		tCCMR2.Out_Fields.CC3S = 0;
+		tCCMR2.Out_Fields.OC3PE = 1;
+		tCCMR2.Out_Fields.OC3M = Config.OCMode;
+		tCCER.Fields.CC3P = Config.OcPolarity;
+		tCCER.Fields.CC3E = 1;
+		TIM3->CCMR2 = tCCMR2;
+		TIM3->CCER = tCCER;
 		break;
 	}
-	TIM3->CR1.Fields.CEN = 1;
+	case Oc4:
+	{
+		dtCCMR2 tCCMR2 = {.Word = 0};
+		dtCCER tCCER = {.Word = 0};
+		tCCMR2.Out_Fields.CC4S = 0;
+		tCCMR2.Out_Fields.OC4PE = 1;
+		tCCMR2.Out_Fields.OC4M = Config.OCMode;
+		tCCER.Fields.CC4P = Config.OcPolarity;
+		tCCER.Fields.CC4E = 1;
+		TIM3->CCMR2 = tCCMR2;
+		TIM3->CCER = tCCER;
+		break;
+	}
+	}
+	TIM3->ARR = tARR;
+	TIM3->PSC = tPSC;
+	TIM3->CR1 = tCR1;
 }
 
 void TIM3_SetValue(dtGPT1SetTypes Type, uint32 Value)
