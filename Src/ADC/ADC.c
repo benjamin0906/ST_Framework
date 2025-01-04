@@ -12,6 +12,15 @@
 static dtADC *const ADC = (dtADC*)(0x40012400);
 static void (*DataHandler)(uint16);
 
+#define CLEAR_CCRDY() \
+	do \
+	{\
+		dtADC_ISR tIsr = {.Word = 0};\
+		tIsr.Fields.CCRDY = 1;\
+		ADC->ISR = tIsr;\
+	}\
+	while(0);
+
 void ADC_Init(dtAdcConfig Config);
 void ADC_SetChConfig(dtAdcCh Ch, dtAdcSmp Smp);
 uint8 ADC_CheckChConfig(void);
@@ -21,6 +30,7 @@ uint8 ADC_CalibProcess(void);
 void ADC_SetDataHandler(void (*Handler)(uint16));
 void ADC_SetSequence(uint8 Order, dtAdcCh Ch);
 void ADC_ConfSequence(void);
+uint8 ADC_IsSeqComplete(void);
 
 void ADC_Init(dtAdcConfig Config)
 {
@@ -70,7 +80,7 @@ void ADC_Init(dtAdcConfig Config)
 		TempIER.Fields.EOCIE = (Config.Interrupt>>1)&0x1;
 		NVIC_EnableIRQ(IRQ_ADC);
 	}
-
+	CLEAR_CCRDY();
 	ADC->IER = TempIER;
 	ADC->CFGR1 = TempCfgr1;
 	ADC->CFGR2 = TempCfgr2;
@@ -104,18 +114,22 @@ void ADC_Disable(void)
 	ADC->CR = TempCr;
 }
 
+/* @param Ch:
+ *  */
 void ADC_SetChConfig(dtAdcCh Ch, dtAdcSmp Smp)
 {
 	dtADC_SMPR TempSmpr = ADC->SMPR;
 	dtADC_CHSELR TempChselr = ADC->CHSELR;
 
-	TempSmpr.Fields.SMPSEL = 0;
-	TempSmpr.Word |= 1<<(Ch+8);
+	CLEAR_CCRDY();
 
-	TempChselr.Word = 1<<Ch;
+	TempSmpr.Fields.SMPSEL |= (Smp)<<(Ch);
+
+	TempChselr.ModeZero_Fields.CHSEL |= 1<<Ch;
 
 	ADC->SMPR = TempSmpr;
 	ADC->CHSELR = TempChselr;
+	while(ADC->ISR.Fields.CCRDY != 1);
 }
 
 void ADC_SetSequence(uint8 Order, dtAdcCh Ch)
@@ -143,7 +157,12 @@ uint8 ADC_CheckChConfig(void)
 void ADC_StartConversation(void)
 {
 	dtADC_CR TempCr = ADC->CR;
+	dtADC_ISR tIsr = {.Word = 0};
+	tIsr.Fields.EOC = 1;
+	tIsr.Fields.EOS = 1;
 	TempCr.Fields.ADSTART = 1;
+
+	ADC->ISR = tIsr;
 	ADC->CR = TempCr;
 }
 
@@ -152,6 +171,11 @@ void ADC_StopConversion(void)
 	dtADC_CR TempCr = ADC->CR;
 	TempCr.Fields.ADSTP = 1;
 	ADC->CR = TempCr;
+}
+
+uint8 ADC_IsAdcStopped(void)
+{
+	return (ADC->CR.Fields.ADSTART == 0);
 }
 
 void ADC_SetExtTrigMode(dtAdcExtTrigMode TrigMode)
@@ -217,12 +241,20 @@ uint8 ADC_CalibProcess(void)
 
 }
 
+uint8 ADC_IsSeqComplete(void)
+{
+	return ADC->ISR.Fields.EOS;
+}
+
 void ADC_SetDataHandler(void (*Handler)(uint16))
 {
 	DataHandler = Handler;
 }
-
+#if defined(MCU_G070)
+void ADC_IRQHandler(void)
+#else
 void ADC_COMP_IRQHandler(void)
+#endif
 {
 	dtADC_ISR ClearFlag = {.Word = 0};
 	if(ADC->ISR.Fields.CCRDY != 0)
@@ -236,7 +268,7 @@ void ADC_COMP_IRQHandler(void)
 		/* Conversion is ready */
 		uint16 Data = ADC->DR.Fields.Data;
 		if(DataHandler != 0) DataHandler(Data);
-		ClearFlag.Fields.EOC = 1;
+		//ClearFlag.Fields.EOC = 1;
 	}
 
 	/* Clearing the flag which caused the interrupt */

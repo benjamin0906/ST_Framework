@@ -275,7 +275,7 @@ typedef struct
 	uint32			:32;	//0xAC
 	uint32			:32;	//0xB0
 	dtADC_CALFACT	CALFACT;//0xB4
-	uint8			Padding[592];	//0xB8
+	uint8			Padding[592];	//0xB5
 	dtADC_CCR		CCR;	//0x308
 
 } dtADC;

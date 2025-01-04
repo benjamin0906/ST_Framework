@@ -10,14 +10,37 @@
 
 #include "types.h"
 
+typedef enum
+{
+	ADCTrigMode_Sw,
+	ADCTrigMode_FallingEdge,
+	ADCTrigMode_RisingEdge,
+	ADCTrigMode_FallingAndRisingEdge,
+} dtADCTrigMode;
+
 typedef struct
 {
+	/* auto power relation mode, 0: on, 1 off (always powered) */
 	uint32 AutoOff		:1;
+
+	/* 1: next conversation start only after reading the previous result */
 	uint32 WaitMode		:1;
+
+	/* 0: single conversation mode; 1: continuous mode */
 	uint32 ContMode		:1;
+
+	/* 0: old result is kept if overran, 1: new result is kept if overran */
 	uint32 OverRun		:1;
+
 	uint32 LeftAlign	:1;
+
+	/* 0b00: 12 bits
+	 * 0b01: 10 bits
+	 * 0b10: 8 bits
+	 * 0b11: 6 bits
+	 */
 	uint32 Resolution	:2;
+
 	uint32 ClkMode		:2;
 	uint32 OVSEn		:1;
 	uint32 OVS			:3;
@@ -86,5 +109,7 @@ extern uint8 ADC_IsAdcReady(void);
 extern void ADC_Enable(void);
 extern void ADC_Disable(void);
 extern void ADC_SetExtTrigMode(dtAdcExtTrigMode TrigMode);
+extern uint8 ADC_IsSeqComplete(void);
+extern uint8 ADC_IsAdcStopped(void);
 
 #endif /* INC_ADC_H_ */
