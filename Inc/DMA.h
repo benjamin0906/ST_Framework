@@ -128,6 +128,58 @@ typedef struct
 #define DMA_CS14	14
 #define DMA_CS15	15
 
+typedef struct
+{
+	uint32 *perPtr;
+	uint32 *memPtr;
+
+	/* 0b0: disabled
+	 * 0b1: enabled
+	 *  */
+	uint32 CircularMode :1;
+
+	/* 0b0: reading from the peripheral ptr
+	 * 0b1: reading from the memory ptr
+	 *  */
+	uint32 Direcion  :1;
+
+	/* 0b0: DMA increments the peripheral pointer after a read/write
+	 * 0b1: DMA doesn't increment the peripheral pointer after a read/write
+	 * */
+	uint32 PeripheralIncrement :1;
+
+	/* 0b0: DMA increments the memory pointer after a read/write
+	 * 0b1: DMA doesn't increment the memory pointer after a read/write
+	 * */
+	uint32 MemIncrement :1;
+
+	/* 0b00: 8 bits
+	 * 0b01: 16 bits
+	 * 0b10: 32 bits
+	 * 0b11: reserved
+	 * */
+	uint32 PeripheralWidth : 2;
+
+	/* 0b00: 8 bits
+	 * 0b01: 16 bits
+	 * 0b10: 32 bits
+	 * 0b11: reserved
+	 * */
+	uint32 MemoryWidth : 2;
+
+	/* 0b00: low
+	 * 0b01: medium
+	 * 0b10: high
+	 * 0b11: very high
+	 * */
+	uint32 PriorityLevel: 2;
+
+	/* This mode ensures that the transfer is triggered by SW. In this mode the circular mode shall be disabled!!!
+	 * 0b0: disabled
+	 * 0b1: enabled */
+	uint32 Mem2Mem :1;
+} dtDmaCfg;
+
 extern void IDMA_Config(const dtDmaConfig *const Config, void (*IrqHandler)(uint8 Flags, uint32 NumOfData));
 extern void DMA_Start(dtDMAInstance Instance, dtDmaStream DmaChannel, uint16 Amount);
 extern void DMA_StartWithNew(dtDMAInstance Instance, dtDmaStream DmaChannel, uint16 Amount, void *Peripheral_Src, void *Memory_Dst);

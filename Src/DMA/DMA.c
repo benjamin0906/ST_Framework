@@ -12,6 +12,9 @@
 static dtDMAx *const DMA[2] = {(dtDMAx*)(0x40020000),(dtDMAx*)(0x40020400)};
 #elif defined(MCU_F446)
 static dtDMAx *const DMA[2] = {(dtDMAx*)(0x40026000),(dtDMAx*)(0x40026400)};
+#elif defined(MCU_G070)
+static dtDMA *const DMA[1] = {(dtDMA*const)(0x40020000)};
+static void (*DmaTransferCompleteCallback[7])(void);
 #endif
 
 #if defined(MCU_F446)
@@ -46,6 +49,28 @@ static dtDMAx *const DMA[2] = {(dtDMAx*)(0x40026000),(dtDMAx*)(0x40026400)};
                         DMA[Instance]->CH[DmaChannel].CCR = Temp;              \
                     }                                                   \
                     while(0)
+#elif defined(MCU_G070)
+
+/* @brief: This disables the specific DMA channel
+ * @Param channel: number of DMA channel to be disabled
+ * */
+static void inline Disable(uint8 channel)
+{
+	dtDMA_CCR tCCR = DMA[0]->DmaChDesc[channel].CCR;
+	tCCR.Fields.EN = 0;
+	DMA[0]->DmaChDesc[channel].CCR = tCCR;
+}
+
+/* @brief: This enables the specific DMA channel
+ * @Param channel: number of DMA channel to be enabled
+ * */
+static void inline Enable(uint8 channel)
+{
+	dtDMA_CCR tCCR = DMA[0]->DmaChDesc[channel].CCR;
+	tCCR.Fields.EN = 1;
+	DMA[0]->DmaChDesc[channel].CCR = tCCR;
+}
+
 #endif
 #define DMA_GET_OPTION(optionVar, option)   ((optionVar&DMA_##option##_MASK)>>DMA_##option##_PLACE)
 
@@ -59,6 +84,8 @@ void DMA_StartWithNew(dtDMAInstance Instance, dtDmaStream DmaChannel, uint16 Amo
 uint8 IDMA_IsFree(dtDMAInstance Instance, dtDmaStream DmaChannel);
 void DMA_Stop(dtDMAInstance Instance, dtDmaStream DmaChannel);
 uint8 DMA_GetStatus(dtDmaStream Ch);
+#elif defined(MCU_G070)
+void DMA_ConfigChannel(const dtDmaCfg *const cfg);
 #endif
 
 #if defined(MCU_L476) && 0

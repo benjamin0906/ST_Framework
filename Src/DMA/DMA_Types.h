@@ -344,6 +344,90 @@ typedef struct
 	uint32 :32;//0xA4
 	dtCSELR CSELR;
 } dtDMAx;
+#elif defined(MCU_G070)
+typedef union
+{
+	uint32 Word;
+	struct
+	{
+		uint32 GF1  :1;
+		uint32 TCF1 :1;
+		uint32 HTF1 :1;
+		uint32 TEF1 :1;
+		uint32 GF2  :1;
+		uint32 TCF2 :1;
+		uint32 HTF2 :1;
+		uint32 TEF2 :1;
+		uint32 GF3  :1;
+		uint32 TCF3 :1;
+		uint32 HTF3 :1;
+		uint32 TEF3 :1;
+		uint32 GF4  :1;
+		uint32 TCF4 :1;
+		uint32 HTF4 :1;
+		uint32 TEF4 :1;
+		uint32 GF5  :1;
+		uint32 TCF5 :1;
+		uint32 HTF5 :1;
+		uint32 TEF5 :1;
+		uint32 GF6  :1;
+		uint32 TCF6 :1;
+		uint32 HTF6 :1;
+		uint32 TEF6 :1;
+		uint32 GF7  :1;
+		uint32 TCF7 :1;
+		uint32 HTF7 :1;
+		uint32 TEF7 :1;
+		uint32       :4;
+	} Fields;
+}dtIsrFlags;
+
+typedef union
+{
+	uint32 Word;
+	struct
+	{
+		uint32 EN       :1;
+		uint32 TCIE     :1;
+		uint32 HTIE     :1;
+		uint32 TEIE     :1;
+		uint32 DIR      :1;
+		uint32 CIRC     :1;
+		uint32 PINC     :1;
+		uint32 MINC     :1;
+		uint32 PSIZE    :2;
+		uint32 MSIZE    :2;
+		uint32 PL       :2;
+		uint32 MEM2MEM  :1;
+		uint32          :17;
+	} Fields;
+} dtDMA_CCR;
+
+typedef union
+{
+	uint32 Word;
+	struct
+	{
+        uint32 NDTR :16;
+        uint32      :16;
+	} Fields;
+} dtDMA_CNDTR;
+
+typedef struct
+{
+	dtDMA_CCR   CCR;
+	dtDMA_CNDTR CNDTR;
+    uint32      CPAR;
+    uint32      CMAR;
+    uint32      :32;
+} dtDmaChDesc;
+
+typedef struct
+{
+	dtIsrFlags ISR;             //0x00
+	dtIsrFlags IFCR;            //0x04
+	dtDmaChDesc DmaChDesc[7];   //0x08
+} dtDMA;
 #endif
 
 #endif /* ST_FRAMEWORK_SRC_DMA_DMA_TYPES_H_ */
