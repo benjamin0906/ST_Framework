@@ -22,6 +22,7 @@ static void (*DataHandler)(uint16);
 	while(0);
 
 void ADC_Init(dtAdcConfig Config);
+void ADC_DmaSet(dtDmaSettings setting);
 void ADC_SetChConfig(dtAdcCh Ch, dtAdcSmp Smp);
 uint8 ADC_CheckChConfig(void);
 void ADC_StartConversation(void);
@@ -54,6 +55,9 @@ void ADC_Init(dtAdcConfig Config)
 	TempCfgr1.Fields.ALIGN = Config.LeftAlign;
 	TempCfgr1.Fields.RES = Config.Resolution;
 	TempCfgr1.Fields.EXTSEL = Config.ExtTrigger;
+	TempCfgr1.Fields.EXTEN = Config.ExtEn;
+	TempCfgr1.Fields.DMACFG = Config.DmaCircMode;
+	TempCfgr1.Fields.DMAEN = Config.DmaEn;
 
 	TempCfgr2.Fields.CKMODE = Config.ClkMode;
 	TempCfgr2.Fields.OVSR = Config.OVS;
@@ -88,6 +92,21 @@ void ADC_Init(dtAdcConfig Config)
 	ADC->CHSELR = TempChselr;
 	ADC->CR = TempCr;
 	ADC->CCR = TempCcr;
+}
+
+void ADC_DmaSet(dtDmaSettings setting)
+{
+	dtADC_CFGR1 TempCfgr1 = ADC->CFGR1;
+	dtADC_CR TempCr = ADC->CR;
+
+	/* Stopping the ADC to set the DMA bits */
+	TempCr.Fields.ADSTP = 1;
+	ADC->CR = TempCr;
+	while(ADC->CR.Fields.ADSTART != 0);
+
+	TempCfgr1.Fields.DMACFG = setting.dmaCircMode;
+	TempCfgr1.Fields.DMAEN = setting.dmaEnable;
+	ADC->CFGR1 = TempCfgr1;
 }
 
 dtAdcState ADC_IsAdcReady(void)
@@ -176,6 +195,11 @@ void ADC_StopConversion(void)
 uint8 ADC_IsAdcStopped(void)
 {
 	return (ADC->CR.Fields.ADSTART == 0);
+}
+
+uint32* ADC_DataPtr(void)
+{
+	return &ADC->DR;
 }
 
 void ADC_SetExtTrigMode(dtAdcExtTrigMode TrigMode)

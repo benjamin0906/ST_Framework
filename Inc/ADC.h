@@ -50,7 +50,16 @@ typedef struct
 	uint32 ClkDiv		:4;
 	uint32 Interrupt	:2;
 	uint32 ExtTrigger	:3;
+	uint32 ExtEn        :1;
+	uint32 DmaEn        :1;
+	uint32 DmaCircMode  :1;
 } dtAdcConfig;
+
+typedef struct
+{
+	uint8 dmaCircMode :1;
+	uint8 dmaEnable :1;
+} dtDmaSettings;
 
 typedef enum
 {
@@ -96,6 +105,7 @@ typedef enum
 } dtAdcExtTrigMode;
 
 extern void ADC_Init(dtAdcConfig Config);
+extern void ADC_DmaSet(dtDmaSettings setting);
 extern void ADC_SetChConfig(dtAdcCh Ch, dtAdcSmp Smp);
 extern uint8 ADC_CheckChConfig(void);
 extern void ADC_StartConversation(void);
@@ -111,5 +121,6 @@ extern void ADC_Disable(void);
 extern void ADC_SetExtTrigMode(dtAdcExtTrigMode TrigMode);
 extern uint8 ADC_IsSeqComplete(void);
 extern uint8 ADC_IsAdcStopped(void);
+extern uint32* ADC_DataPtr(void);
 
 #endif /* INC_ADC_H_ */
