@@ -128,10 +128,14 @@ typedef struct
 #define DMA_CS14	14
 #define DMA_CS15	15
 
+#if defined(MCU_G070)
 typedef struct
 {
 	uint32 *perPtr;
 	uint32 *memPtr;
+
+	/* The channel to be configured */
+	uint32 Channel :3;
 
 	/* 0b0: disabled
 	 * 0b1: enabled
@@ -143,13 +147,13 @@ typedef struct
 	 *  */
 	uint32 Direcion  :1;
 
-	/* 0b0: DMA increments the peripheral pointer after a read/write
-	 * 0b1: DMA doesn't increment the peripheral pointer after a read/write
+	/* 0b1: DMA increments the peripheral pointer after a read/write
+	 * 0b0: DMA doesn't increment the peripheral pointer after a read/write
 	 * */
 	uint32 PeripheralIncrement :1;
 
-	/* 0b0: DMA increments the memory pointer after a read/write
-	 * 0b1: DMA doesn't increment the memory pointer after a read/write
+	/* 0b1: DMA increments the memory pointer after a read/write
+	 * 0b0: DMA doesn't increment the memory pointer after a read/write
 	 * */
 	uint32 MemIncrement :1;
 
@@ -178,7 +182,14 @@ typedef struct
 	 * 0b0: disabled
 	 * 0b1: enabled */
 	uint32 Mem2Mem :1;
+
+	uint16 NumberOfDataToTransfer;
 } dtDmaCfg;
+
+extern void DMA_ConfigChannel(const dtDmaCfg *const cfg, void (*CompleteCallback)(void));
+extern void DMA_EnableChannel(const uint8 channel);
+extern void DMA_DisableChannel(const uint8 channel);
+#endif
 
 extern void IDMA_Config(const dtDmaConfig *const Config, void (*IrqHandler)(uint8 Flags, uint32 NumOfData));
 extern void DMA_Start(dtDMAInstance Instance, dtDmaStream DmaChannel, uint16 Amount);

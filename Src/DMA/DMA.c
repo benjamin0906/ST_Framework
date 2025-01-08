@@ -85,9 +85,56 @@ uint8 IDMA_IsFree(dtDMAInstance Instance, dtDmaStream DmaChannel);
 void DMA_Stop(dtDMAInstance Instance, dtDmaStream DmaChannel);
 uint8 DMA_GetStatus(dtDmaStream Ch);
 #elif defined(MCU_G070)
-void DMA_ConfigChannel(const dtDmaCfg *const cfg);
+void DMA_ConfigChannel(const dtDmaCfg *const cfg, void (*CompleteCallback)(void));
+void DMA_EnableChannel(const uint8 channel);
+void DMA_DisableChannel(const uint8 channel);
 #endif
 
+#if defined(MCU_G070)
+void DMA_ConfigChannel(const dtDmaCfg *const cfg, void (*CompleteCallback)(void))
+{
+	dtDMA_CCR tCCR;
+	dtDMA_CNDTR tCNDTR = {.Word = 0};
+	Disable(cfg->Channel);
+
+	tCCR.Fields.CIRC = cfg->CircularMode;
+	tCCR.Fields.DIR = cfg->Direcion;
+	tCCR.Fields.MEM2MEM = cfg->Mem2Mem;
+	tCCR.Fields.MINC = cfg->MemIncrement;
+	tCCR.Fields.MSIZE = cfg->MemoryWidth;
+	tCCR.Fields.PINC = cfg->PeripheralIncrement;
+	tCCR.Fields.PSIZE = cfg->PeripheralWidth;
+	tCCR.Fields.PL = cfg->PriorityLevel;
+
+	if(CompleteCallback != 0)
+	{
+		tCCR.Fields.TCIE = 1;
+		DmaTransferCompleteCallback[cfg->Channel] = CompleteCallback;
+		NVIC_EnableIRQ(IRQ_DMA_Ch1);
+	}
+	tCCR.Fields.HTIE = 0;
+	tCCR.Fields.TEIE = 0;
+	tCCR.Fields.EN = 0;
+
+	tCNDTR.Fields.NDTR = cfg->NumberOfDataToTransfer;
+
+	DMA[0]->DmaChDesc[cfg->Channel].CMAR = cfg->memPtr;
+	DMA[0]->DmaChDesc[cfg->Channel].CPAR = cfg->perPtr;
+	DMA[0]->DmaChDesc[cfg->Channel].CNDTR = tCNDTR;
+	DMA[0]->DmaChDesc[cfg->Channel].CCR = tCCR;
+
+}
+
+void DMA_EnableChannel(const uint8 channel)
+{
+	Enable(channel);
+}
+
+void DMA_DisableChannel(const uint8 channel)
+{
+	Disable(channel);
+}
+#endif
 #if defined(MCU_L476) && 0
 
 void DMA_Set(dtDMAInstance Instance, dtChannel Ch, uint32* MemAddr, uint32* PeripheralAddr, uint32 options, void(IntFunc)(void))
@@ -653,5 +700,17 @@ void DMA2_Stream7_IRQHandler(void)
 {
     if(DMA_IntFunc[1][7] != 0) (*DMA_IntFunc[1][7])((DMA[0]->HISR.Word >> 22) & 0x3F, DMA[0]->CH[7].S0NDTR.Word);
     DMA[1]->HIFCR.Word = (0x3D << 22);
+}
+#elif defined(MCU_G070)
+void DMA1_Channel1_IRQHandler(void)
+{
+	dtIsrFlags tIFCR = {.Word = 0};
+	tIFCR.Fields.GF1 = 1;
+	tIFCR.Fields.TCF1 = 1;
+	if(DmaTransferCompleteCallback[0] != 0)
+	{
+		DmaTransferCompleteCallback[0]();
+	}
+	DMA[0]->IFCR = tIFCR;
 }
 #endif
