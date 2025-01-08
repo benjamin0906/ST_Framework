@@ -36,7 +36,7 @@ typedef enum
 } dtI2cSessionResult;
 
 extern void I2C_Init(dtI2CInstance Instance, dtI2cConfig config);
-extern void I2C_Start(dtI2CInstance Instance, dtI2cSessionType SessionType, uint8 SlaveAdd, uint8* RegisterAddress, uint8 RegisterLength, uint8* Data, uint8 DataLength);
+extern void I2C_Start(dtI2CInstance Instance, dtI2cSessionType SessionType,const uint8 SlaveAdd, const uint8* const RegisterAddress, uint8 RegisterLength, uint8* Data, uint8 DataLength);
 extern dtI2cSessionResult I2C_Result(dtI2CInstance Instance);
 
 #endif /* INC_I2C_H_ */
