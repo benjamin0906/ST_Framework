@@ -51,6 +51,8 @@ extern void BasicTIM_Set(dtBTimId Id, dtBasicTimConfig Config, void (*IrqPtr)(vo
 extern void BasicTIM_SetPS(dtBTimId Id, uint16 Value);
 extern void BasicTIM_SetAR(dtBTimId Id, uint16 Value);
 extern void BasicTIM_Update(dtBTimId Id);
+extern void BasicTIM_Stop(dtBTimId id);
+extern void BasicTIM_Start(dtBTimId id);
 
 #endif /* BASICTIM_BASICTIM_H_ */
 #else

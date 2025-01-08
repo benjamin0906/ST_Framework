@@ -30,6 +30,8 @@ static void (*IrqPtrs[2])(void);
 #endif
 #if defined(MCU_F446) || defined(MCU_G070) || defined(MCU_F410) || defined(MCU_L433) || defined(MCU_G071) || defined(MCU_F415) || defined(MCU_L476)
 void BasicTIM_Set(dtBTimId Id, dtBasicTimConfig Config, void (*IrqPtr)(void));
+void BasicTIM_Stop(dtBTimId id);
+void BasicTIM_Start(dtBTimId id);
 
 void BasicTIM_Set(dtBTimId Id, dtBasicTimConfig Config, void (*IrqPtr)(void))
 {
@@ -89,6 +91,21 @@ void BasicTIM_Set(dtBTimId Id, dtBasicTimConfig Config, void (*IrqPtr)(void))
 	BTIMs[Id]->DIER = TempDIER;
 
 	BTIMs[Id]->CR1.Fields.CEN = Config.Enable;
+}
+
+void BasicTIM_Stop(dtBTimId id)
+{
+	dtCR1 tCR = BTIMs[id]->CR1;
+	tCR.Fields.CEN = 0;
+	BTIMs[id]->CR1 = tCR;
+}
+
+void BasicTIM_Start(dtBTimId id)
+{
+	dtCR1 tCR = BTIMs[id]->CR1;
+	tCR.Fields.CEN = 1;
+	BTIMs[id]->CNT.Word = 0;
+	BTIMs[id]->CR1 = tCR;
 }
 
 void BasicTIM_SetAR(dtBTimId Id, uint16 Value)
