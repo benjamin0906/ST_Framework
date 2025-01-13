@@ -130,6 +130,12 @@ void RCC_ClockTreeInit(const dtRccClockTreeCfg config)
 		while(RCC->CR.Fields.HSIRDY == 0);
 	}
 
+	if(config.LsiClock != 0)
+	{
+		RCC->CSR.Fields.LSION = 1;
+		while(RCC->CSR.Fields.LSIRDY == 0);
+	}
+
 	/* PLL init */
 	if(     (config.SysClockCfg == SysClock_PLL)
         ||  (config.UsbClockSel == USB_SRC_PLLQ)

@@ -160,7 +160,7 @@ typedef enum
 #if defined(MCU_L433) || defined(MCU_L476)
 	RCC_QSPI	= 72,
 #endif
-#if defined(MCU_G071)
+#if defined(MCU_G070) || defined(MCU_G071)
 	RCC_RTC		= 74,
 #endif
 #if defined(MCU_G070) || defined(MCU_G071)
@@ -557,6 +557,7 @@ typedef struct RccClockTreeCfg
 {
 	dtRccSysClockCfg SysClockCfg;
 	dtPLLCFGR PllCfg;
+	uint8 LsiClock :1;
 	uint8 AhbPrescaler :4;
 	uint8 ApbPrescaler :4;
 	uint8 UsartClockSel :2;

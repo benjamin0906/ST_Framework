@@ -10,7 +10,7 @@
 #include "RCC_RTC.h"
 #include "Pwr_RTC.h"
 
-#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_L433) || defined(MCU_G071) || defined(MCU_F415) || defined(MCU_L476)
+#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_L433) || defined(MCU_G071) || defined(MCU_F415) || defined(MCU_L476) || defined(MCU_G070)
 static dtRTC *const RTC = (dtRTC*)0x40002800;
 
 void RTC_Init(dtRTCConfig Config);
@@ -39,7 +39,7 @@ void RTC_Init(dtRTCConfig Config)
 	}
 
 	/* Start initialization */
-#if defined(MCU_G071)
+#if defined(MCU_G071) || defined(MCU_G070)
 	RTC->ICSR.Fields.INIT = 1;
 	while(RTC->ICSR.Fields.INITF == 0);
 #endif
@@ -70,7 +70,7 @@ void RTC_Init(dtRTCConfig Config)
 	RTC->TR = TimeTemp;
 
 	RTC->CR.Fields.FMT = Config.Format;
-#if defined(MCU_G071)
+#if defined(MCU_G071) || defined(MCU_G070)
 	RTC->ICSR.Fields.INIT = 0;
 #endif
 
@@ -115,7 +115,7 @@ void RTC_Lock(void)
 uint8 RTC_SetTime(dtTime Time)
 {
 	uint8 ret = 0;
-#if defined(MCU_G071)
+#if defined(MCU_G071) || defined(MCU_G070)
 	if(RTC->ICSR.Fields.INIT == 0)
 	{
 		/* Unlock RTC registers */
@@ -144,7 +144,7 @@ uint8 RTC_SetTime(dtTime Time)
 uint8 RTC_SetDate(dtDate Date)
 {
 	uint8 ret = 0;
-#if defined(MCU_G071)
+#if defined(MCU_G071) || defined(MCU_G070)
 	if(RTC->ICSR.Fields.INIT == 0)
 	{
 		/* Unlock RTC registers */
@@ -174,7 +174,7 @@ uint8 RTC_SetDate(dtDate Date)
 uint8 RTC_SetPeriodicWake(dtRTCWuckSel CkSel, uint16 Value)
 {
 	uint8 ret = 0;
-#if defined(MCU_G071)
+#if defined(MCU_G071) || defined(MCU_G070)
 	RTC_WPUnlock();
 	if(RTC->CR.Fields.WUTE != 0)
 	{
@@ -203,7 +203,7 @@ uint8 RTC_SetPeriodicWake(dtRTCWuckSel CkSel, uint16 Value)
 
 void RTC_ClearInt(dtRTCIntMask Mask)
 {
-#if defined(MCU_G071)
+#if defined(MCU_G071) || defined(MCU_G070)
 	dtRTC_SCR TempScr = {.Word = Mask};
 	RTC->SCR = TempScr;
 #endif
@@ -211,7 +211,7 @@ void RTC_ClearInt(dtRTCIntMask Mask)
 
 uint8 RTC_IsIntPending(dtRTCIntMask Mask)
 {
-#if defined(MCU_G071)
+#if defined(MCU_G071) || defined(MCU_G070)
 	return (RTC->SR.Word & Mask) != 0;
 #else
 	return 0;
