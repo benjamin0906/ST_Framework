@@ -21,6 +21,7 @@ dtTime RTC_GetTime(void);
 uint8 RTC_SetTime(dtTime Time);
 uint8 RTC_SetDate(dtDate Date);
 uint8 RTC_SetPeriodicWake(dtRTCWuckSel CkSel, uint16 Value);
+void RTC_StopWakeUpTimer(void);
 void RTC_ClearInt(dtRTCIntMask Mask);
 uint8 RTC_IsIntPending(dtRTCIntMask Mask);
 
@@ -73,7 +74,7 @@ void RTC_Init(dtRTCConfig Config)
 #if defined(MCU_G071) || defined(MCU_G070)
 	RTC->ICSR.Fields.INIT = 0;
 #endif
-
+	RTC_ClearInt(0x3f);
 	RTC_Lock();
 }
 
@@ -185,10 +186,19 @@ uint8 RTC_SetPeriodicWake(dtRTCWuckSel CkSel, uint16 Value)
 	}
 	else if(RTC->ICSR.Fields.WUTWF != 0)
 	{
+		dtRTC_SCR tSCR = RTC->SCR;
 		dtRTC_CR TempCR = RTC->CR;
 		dtRTC_WUTR TempWUTR;
+
+		/* clearing wutf flag */
+		tSCR.Fields.CWUTF = 1;
+		RTC->SCR = tSCR;
+
+		/* Setting the countdown value */
 		TempWUTR.Fields.WUT = Value;
 		RTC->WUTR = TempWUTR;
+
+		/* enabling wake up timer, setting its clock and enabling its interrupt */
 		TempCR.Fields.WUTIE = 1;
 		TempCR.Fields.WUTE = 1;
 		TempCR.Fields.WUCKSEL = CkSel;
@@ -199,6 +209,15 @@ uint8 RTC_SetPeriodicWake(dtRTCWuckSel CkSel, uint16 Value)
 	}
 #endif
 	return ret;
+}
+
+void RTC_StopWakeUpTimer(void)
+{
+	RTC_WPUnlock();
+	dtRTC_CR TempCR = RTC->CR;
+	TempCR.Fields.WUTE = 0;
+	RTC->CR = TempCR;
+	RTC_Lock();
 }
 
 void RTC_ClearInt(dtRTCIntMask Mask)
@@ -217,6 +236,18 @@ uint8 RTC_IsIntPending(dtRTCIntMask Mask)
 	return 0;
 #endif
 }
+
+void RTC_STAMP_IRQHandler(void)
+{
+    dtRTC_MISR tMISR = RTC->MISR;
+    dtRTC_SCR tSCR = RTC->SCR;
+    if(tMISR.Fields.WUTMF)
+    {
+        tSCR.Fields.CWUTF = 1;
+    }
+    RTC->SCR = tSCR;
+}
+
 #else
 #warning "NO CPU IS DEFINED"
 #endif

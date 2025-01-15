@@ -48,6 +48,7 @@ extern dtTime RTC_GetTime(void);
 extern uint8 RTC_SetTime(dtTime Time);
 extern uint8 RTC_SetDate(dtDate Date);
 extern uint8 RTC_SetPeriodicWake(dtRTCWuckSel CkSel, uint16 Value);
+extern void RTC_StopWakeUpTimer(void);
 extern void RTC_ClearInt(dtRTCIntMask Mask);
 extern uint8 RTC_IsIntPending(dtRTCIntMask Mask);
 

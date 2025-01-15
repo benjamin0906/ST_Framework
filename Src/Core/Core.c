@@ -26,3 +26,10 @@ void Core_SystemReset(void)
     SCB->AIRCR = temp;
     while(1);
 }
+
+void Core_SleepMode(uint8 sleepdeep)
+{
+	dtSCR tSCR = SCB->SCR;
+	tSCR.Fields.SLEEPDEEP = (sleepdeep != 0);
+	SCB->SCR = tSCR;
+}

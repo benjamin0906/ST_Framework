@@ -147,6 +147,7 @@ typedef union
 	struct
 	{
 		uint32 PREDIV_S	:15;
+		uint32          :1;
 		uint32 PREDIV_A	:7;
 	} Fields;
 } dtRTC_PRER;

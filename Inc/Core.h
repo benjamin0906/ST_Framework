@@ -48,7 +48,7 @@ asm(    "push {r0}              \n"             \
 );
 
 void Core_SystemReset(void);
-
+extern void Core_SleepMode(uint8 sleepdeep);
 extern void CoreI_SetPsp(uint32*);
 #else
 #warning "NO CPU IS DEFINED"
