@@ -1055,403 +1055,6 @@ typedef struct
 
 } dtRCC;
 #elif defined(MCU_L433)
-typedef union
-{
-	uint32 Word;
-	struct
-	{
-		uint32	MSION		:1;
-		uint32	MSIRDY		:1;
-		uint32	MSIPLLEN	:1;
-		uint32	MSIRGSEL	:1;
-		uint32	MSIRANGE	:4;
-		uint32	HSION		:1;
-		uint32	HSIKERON	:1;
-		uint32	HSIRDY		:1;
-		uint32	HSIASFS		:1;
-		uint32				:4;
-		uint32	HSEON		:1;
-		uint32	HSERDY		:1;
-		uint32	HSEBYP		:1;
-		uint32	CSSON		:1;
-		uint32				:4;
-		uint32	PLLON		:1;
-		uint32	PLLRDY		:1;
-		uint32	PLLSAI1ON	:1;
-		uint32	PLLSAI1RDY	:1;
-	} Fields;
-} dtCR;
-
-typedef union
-{
-	uint32 Word;
-	struct
-	{
-		uint32	MSI_CAL		:8;
-		uint32	MSI_TRIM	:8;
-		uint32	HSI_CAL		:8;
-		uint32	HSI_TRIM	:8;
-	} Fields;
-} dtICSCR;
-
-typedef union
-{
-	uint32 Word;
-	struct
-	{
-		uint32	SW			:2;
-		uint32	SWS			:2;
-		uint32	HPRE		:4;
-		uint32	PPRE1		:3;
-		uint32	PPRE2		:3;
-		uint32				:1;
-		uint32	STOP_WUCK	:1;
-		uint32				:8;
-		uint32	MCOSEL		:4;
-		uint32	MCOPRE		:3;
-	} Fields;
-} dtCFGR;
-
-typedef union
-{
-	uint32 Word;
-	struct
-	{
-		uint32	PLLSRC		:2;
-		uint32				:2;
-		uint32	PLLM		:3;
-		uint32				:1;
-		uint32	PLLN		:7;
-		uint32				:1;
-		uint32	PLLPEN		:1;
-		uint32	PLLP		:1;
-		uint32				:2;
-		uint32	PLLQEN		:1;
-		uint32	PLLQ		:2;
-		uint32				:1;
-		uint32	PLLREN		:1;
-		uint32	PLLR		:2;
-		uint32	PLLPDIV		:5;
-	} Fields;
-} dtPLLCFGR;
-
-typedef union
-{
-	uint32 Word;
-	struct
-	{
-		uint32				:8;
-		uint32	PLLSAI1N	:7;
-		uint32				:1;
-		uint32	PLLSAI1PEN	:1;
-		uint32	PLLSAI1P	:1;
-		uint32				:2;
-		uint32	PLLSAI1QEN	:1;
-		uint32	PLLSAI1Q	:2;
-		uint32				:1;
-		uint32	PLLSAI1REN	:1;
-		uint32	PLLSAI1R	:2;
-		uint32	PLLSAI1PDIV	:5;
-	} Fields;
-} dtPLLSAI1CFGR;
-
-typedef union
-{
-	uint32 Word;
-	struct
-	{
-		uint32	LSIRDYIE	:1;
-		uint32	LSERDYIE	:1;
-		uint32	MSIRDYIE	:1;
-		uint32	HSIRDYIE	:1;
-		uint32	HSERDYIE	:1;
-		uint32	PLLRDYIE	:1;
-		uint32	PLLSAI1RDYIE:1;
-		uint32				:2;
-		uint32	LSECSSIE	:1;
-		uint32	HSI48RDYIE	:1;
-	} Fields;
-} dtCIER;
-
-typedef union
-{
-	uint32 Word;
-	struct
-	{
-		uint32	LSIRDYF		:1;
-		uint32	LSERDYF		:1;
-		uint32	MSIRDYF		:1;
-		uint32	HSIRDYF		:1;
-		uint32	HSERDYF		:1;
-		uint32	PLLRDYF		:1;
-		uint32	PLLSAI1RDYF	:1;
-		uint32				:1;
-		uint32	CSSF		:1;
-		uint32	LSECSSF		:1;
-		uint32	HSI48RDYF	:1;
-	} Fields;
-} dtCIFR;
-
-typedef union
-{
-	uint32 Word;
-	struct
-	{
-		uint32	LSIRDYC		:1;
-		uint32	LSERDYC		:1;
-		uint32	MSIRDYC		:1;
-		uint32	HSIRDYC		:1;
-		uint32	HSERDYC		:1;
-		uint32	PLLRDYC		:1;
-		uint32	PLLSAI1RDYC	:1;
-		uint32				:1;
-		uint32	CSSC		:1;
-		uint32	LSECSSC		:1;
-		uint32	HSI48RDYC	:1;
-	} Fields;
-} dtCICR;
-
-typedef union
-{
-	uint32 Word;
-	struct
-	{
-		uint32	DMA1		:1;
-		uint32	DMA2		:1;
-		uint32				:6;
-		uint32	FLASH		:1;
-		uint32				:3;
-		uint32	CRC			:1;
-		uint32				:3;
-		uint32	TSC			:1;
-	} Fields;
-} dtAHB1;
-
-typedef union
-{
-	uint32 Word;
-	struct
-	{
-		uint32	GPIOA		:1;
-		uint32	GPIOB		:1;
-		uint32	GPIOC		:1;
-		uint32	GPIOD		:1;
-		uint32	GPIOE		:1;
-		uint32				:2;
-		uint32	GPIOH		:1;
-		uint32				:5;
-		uint32	ADC			:1;
-		uint32				:2;
-		uint32	AES			:1;
-		uint32				:1;
-		uint32	RNG			:1;
-	} Fields;
-} dtAHB2;
-
-typedef union
-{
-	uint32 Word;
-	struct
-	{
-		uint32				:8;
-		uint32	QSPI		:1;
-	} Fields;
-} dtAHB3;
-
-typedef union
-{
-	uint32 Word;
-	struct
-	{
-		uint32	TIM2		:1;
-		uint32	TIM3		:1;
-		uint32				:2;
-		uint32	TIM6		:1;
-		uint32	TIM7		:1;
-		uint32				:3;
-		uint32	LCD			:1;
-		uint32				:4;
-		uint32	SPI2		:1;
-		uint32	SPI3		:1;
-		uint32				:1;
-		uint32	USART2		:1;
-		uint32	USART3		:1;
-		uint32	USART4		:1;
-		uint32				:1;
-		uint32	I2C1		:1;
-		uint32	I2C2		:1;
-		uint32	I2C3		:1;
-		uint32	CRS			:1;
-		uint32	CAN1		:1;
-		uint32	USBFS		:1;
-		uint32				:1;
-		uint32	PWR			:1;
-		uint32	DAC1		:1;
-		uint32	OPAMP		:1;
-		uint32	LPTIM1		:1;
-	} Fields;
-} dtAPB1;
-
-typedef union
-{
-	uint32 Word;
-	struct
-	{
-		uint32	LPUART1		:1;
-		uint32	I2C4		:1;
-		uint32	SWPMI1		:1;
-		uint32				:2;
-		uint32	LPTIM2		:1;
-	} Fields;
-} dtAPB1_2;
-
-typedef union
-{
-	uint32 Word;
-	struct
-	{
-		uint32	SYSCFG		:1;
-		uint32				:9;
-		uint32	SDMMC1		:1;
-		uint32	TIM1		:1;
-		uint32	SPI1		:1;
-		uint32				:1;
-		uint32	USART1		:1;
-		uint32				:1;
-		uint32	TIM15		:1;
-		uint32	TIM16		:1;
-		uint32				:3;
-		uint32	SAI1		:1;
-		uint32				:2;
-		uint32	DFSDM1		:1;
-	} Fields;
-} dtAPB2;
-
-typedef struct
-{
-	uint32		:32;	//0x04
-	dtAHB1		AHB1;	//0x08
-	dtAHB2		AHB2;	//0x0C
-	dtAHB3		AHB3;	//0x10
-	uint32		:32;	//0x14
-	dtAPB1		APB1;	//0x18
-	dtAPB1_2	APB1_2;	//0x1C
-	dtAPB2		APB2;	//0x20
-} dtBusGroup;
-
-typedef union
-{
-	uint32 Word;
-	struct
-	{
-		uint32	USART1SEL	:2;
-		uint32	USART2SEL	:2;
-		uint32	USART3SEL	:2;
-		uint32	USART4SEL	:2;
-		uint32				:2;
-		uint32	LPUART1SEL	:2;
-		uint32	I2C1SEL		:2;
-		uint32	I2C2SEL		:2;
-		uint32	I2C3SEL		:2;
-		uint32	LPTIM1SEL	:2;
-		uint32	LPTIM2SEL	:2;
-		uint32	SAI1SEL		:2;
-		uint32				:2;
-		uint32	CLK48SEL	:2;
-		uint32	ADCSEL		:2;
-		uint32	SWPMI1SEL	:1;
-		uint32				:1;
-	} Fields;
-} dtCCIPR;
-
-typedef union
-{
-	uint32 Word;
-	struct
-	{
-		uint32	LSEON		:1;
-		uint32	LSERDY		:1;
-		uint32	LSEBYP		:1;
-		uint32	LSEDRV		:2;
-		uint32	LSECSSON	:1;
-		uint32	LSECSSD		:1;
-		uint32	LSESYSDIS	:1;
-		uint32	RTCSEL		:2;
-		uint32				:5;
-		uint32	RTCEN		:1;
-		uint32	BDRST		:1;
-		uint32				:7;
-		uint32	LSCOEN		:1;
-		uint32	LSCOSEL		:1;
-	} Fields;
-} dtBDCR;
-
-typedef union
-{
-	uint32 Word;
-	struct
-	{
-		uint32	LSION		:1;
-		uint32	LSIRDY		:1;
-		uint32				:2;
-		uint32	LSIPREDIV	:1;
-		uint32				:3;
-		uint32	MSISRANGE	:4;
-		uint32				:11;
-		uint32	RMVF		:1;
-		uint32	FWRSTF		:1;
-		uint32	OBLRSTF		:1;
-		uint32	PINRSTF		:1;
-		uint32	BORRSTF		:1;
-		uint32	SFTRSTF		:1;
-		uint32	IWWGRSTF	:1;
-		uint32	WWDGRSTF	:1;
-		uint32	LPWRRSTF	:1;
-	} Fields;
-} dtCSR;
-
-typedef union
-{
-	uint32 Word;
-	struct
-	{
-		uint32	HSI48ON		:1;
-		uint32	HSI48RDY	:1;
-		uint32				:5;
-		uint32	HSI48CAL	:9;
-	} Fields;
-} dtCRRCR;
-
-typedef union
-{
-	uint32 Word;
-	struct
-	{
-		uint32	I2C4SEL		:2;
-	} Fields;
-} dtCCIPR2;
-
-typedef struct
-{
-	dtCR			CR;				//0x00
-	dtICSCR			ICSCR;			//0x04
-	dtCFGR			CFGR;			//0x08
-	dtPLLCFGR		PLLCFGR;		//0x0C
-	dtPLLSAI1CFGR	PLLSAI1CFGR;	//0x10
-	uint32			:32;			//0x14
-	dtCIER			CIER;			//0x18
-	dtCIFR			CIFR;			//0x1C
-	dtCICR			CICR;			//0x20
-	dtBusGroup		RSTR;			//0x24
-	dtBusGroup		ENR;
-	dtBusGroup		SMENR;
-	dtCCIPR			CCIPR;
-	dtBDCR			BDCR;
-	dtCSR			CSR;
-	dtCRRCR			CRRCR;
-	dtCCIPR2		CCIPR2;
-} dtRCC;
-
 /*typedef union
 {
 	uint32 Word;
@@ -1461,6 +1064,9 @@ typedef struct
 	} Fields;
 } dt;*/
 #elif defined(MCU_L476)
+#endif
+
+#if defined(MCU_L433) || defined(MCU_L476) || defined(STM32U0)
 typedef union
 {
 	uint32 Word;
@@ -1483,13 +1089,20 @@ typedef union
 		uint32				:4;
 		uint32	PLLON		:1;
 		uint32	PLLRDY		:1;
+
+#if defined(MCU_L433) || defined(MCU_L476)
 		uint32	PLLSAI1ON	:1;
 		uint32	PLLSAI1RDY	:1;
+#endif
+#if defined(MCU_L476)
 		uint32	PLLSAI2ON	:1;
 		uint32	PLLSAI2RDY	:1;
+#endif
 	} Fields;
 } dtCR;
+#endif
 
+#if defined(MCU_L433) || defined(MCU_L476) || defined(STM32U0)
 typedef union
 {
 	uint32 Word;
@@ -1501,25 +1114,46 @@ typedef union
 		uint32	HSI_TRIM	:7;
 	} Fields;
 } dtICSCR;
+#endif
 
+#if defined(MCU_L433) || defined(MCU_L476) || defined(STM32U0)
 typedef union
 {
 	uint32 Word;
 	struct
 	{
+#if defined(MCU_L433) || defined(MCU_L476)
 		uint32	SW			:2;
 		uint32	SWS			:2;
+#elif defined(STM32U0)
+		uint32	SW			:3;
+		uint32	SWS			:3;
+		uint32              :2;
+#endif
 		uint32	HPRE		:4;
+#if defined(MCU_L433) || defined(MCU_L476)
 		uint32	PPRE1		:3;
 		uint32	PPRE2		:3;
 		uint32				:1;
+#elif defined(STM32U0)
+		uint32  PPRE        :3;
+#endif
 		uint32	STOP_WUCK	:1;
+#if defined(MCU_L433) || defined(MCU_L476)
 		uint32				:8;
 		uint32	MCOSEL		:4;
 		uint32	MCOPRE		:3;
+#elif defined(STM32U0)
+		uint32	MCO2SEL		:4;
+		uint32	MCO2PRE		:4;
+		uint32	MCOSEL		:4;
+		uint32	MCOPRE		:4;
+#endif
 	} Fields;
 } dtCFGR;
+#endif
 
+#if defined(MCU_L433) || defined(MCU_L476) || defined(STM32U0)
 typedef union
 {
 	uint32 Word;
@@ -1532,17 +1166,31 @@ typedef union
 		uint32	PLLN		:7;
 		uint32				:1;
 		uint32	PLLPEN		:1;
+#if defined(MCU_L433) || defined(MCU_L476)
 		uint32	PLLP		:1;
+#elif defined(STM32U0)
+		uint32	PLLP		:5;
+#endif
 		uint32				:2;
 		uint32	PLLQEN		:1;
+#if defined(MCU_L433) || defined(MCU_L476)
 		uint32	PLLQ		:2;
 		uint32				:1;
+#elif defined(STM32U0)
+		uint32	PLLQ		:3;
+#endif
 		uint32	PLLREN		:1;
+#if defined(MCU_L433) || defined(MCU_L476)
 		uint32	PLLR		:2;
 		uint32	PLLPDIV		:5;
+#elif defined(STM32U0)
+		uint32	PLLR		:3;
+#endif
 	} Fields;
 } dtPLLCFGR;
+#endif
 
+#if defined(MCU_L433) || defined(MCU_L476)
 typedef union
 {
 	uint32 Word;
@@ -1562,7 +1210,9 @@ typedef union
 		uint32	PLLSAI1PDIV	:5;
 	} Fields;
 } dtPLLSAI1CFGR;
+#endif
 
+#if defined(MCU_L476)
 typedef union
 {
 	uint32 Word;
@@ -1582,7 +1232,9 @@ typedef union
 		uint32	PLLSAI2PDIV	:5;
 	} Fields;
 } dtPLLSAI2CFGR;
+#endif
 
+#if defined(MCU_L433) || defined(MCU_L476) || defined(STM32U0)
 typedef union
 {
 	uint32 Word;
@@ -1594,52 +1246,53 @@ typedef union
 		uint32	HSIRDYIE	:1;
 		uint32	HSERDYIE	:1;
 		uint32	PLLRDYIE	:1;
+#if defined(MCU_L433) || defined(MCU_L476)
 		uint32	PLLSAI1RDYIE:1;
+#elif defined(STM32U0)
+		uint32              :1;
+#endif
+#if defined(MCU_L476)
 		uint32	PLLSAI2RDYIE:1;
+#elif defined(MCU_L433) || defined(STM32U0)
+		uint32              :1;
+#endif
 		uint32				:1;
 		uint32	LSECSSIE	:1;
 		uint32	HSI48RDYIE	:1;
 	} Fields;
 } dtCIER;
+#endif
 
+#if defined(MCU_L433) || defined(MCU_L476) || defined(STM32U0)
 typedef union
 {
 	uint32 Word;
 	struct
 	{
-		uint32	LSIRDYF		:1;
-		uint32	LSERDYF		:1;
-		uint32	MSIRDYF		:1;
-		uint32	HSIRDYF		:1;
-		uint32	HSERDYF		:1;
-		uint32	PLLRDYF		:1;
-		uint32	PLLSAI1RDYF	:1;
-		uint32	PLLSAI2RDYF	:1;
-		uint32	CSSF		:1;
-		uint32	LSECSSF		:1;
-		uint32	HSI48RDYF	:1;
+		uint32	LSIRDYI     :1;
+		uint32	LSERDYI     :1;
+		uint32	MSIRDYI     :1;
+		uint32	HSIRDYI     :1;
+		uint32	HSERDYI     :1;
+		uint32	PLLRDYI     :1;
+#if defined(MCU_L433) || defined(MCU_L476)
+		uint32	PLLSAI1RDYIE:1;
+#elif defined(STM32U0)
+		uint32              :1;
+#endif
+#if defined(MCU_L476)
+		uint32	PLLSAI2RDYIE:1;
+#elif defined(MCU_L433) || defined(STM32U0)
+		uint32              :1;
+#endif
+		uint32	CSS         :1;
+		uint32	LSECSSI	    :1;
+		uint32	HSI48RDYI	:1;
 	} Fields;
-} dtCIFR;
+} dtCIxR; //x can be F as Flag and C as clear
+#endif
 
-typedef union
-{
-	uint32 Word;
-	struct
-	{
-		uint32	LSIRDYC		:1;
-		uint32	LSERDYC		:1;
-		uint32	MSIRDYC		:1;
-		uint32	HSIRDYC		:1;
-		uint32	HSERDYC		:1;
-		uint32	PLLRDYC		:1;
-		uint32	PLLSAI1RDYC	:1;
-		uint32	PLLSAI2RDYC	:1;
-		uint32	CSSC		:1;
-		uint32	LSECSSC		:1;
-		uint32	HSI48RDYC	:1;
-	} Fields;
-} dtCICR;
-
+#if defined(MCU_L433) || defined(MCU_L476) || defined(STM32U0)
 typedef union
 {
 	uint32 Word;
@@ -1653,10 +1306,14 @@ typedef union
 		uint32	CRC			:1;
 		uint32				:3;
 		uint32	TSC			:1;
+#if defined(MCU_L476)
 		uint32	DMA2D		:1;
+#endif
 	} Fields;
 } dtAHB1;
+#endif
 
+#if defined(MCU_L433) || defined(MCU_L476)
 typedef union
 {
 	uint32 Word;
@@ -1667,32 +1324,76 @@ typedef union
 		uint32	GPIOC		:1;
 		uint32	GPIOD		:1;
 		uint32	GPIOE		:1;
+#if defined(MCU_L476)
 		uint32	GPIOF		:1;
 		uint32	GPIOG		:1;
+#elif defined(MCU_L433)
+		uint32              :2;
+#endif
 		uint32	GPIOH		:1;
+#if defined(MCU_L476)
 		uint32	GPIOI		:1;
+#elif defined(MCU_L433)
+		uint32              :1;
+#endif
 		uint32				:3;
+#if defined(MCU_L476)
 		uint32	OTGFS		:1;
+#elif defined(MCU_L433)
+		uint32              :1;
+#endif
 		uint32	ADC			:1;
+#if defined(MCU_L476)
 		uint32	DCMI		:1;
+#elif defined(MCU_L433)
+		uint32              :1;
+#endif
 		uint32				:1;
 		uint32	AES			:1;
+#if defined(MCU_L476)
 		uint32	HASH		:1;
+#elif defined(MCU_L433)
+		uint32              :1;
+#endif
 		uint32	RNG			:1;
 	} Fields;
 } dtAHB2;
+#endif
 
+#if defined(STM32U0)
+typedef union
+{
+	struct
+	{
+		uint32 GPIOA		:1;
+		uint32 GPIOB		:1;
+		uint32 GPIOC		:1;
+		uint32 GPIOD		:1;
+		uint32 GPIOE		:1;
+		uint32 GPIOF		:1;
+	} Fields;
+	uint32 Word;
+} dtIOP;
+#endif
+
+#if defined(MCU_L433) || defined(MCU_L476)
 typedef union
 {
 	uint32 Word;
 	struct
 	{
+#if defined(MCU_L476)
 		uint32	FMC			:1;
+#elif defined(MCU_L433)
+		uint32              :1;
+#endif
 		uint32				:7;
 		uint32	QSPI		:1;
 	} Fields;
 } dtAHB3;
+#endif
 
+#if defined(MCU_L433) || defined(MCU_L476) || defined(STM32U0)
 typedef union
 {
 	uint32 Word;
@@ -1700,34 +1401,89 @@ typedef union
 	{
 		uint32	TIM2		:1;
 		uint32	TIM3		:1;
+#if defined(MCU_L476)
 		uint32	TIM4		:1;
 		uint32	TIM5		:1;
+#elif defined(MCU_L433) || defined(STM32U0)
+		uint32              :2;
+#endif
 		uint32	TIM6		:1;
 		uint32	TIM7		:1;
+#if defined(MCU_L433) || defined(MCU_L476)
 		uint32				:3;
+#elif defined(STM32U0)
+		uint32              :1;
+		uint32 LPUART2      :1;
+		uint32              :1;
+#endif
 		uint32	LCD			:1;
-		uint32				:4;
+#if defined(MCU_L433) || defined(MCU_L476) || defined(STM32U0)
+		uint32				:1;
+#endif
+#if defined(MCU_L433) || defined(MCU_L476) || defined(STM32U0)
+		uint32				:1;
+#endif
+#if defined(MCU_L433) || defined(MCU_L476)
+		uint32				:1;
+#elif defined(STM32U0)
+		uint32 LPUART3      :1;
+#endif
+#if defined(MCU_L433) || defined(MCU_L476)
+		uint32				:1;
+#elif defined(STM32U0)
+		uint32 USB          :1;
+#endif
 		uint32	SPI2		:1;
 		uint32	SPI3		:1;
+#if defined(MCU_L433) || defined(MCU_L476)
 		uint32				:1;
+#elif defined(STM32U0)
+		uint32 CRS          :1;
+#endif
 		uint32	USART2		:1;
 		uint32	USART3		:1;
 		uint32	USART4		:1;
+#if defined(MCU_L476)
 		uint32	USART5		:1;
+#elif defined(MCU_L433)
+		uint32              :1;
+#elif defined(STM32U0)
+		uint32 LPUART1      :1;
+#endif
 		uint32	I2C1		:1;
 		uint32	I2C2		:1;
 		uint32	I2C3		:1;
+#if defined(MCU_L433) || defined(MCU_L476)
 		uint32	CRS			:1;
+#elif defined(STM32U0)
+		uint32 OPAMP        :1;
+#endif
+#if defined(MCU_L433) || defined(MCU_L476)
 		uint32	CAN1		:1;
+#elif defined(STM32U0)
+		uint32 I2C4         :1;
+#endif
+#if defined(MCU_L476)
 		uint32	CAN2		:1;
+#elif defined(MCU_L433)
+		uint32 USBFS        :1;
+#elif defined(STM32U0)
+		uint32 LPTIM3       :1;
+#endif
 		uint32				:1;
 		uint32	PWR			:1;
 		uint32	DAC1		:1;
+#if defined(MCU_L433) || defined(MCU_L476)
 		uint32	OPAMP		:1;
-		uint32	LPTIM1		:1;
+#elif defined(STM32U0)
+		uint32 LPTIM2       :1;
+#endif
+		uint32 LPTIM1		:1;
 	} Fields;
 } dtAPB1;
+#endif
 
+#if defined(MCU_L433) || defined(MCU_L476)
 typedef union
 {
 	uint32 Word;
@@ -1740,7 +1496,9 @@ typedef union
 		uint32	LPTIM2		:1;
 	} Fields;
 } dtAPB1_2;
+#endif
 
+#if defined(MCU_L433) || defined(MCU_L476) || defined(STM32U0)
 typedef union
 {
 	uint32 Word;
@@ -1748,35 +1506,79 @@ typedef union
 	{
 		uint32	SYSCFG		:1;
 		uint32				:9;
+#if defined(MCU_L433) || defined(MCU_L476)
 		uint32	SDMMC1		:1;
+#elif defined(STM32U0)
+		uint32              :1;
+#endif
 		uint32	TIM1		:1;
 		uint32	SPI1		:1;
+#if defined(MCU_L476)
 		uint32	TIM8		:1;
+#elif defined(MCU_L433) || defined(STM32U0)
+		uint32              :1;
+#endif
 		uint32	USART1		:1;
 		uint32				:1;
 		uint32	TIM15		:1;
 		uint32	TIM16		:1;
+#if defined(MCU_L476)
 		uint32	TIM17		:1;
-		uint32				:2;
+#elif defined(MCU_L433) || defined(STM32U0)
+		uint32              :1;
+#endif
+#if defined(MCU_L476) || defined(MCU_L433) || defined(STM32U0)
+		uint32              :1;
+#endif
+#if defined(MCU_L476) || defined(MCU_L433)
+		uint32              :1;
+#elif defined(STM32U0)
+		uint32 ADC          :1;
+#endif
+
+#if defined(MCU_L433) || defined(MCU_L476)
 		uint32	SAI1		:1;
+#endif
+#if defined(MCU_L476)
 		uint32	SAI2		:1;
+#elif defined(MCU_L433)
+		uint32              :1;
+#endif
 		uint32				:1;
+#if defined(MCU_L433) || defined(MCU_L476)
 		uint32	DFSDM1		:1;
+#endif
 	} Fields;
 } dtAPB2;
+#endif
 
+#if defined(MCU_L433) || defined(MCU_L476) || defined(STM32U0)
 typedef struct
 {
 	uint32		:32;	//0x04
 	dtAHB1		AHB1;	//0x08
+#if defined(MCU_L433) || defined(MCU_L476)
 	dtAHB2		AHB2;	//0x0C
+#elif defined(STM32U0)
+	dtIOP       IOP;    //0x0C
+#endif
+#if defined(MCU_L433) || defined(MCU_L476)
 	dtAHB3		AHB3;	//0x10
+#elif defined(STM32U0)
+	uint32      :32;    //0x10
+#endif
 	uint32		:32;	//0x14
 	dtAPB1		APB1;	//0x18
+#if defined(MCU_L433) || defined(MCU_L476)
 	dtAPB1_2	APB1_2;	//0x1C
+#elif defined(STM32U0)
+	uint32      :32;    //0x1C
+#endif
 	dtAPB2		APB2;	//0x20
 } dtBusGroup;
+#endif
 
+#if defined(MCU_L433) || defined(MCU_L476) || defined(STM32U0)
 typedef union
 {
 	uint32 Word;
@@ -1784,24 +1586,57 @@ typedef union
 	{
 		uint32	USART1SEL	:2;
 		uint32	USART2SEL	:2;
+#if defined(MCU_L433) || defined(MCU_L476)
 		uint32	USART3SEL	:2;
+#elif defined(STM32U0)
+		uint32              :2;
+#endif
+#if defined(MCU_L433) || defined(MCU_L476)
 		uint32	USART4SEL	:2;
+#elif defined(STM32U0)
+		uint32 LPUART3SEL   :2;
+#endif
+#if defined(MCU_L476)
 		uint32	USART5SEL	:2;
+#elif defined(MCU_L433)
+		uint32              :2;
+#elif defined(STM32U0)
+		uint32 LPUART2SEL   :2;
+#endif
 		uint32	LPUART1SEL	:2;
 		uint32	I2C1SEL		:2;
+#if defined(MCU_L433) || defined(MCU_L476)
 		uint32	I2C2SEL		:2;
+#elif defined(STM32U0)
+		uint32              :2;
+#endif
 		uint32	I2C3SEL		:2;
 		uint32	LPTIM1SEL	:2;
 		uint32	LPTIM2SEL	:2;
+#if defined(MCU_L433) || defined(MCU_L476)
 		uint32	SAI1SEL		:2;
+#elif defined(STM32U0)
+		uint32 LPTIM3SEL    :2;
+#endif
+#if defined(MCU_L476)
 		uint32	SAI2SEL		:2;
+#elif defined(MCU_L433)
+		uint32              :2;
+#elif defined(STM32U0)
+		uint32 TIM1SEL      :1;
+		uint32 TIM15SEL     :2;
+#endif
 		uint32	CLK48SEL	:2;
 		uint32	ADCSEL		:2;
+#if defined(MCU_L433) || defined(MCU_L476)
 		uint32	SWPMI1SEL	:1;
 		uint32	DFSDM1SEL	:1;
+#endif
 	} Fields;
 } dtCCIPR;
+#endif
 
+#if defined(MCU_L433) || defined(MCU_L476) || defined(STM32U0)
 typedef union
 {
 	uint32 Word;
@@ -1813,9 +1648,31 @@ typedef union
 		uint32	LSEDRV		:2;
 		uint32	LSECSSON	:1;
 		uint32	LSECSSD		:1;
+#if defined(MCU_L476)
 		uint32				:1;
+#elif defined(MCU_L433)
+		uint32	LSESYSDIS	:1;
+#elif defined(STM32U0)
+		uint32 LSESYSEN     :1;
+#endif
 		uint32	RTC_SEL		:2;
-		uint32				:5;
+#if defined(MCU_L433) || defined(MCU_L476) || defined(STM32U0)
+		uint32              :1;
+#endif
+#if defined(MCU_L433) || defined(MCU_L476)
+		uint32              :1;
+#elif defined(STM32U0)
+		uint32 LSESYSRDY    :1;
+#endif
+#if defined(MCU_L433) || defined(MCU_L476) || defined(STM32U0)
+		uint32              :1;
+#endif
+#if defined(MCU_L433) || defined(MCU_L476) || defined(STM32U0)
+		uint32              :1;
+#endif
+#if defined(MCU_L433) || defined(MCU_L476) || defined(STM32U0)
+		uint32              :1;
+#endif
 		uint32	RTCEN		:1;
 		uint32	BDRST		:1;
 		uint32				:7;
@@ -1823,7 +1680,9 @@ typedef union
 		uint32	LSCOSEL		:1;
 	} Fields;
 } dtBDCR;
+#endif
 
+#if defined(MCU_L433) || defined(MCU_L476) || defined(STM32U0)
 typedef union
 {
 	uint32 Word;
@@ -1831,23 +1690,44 @@ typedef union
 	{
 		uint32	LSION		:1;
 		uint32	LSIRDY		:1;
-		uint32				:2;
+#if defined(MCU_L433) || defined(MCU_L476)
+		uint32              :1;
+#elif defined(STM32U0)
+		uint32 LSIPREDIV    :1;
+#endif
+#if defined(MCU_L433) || defined(MCU_L476) || defined(STM32U0)
+		uint32              :1;
+#endif
+#if defined(MCU_L476) || defined(STM32U0)
 		uint32				:1;
+#elif defined(MCU_L433)
+		uint32	LSIPREDIV	:1;
+#endif
 		uint32				:3;
 		uint32	MSISRANGE	:4;
 		uint32				:11;
 		uint32	RMVF		:1;
+#if defined(MCU_L433) || defined(MCU_L476)
 		uint32	FWRSTF		:1;
+#elif defined(STM32U0)
+		uint32              :1;
+#endif
 		uint32	OBLRSTF		:1;
 		uint32	PINRSTF		:1;
+#if defined(MCU_L433) || defined(MCU_L476)
 		uint32	BORRSTF		:1;
+#elif defined(STM32U0)
+		uint32 PWRRSTF      :1;
+#endif
 		uint32	SFTRSTF		:1;
 		uint32	IWWGRSTF	:1;
 		uint32	WWDGRSTF	:1;
 		uint32	LPWRRSTF	:1;
 	} Fields;
 } dtCSR;
+#endif
 
+#if defined(MCU_L433) || defined(MCU_L476) || defined(STM32U0)
 typedef union
 {
 	uint32 Word;
@@ -1859,7 +1739,9 @@ typedef union
 		uint32	HSI48CAL	:9;
 	} Fields;
 } dtCRRCR;
+#endif
 
+#if defined(MCU_L433) || defined(MCU_L476)
 typedef union
 {
 	uint32 Word;
@@ -1868,18 +1750,28 @@ typedef union
 		uint32	I2C4SEL		:2;
 	} Fields;
 } dtCCIPR2;
+#endif
 
+#if defined(MCU_L433) || defined(MCU_L476) || defined(STM32U0)
 typedef struct
 {
 	dtCR			CR;				//0x00
 	dtICSCR			ICSCR;			//0x04
 	dtCFGR			CFGR;			//0x08
 	dtPLLCFGR		PLLCFGR;		//0x0C
+#if defined(MCU_L476)
 	dtPLLSAI1CFGR	PLLSAI1CFGR;	//0x10
+#elif defined(STM32U0)
+	uint32          :32;            //0x10
+#endif
+#if defined(MCU_L476)
 	dtPLLSAI2CFGR	PLLSAI2CFGR;	//0x14
+#elif defined(MCU_L433)
+	uint32          :32;            //0x14
+#endif
 	dtCIER			CIER;			//0x18
-	dtCIFR			CIFR;			//0x1C
-	dtCICR			CICR;			//0x20
+	dtCIxR			CIFR;			//0x1C
+	dtCIxR			CICR;			//0x20
 	dtBusGroup		RSTR;			//0x24
 	dtBusGroup		ENR;
 	dtBusGroup		SMENR;
@@ -1887,9 +1779,12 @@ typedef struct
 	dtBDCR			BDCR;
 	dtCSR			CSR;
 	dtCRRCR			CRRCR;
+#if defined(MCU_L433) || defined(MCU_L476)
 	dtCCIPR2		CCIPR2;
+#endif
 } dtRCC;
 #endif
+
 
 typedef enum
 {
