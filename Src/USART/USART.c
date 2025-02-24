@@ -10,8 +10,8 @@
 #include "RCC.h"
 #include "NVIC.h"
 
-#if defined(MCU_F446) || defined(MCU_G070) || defined(MCU_F410) || defined(MCU_L433) || defined(MCU_G071) || defined(MCU_F415) || defined(MCU_L476)
-#if defined(MCU_G070) || defined(MCU_G071)
+#if defined(MCU_F446) || defined(MCU_G070) || defined(MCU_F410) || defined(MCU_L433) || defined(MCU_G071) || defined(MCU_F415) || defined(MCU_L476) || defined(STM32U0)
+#if defined(MCU_G070) || defined(MCU_G071) || defined(STM32U0)
 /* Not every USART instances has the same features. USART1 and 2 have full functionality but USART 3 and 4 have only basic functionality */
 /* The registers of the module can only be accessed 32 bit operations */
 static dtUSART *const USART[4] = {  (dtUSART*)0x40013800,
@@ -64,7 +64,7 @@ uint8 USART_Transmitting(dtUSARTInstance Instance);
 
 void USART_Init(dtUSARTInstance Instance, dtUSARTConfig Config)
 {
-#if defined(MCU_G070) || defined(MCU_G071)
+#if defined(MCU_G070) || defined(MCU_G071) || defined(STM32U0)
 	if(USART[Instance]->CR1.Fields.UE == 0)
 	{
 	dtCR1 TempCR1 = {.Word = 0};
