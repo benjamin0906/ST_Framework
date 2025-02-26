@@ -8,7 +8,18 @@
 #ifndef INC_REGDEFS_REGDEF_HELPER_H_
 #define INC_REGDEFS_REGDEF_HELPER_H_
 
+#define LEN_CHECK_GREATER_THAN(var, length) ((sizeof(var) > length) ? -1 : 1)
+#define LEN_CHECK_NOT_EQUAL(var, length) ((sizeof(var) != length) ? -1 : 1)
+#define LEN_CHECK_LESS_THAN(var, length) ((sizeof(var) < length) ? -1 : 1)
+
+#define LEN_CHECK(var, size) \
+	struct LengthCheck_##var \
+	{ \
+	uint32 var :LEN_CHECK_NOT_EQUAL(var, size); \
+	};
+
 #define REGDEF(Domain, RegName) \
+	LEN_CHECK(dt##Domain##_##RegName##_Bits, 4) \
 	typedef union u##Domain##_##RegName \
 	{ \
         uint32 U; \
