@@ -9,21 +9,26 @@
 #include "Flash.h"
 #include "Pwr.h"
 
-#ifndef MODULE_TEST
+#if defined(STM32U0)
+#include "RegDefs/FLASH_regdef.h"
+
+#define MAX_LATENCY 2
+#endif
+
 #if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_F415)
 static dtFlash *const Flash = (dtFlash*)(0x40023C00);
 #elif defined(MCU_G070) || defined(MCU_G071) || defined(MCU_L476)
 static dtFlash *const Flash = (dtFlash*)(0x40022000);
-#endif
-#else
-#include "TestEnv.h"
-static dtFlash *const Flash = (dtFlash*)&TestFlash;
+#elif defined(STM32U0)
+static dtFLASH *const FLASH =(dtFLASH*)(0x40022000);
 #endif
 
 #if defined(MCU_F410) || defined(MCU_F446)
 dtSetLatRet Flash_SetLatency(uint32 clock, uint8 VoltageRange);
 #elif defined(MCU_G070) || defined(MCU_G071) || defined(MCU_L476)
 dtSetLatRet Flash_SetLatency(uint32 clock);
+#elif defined(STM32U0)
+Std_ReturnType FLASH_SetLatency(uint8 latency);
 #endif
 
 #if defined(MCU_F410) || defined(MCU_F446) || defined(MCU_F415)
@@ -186,5 +191,21 @@ dtSetLatRet Flash_SetLatency(uint32 clock)
 	Flash->ACR.Fields.LATENCY = Latency;
 	if(Flash->ACR.Fields.LATENCY != Latency) ret = LatFailed;
 	return ret;
+}
+#elif defined(STM32U0)
+Std_ReturnType FLASH_SetLatency(uint8 latency)
+{
+    Std_ReturnType ret = E_NOT_OK;
+    if(latency < MAX_LATENCY)
+    {
+        dtFLASH_ACR tACR = FLASH->ACR;
+        tACR.B.LATENCY = latency;
+        FLASH->ACR = tACR;
+        if(FLASH->ACR.B.LATENCY == latency)
+        {
+            ret = E_OK;
+        }
+    }
+    return ret;
 }
 #endif
