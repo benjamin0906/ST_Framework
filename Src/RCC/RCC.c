@@ -103,6 +103,13 @@ static dtRCC *const RCC = (dtRCC*)&TestRCC;
 #define PLL_INPUT_FREQ_MAX	16000000
 #define PLL_VCO_FREQ_MIN	96000000
 #define PLL_VCO_FREQ_MAX	344000000
+
+/* This table defines the VCore range and Latency of the Flash according to the system frequency */
+static const uint8 VCoreLatencyFreqTable[2][3] = {
+													{24, 48, 56},
+													{8,  16, 18},
+};
+
 #endif
 
 #ifndef EXTERNAL_OSC_FREQUENCY
@@ -186,6 +193,19 @@ void RCC_ClockTreeInit(const dtRccClockTreeCfg config)
 		if(sysClock <= 16000000) Pwr_SetVos(2);
 		else Pwr_SetVos(1);
 		Flash_SetLatency(sysClock);
+#elif defined(STM32U0)
+		{
+			uint8 lLatency = 0;
+			uint8 lRange = sizeof(VCoreLatencyFreqTable)/sizeof(VCoreLatencyFreqTable[0]);
+			do
+			{
+				lRange--;
+				for(lLatency = 0; sysClock > ((uint32)VCoreLatencyFreqTable[lLatency][lRange]*1000000) && (lLatency < sizeof(VCoreLatencyFreqTable[0])); lLatency++);
+			}
+			while((sysClock > ((uint32)VCoreLatencyFreqTable[lLatency][lRange]*1000000)) && (lRange > 0));
+			Pwr_SetVos(lRange);
+			while(FLASH_SetLatency(lLatency) != E_OK);
+		}
 #endif
 	/* AHB init */
 	RCC->CFGR.Fields.HPRE = config.AhbPrescaler;
