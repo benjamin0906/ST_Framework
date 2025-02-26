@@ -10,6 +10,7 @@
 
 #include "types.h"
 
+#if defined(MCU_G070) || defined(MCU_G071) || defined(MCU_L476)
 typedef enum
 {
 	Pwr_LPM_Stop0,
@@ -17,6 +18,16 @@ typedef enum
 	Pwr_LPM_Standby		= 0x3,
 	Pwr_LPM_Shutdown	= 0x4,
 } dtLowPwrModes;
+#elif defined(STM32U0)
+typedef enum
+{
+	Pwr_LPM_Stop0       = 0x0,
+	Pwr_LPM_Stop1,
+	Pwr_LPM_Stop2,
+	Pwr_LPM_Standby,
+	Pwr_LPM_Shutdown,
+} dtLowPwrModes;
+#endif
 
 extern void Pwr_SetVos(uint8 mode);
 extern uint8 Pwr_GetVos(void);
