@@ -20,5 +20,7 @@ typedef enum
 extern dtSetLatRet Flash_SetLatency(uint32 clock, uint8 VoltageRange);
 #elif defined(MCU_G070) || defined(MCU_G071) || defined(MCU_L476)
 dtSetLatRet Flash_SetLatency(uint32 clock);
+#elif defined(STM32U0)
+extern Std_ReturnType FLASH_SetLatency(uint8 latency);
 #endif
 #endif /* FLASH_FLASH_H_ */
