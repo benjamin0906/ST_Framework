@@ -5,7 +5,11 @@
  *      Author: BodnarB
  */
 
+#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_G070) || defined(MCU_G071) || defined(MCU_L433) || defined(MCU_F415) || defined(MCU_L476)
 #include "GPIO_Types.h"
+#elif defined(STM32U0)
+#include "RegDefs/GPIO_regdef.h"
+#endif
 #include "GPIO.h"
 
 /* ----------Register definition section---------- */
@@ -16,6 +20,8 @@ static dtGPIO *const GPIOA = (dtGPIO*) 0x40020000;
 static dtGPIO *const GPIOA = (dtGPIO*) 0x48000000;
 #elif defined(MCU_G070) || defined(MCU_G071)
 static dtGPIO *const GPIOA = (dtGPIO*) 0x50000000;
+#elif defined(STM32U0)
+static dtGPIO *const GPIO = (dtGPIO*) 0x50000000;
 #endif
 #if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_F415)
 static dtGPIO *const GPIOB = (dtGPIO*) 0x40020400;
@@ -104,74 +110,77 @@ void GPIO_PinInit(dtGPIOs Gpio, dtGPIOConfig Config);
 void GPIO_PinDeinit(dtGPIOs Gpio);
 void GPIO_Set(dtGPIOs Gpio, dtPortValue Value);
 uint8 GPIO_Get(dtGPIOs Gpio);
+#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_G070) || defined(MCU_G071) || defined(MCU_L433) || defined(MCU_F415) || defined(MCU_L476)
 static inline dtGPIO* GetPort(dtGPIOs Gpio);
+#elif defined(STM32U0)
+static inline dtGPIOx* GetPort(dtGPIOs Gpio);
+#endif
 
 void GPIO_PinInit(dtGPIOs Gpio, dtGPIOConfig Config)
 {
 	uint32 FieldId = (Gpio & 0xF)<<1;
 	uint32 ClearMask = ~(3 << FieldId);
-	dtGPIO *Temp = GetPort(Gpio);
+	dtGPIOx *Temp = GetPort(Gpio);
 	if(Temp != 0)
 	{
 		/* Setting the mode and the alternate function. */
-		Temp->MODER.Word &= ClearMask;
+		Temp->MODER.U &= ClearMask;
 		if(Config.Mode == Input)
 		{
 			/* Nothing to do */
 		}
-		else if(Config.Mode == Output) Temp->MODER.Word |= 1 << FieldId;
-		else if(Config.Mode == Analog) Temp->MODER.Word |= 3 << FieldId;
+		else if(Config.Mode == Output) Temp->MODER.U |= 1 << FieldId;
+		else if(Config.Mode == Analog) Temp->MODER.U |= 3 << FieldId;
 		else
 		{
-			Temp->MODER.Word |= 2 << FieldId;
+			Temp->MODER.U |= 2 << FieldId;
 			if(FieldId >= 16)
 			{
 				uint8 shifter = (FieldId-16)<<1;
 				uint32 AltFieldClearMask = ~(0xF << shifter);
-				Temp->AFR.AFRH.Word &= AltFieldClearMask;
-				Temp->AFR.AFRH.Word |= (Config.Mode-3) << shifter;
+				Temp->AFRH.U &= AltFieldClearMask;
+				Temp->AFRH.U |= (Config.Mode-3) << shifter;
 			}
 			else
 			{
 				uint8 shifter = (FieldId)<<1;
 				uint32 AltFieldClearMask = ~(0xF << shifter);
-				Temp->AFR.AFRL.Word &= AltFieldClearMask;
-				Temp->AFR.AFRL.Word |= (Config.Mode-3) << shifter;
+				Temp->AFRL.U &= AltFieldClearMask;
+				Temp->AFRL.U |= (Config.Mode-3) << shifter;
 			}
 		}
 
 		/* Setting the type of the pin (push-pull or open-drain) */
-		Temp->OTYPER.Word &= ~(1 << (FieldId>>1));
-		if(Config.Type == OpenDrain) Temp->OTYPER.Word |= (1 << (FieldId>>1));
+		Temp->OTYPER.U &= ~(1 << (FieldId>>1));
+		if(Config.Type == OpenDrain) Temp->OTYPER.U |= (1 << (FieldId>>1));
 
 		/* Setting the speed of the pin */
-		Temp->OSPEEDER.Word &= ClearMask;
-		Temp->OSPEEDER.Word |= Config.Speed << (FieldId);
+		Temp->OSPEEDR.U &= ClearMask;
+		Temp->OSPEEDR.U |= Config.Speed << (FieldId);
 
-		Temp->PUPDR.Word &= ClearMask;
-		Temp->PUPDR.Word |= Config.PUPD << (FieldId);
+		Temp->PUPDR.U &= ClearMask;
+		Temp->PUPDR.U |= Config.PUPD << (FieldId);
 	}
 }
 
 void GPIO_Set(dtGPIOs Gpio, dtPortValue Value)
 {
 	uint32 Pin = 1 << (Gpio & 0xF);
-	dtGPIO *Temp = GetPort(Gpio);
+	dtGPIOx *Temp = GetPort(Gpio);
 
-	if((Value == Clear) || ((Value == Toggle) && ((Temp->ODR.Word & Pin) != 0))) Pin <<= 16;
+	if((Value == Clear) || ((Value == Toggle) && ((Temp->ODR.U & Pin) != 0))) Pin <<= 16;
 
-	Temp->BSRR.Word |= Pin;
+	Temp->BSRR.U |= Pin;
 }
 
 uint8 GPIO_Get(dtGPIOs Gpio)
 {
 	uint8 ret = 0;
 	uint32 Pin = (Gpio & 0xF);
-	dtGPIO *Temp = GetPort(Gpio);
-	ret = Temp->IDR.Word>>Pin & 1;
+	ret = GetPort(Gpio)->IDR.U>>Pin & 1;
 	return ret;
 }
-
+#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_G070) || defined(MCU_G071) || defined(MCU_L433) || defined(MCU_F415) || defined(MCU_L476)
 static inline dtGPIO* GetPort(dtGPIOs Gpio)
 {
 	dtGPIO *Temp = 0;
@@ -274,6 +283,12 @@ static inline dtGPIO* GetPort(dtGPIOs Gpio)
 	}
 	return Temp;
 }
+#elif defined(STM32U0)
+static inline dtGPIOx* GetPort(dtGPIOs Gpio)
+{
+    return &GPIO->GPIOs[Gpio>>4];
+}
+#endif
 
 void GPIO_PinDeinit(dtGPIOs Gpio)
 {
@@ -281,12 +296,12 @@ void GPIO_PinDeinit(dtGPIOs Gpio)
     uint32 ClearMask = ~(3 << FieldId);
     uint8 shifter = (FieldId-16)<<1;
     uint32 AltFieldClearMask = ~(0xF << shifter);
-    dtGPIO *Temp = GetPort(Gpio);
+    dtGPIOx *Temp = GetPort(Gpio);
 
-    Temp->MODER.Word &= ClearMask;
-    if(FieldId >= 16) Temp->AFR.AFRH.Word &= AltFieldClearMask;
-    else Temp->AFR.AFRL.Word &= AltFieldClearMask;
-    Temp->PUPDR.Word &= ClearMask;
-    Temp->OTYPER.Word &= ~(1 << (FieldId>>1));
-    Temp->OSPEEDER.Word &= ClearMask;
+    Temp->MODER.U &= ClearMask;
+    if(FieldId >= 16) Temp->AFRH.U &= AltFieldClearMask;
+    else Temp->AFRL.U &= AltFieldClearMask;
+    Temp->PUPDR.U &= ClearMask;
+    Temp->OTYPER.U &= ~(1 << (FieldId>>1));
+    Temp->OSPEEDR.U &= ClearMask;
 }
