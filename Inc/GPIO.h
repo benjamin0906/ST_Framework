@@ -12,6 +12,7 @@
 
 typedef enum
 {
+#if defined(STM32U0) || defined(STM32L4)
 	PortA_0 = 0,
 	PortA_1,
 	PortA_2,
@@ -28,7 +29,8 @@ typedef enum
 	PortA_13,
 	PortA_14,
 	PortA_15,
-
+#endif
+#if defined(STM32U0) || defined(STM32L4)
 	PortB_0,
 	PortB_1,
 	PortB_2,
@@ -45,7 +47,8 @@ typedef enum
 	PortB_13,
 	PortB_14,
 	PortB_15,
-
+#endif
+#if defined(STM32U0) || defined(STM32L4)
 	PortC_0,
 	PortC_1,
 	PortC_2,
@@ -62,7 +65,8 @@ typedef enum
 	PortC_13,
 	PortC_14,
 	PortC_15,
-
+#endif
+#if defined(STM32U0) || defined(STM32L4)
 	PortD_0,
 	PortD_1,
 	PortD_2,
@@ -79,7 +83,8 @@ typedef enum
 	PortD_13,
 	PortD_14,
 	PortD_15,
-
+#endif
+#if defined(STM32U0) || defined(STM32L4)
 	PortE_0,
 	PortE_1,
 	PortE_2,
@@ -96,7 +101,8 @@ typedef enum
 	PortE_13,
 	PortE_14,
 	PortE_15,
-
+#endif
+#if defined(STM32U0) || defined(STM32L4)
 	PortF_0,
 	PortF_1,
 	PortF_2,
@@ -113,7 +119,8 @@ typedef enum
 	PortF_13,
 	PortF_14,
 	PortF_15,
-
+#endif
+#if defined(STM32L4)
 	PortG_0,
 	PortG_1,
 	PortG_2,
@@ -130,7 +137,8 @@ typedef enum
 	PortG_13,
 	PortG_14,
 	PortG_15,
-
+#endif
+#if defined(STM32L4)
 	PortH_0,
 	PortH_1,
 	PortH_2,
@@ -147,57 +155,7 @@ typedef enum
 	PortH_13,
 	PortH_14,
 	PortH_15,
-
-	PortI_0,
-	PortI_1,
-	PortI_2,
-	PortI_3,
-	PortI_4,
-	PortI_5,
-	PortI_6,
-	PortI_7,
-	PortI_8,
-	PortI_9,
-	PortI_10,
-	PortI_11,
-	PortI_12,
-	PortI_13,
-	PortI_14,
-	PortI_15,
-
-	PortJ_0,
-	PortJ_1,
-	PortJ_2,
-	PortJ_3,
-	PortJ_4,
-	PortJ_5,
-	PortJ_6,
-	PortJ_7,
-	PortJ_8,
-	PortJ_9,
-	PortJ_10,
-	PortJ_11,
-	PortJ_12,
-	PortJ_13,
-	PortJ_14,
-	PortJ_15,
-
-	PortK_0,
-	PortK_1,
-	PortK_2,
-	PortK_3,
-	PortK_4,
-	PortK_5,
-	PortK_6,
-	PortK_7,
-	PortK_8,
-	PortK_9,
-	PortK_10,
-	PortK_11,
-	PortK_12,
-	PortK_13,
-	PortK_14,
-	PortK_15,
+#endif
 } dtGPIOs;
 
 enum eGPIO_MODE
