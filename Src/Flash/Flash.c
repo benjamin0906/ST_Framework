@@ -196,7 +196,7 @@ dtSetLatRet Flash_SetLatency(uint32 clock)
 Std_ReturnType FLASH_SetLatency(uint8 latency)
 {
     Std_ReturnType ret = E_NOT_OK;
-    if(latency < MAX_LATENCY)
+    if(latency <= MAX_LATENCY)
     {
         dtFLASH_ACR tACR = FLASH->ACR;
         tACR.B.LATENCY = latency;
