@@ -17,6 +17,8 @@
 #define NVIC_PRIO_BITS  4
 #elif defined(MCU_G070)
 #define NVIC_PRIO_BITS  2
+#elif defined(STM32U0)
+#define NVIC_PRIO_BITS  2
 #endif
 
 extern dtISER *const ISER;

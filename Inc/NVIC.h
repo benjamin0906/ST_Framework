@@ -10,74 +10,78 @@
 
 #include "types.h"
 
-#if defined(MCU_F446) || defined(MCU_G070) || defined(MCU_F410) || defined(MCU_L433) || defined(MCU_G071) || defined(MCU_F415) || defined(MCU_L476)
+#if defined(MCU_F446) || defined(MCU_G070) || defined(MCU_F410) || defined(MCU_L433) || defined(MCU_G071) || defined(MCU_F415) || defined(MCU_L476) || defined(STM32U0)
 typedef enum
 {
-#if defined(MCU_F446) || defined(MCU_L476)
+#if defined(MCU_F446) || defined(MCU_L476) || defined(STM32U0)
     EXC_SVCall          = -5,
 #endif
-#if defined(MCU_F446) || defined(MCU_L476)
+#if defined(MCU_F446) || defined(MCU_L476) || defined(STM32U0)
     EXC_PendSV          = -2,
 #endif
-#if defined(MCU_F446) || defined(MCU_L476)
+#if defined(MCU_F446) || defined(MCU_L476) || defined(STM32U0)
     EXC_SysTick         = -1,
 #endif
-#if defined(MCU_F446) || defined(MCU_G070) || defined(MCU_F410) || defined(MCU_L433) || defined(MCU_G071) || defined(MCU_F415) || defined(MCU_L476)
+#if defined(MCU_F446) || defined(MCU_G070) || defined(MCU_F410) || defined(MCU_L433) || defined(MCU_G071) || defined(MCU_F415) || defined(MCU_L476) || defined(STM32U0)
 	IRQ_WWDG 			= 0,
 #endif
-#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_L433) || defined(MCU_G071) || defined(MCU_F415) || defined(MCU_L476)
+#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_L433) || defined(MCU_G071) || defined(MCU_F415) || defined(MCU_L476) || defined(STM32U0)
 	IRQ_PVD				= 1,
 #endif
 #if defined(MCU_F410) || defined(MCU_F410)
 	IRQ_EXTI21			= 2,
 #elif defined(MCU_F446) || defined(MCU_F415)
 	IRQ_TAMP_STAMP		= 2,
-#elif defined(MCU_G070) || defined(MCU_L433) || defined(MCU_G071) || defined(MCU_L476)
+#elif defined(MCU_G070) || defined(MCU_L433) || defined(MCU_G071) || defined(MCU_L476) || defined(STM32U0)
 	IRQ_RTC_TAMP		= 2,
 #endif
 #if defined(MCU_F410) || defined(MCU_F410)
 	IRQ_EXTI22			= 3,
 #elif defined(MCU_F446) || defined(MCU_L433) || defined(MCU_F415) || defined(MCU_L476)
 	IRQ_RTC_WKUP		= 3,
-#elif defined(MCU_G070) || defined(MCU_G071)
+#elif defined(MCU_G070) || defined(MCU_G071) || defined(STM32U0)
 	IRQ_FLASH			= 3,
 #endif
 #if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_L433) || defined(MCU_F415) || defined(MCU_L476)
 	IRQ_FLASH			= 4,
 #elif defined(MCU_G070) || defined(MCU_G071)
 	IRQ_RCC				= 4,
+#elif defined(STM32U0)
+	IRQ_RCC_CRS         = 4,
 #endif
 #if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_L433) || defined(MCU_F415) || defined(MCU_L476)
 	IRQ_RCC				= 5,
-#elif defined(MCU_G070) || defined(MCU_G071)
+#elif defined(MCU_G070) || defined(MCU_G071) || defined(STM32U0)
 	IRQ_EXTI0_1			= 5,
 #endif
 #if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_L433) || defined(MCU_F415) || defined(MCU_L476)
 	IRQ_EXTI0			= 6,
-#elif defined(MCU_G070) || defined(MCU_G071)
+#elif defined(MCU_G070) || defined(MCU_G071) || defined(STM32U0)
 	IRQ_EXTI2_3			= 6,
 #endif
 #if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_L433) || defined(MCU_F415) || defined(MCU_L476)
 	IRQ_EXTI1			= 7,
-#elif defined(MCU_G070) || defined(MCU_G071)
+#elif defined(MCU_G070) || defined(MCU_G071) || defined(STM32U0)
 	IRQ_EXTI4_15		= 7,
 #endif
 #if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_L433) || defined(MCU_F415) || defined(MCU_L476)
 	IRQ_EXTI2			= 8,
+#elif  defined(STM32U0)
+	IRQ_USB             = 8,
 #endif
 #if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_L433) || defined(MCU_F415) || defined(MCU_L476)
 	IRQ_EXTI3			= 9,
-#elif defined(MCU_G070) || defined(MCU_G071)
+#elif defined(MCU_G070) || defined(MCU_G071) || defined(STM32U0)
 	IRQ_DMA_Ch1			= 9,
 #endif
 #if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_L433) || defined(MCU_F415) || defined(MCU_L476)
 	IRQ_EXTI4			= 10,
-#elif defined(MCU_G070) || defined(MCU_G071)
+#elif defined(MCU_G070) || defined(MCU_G071) || defined(STM32U0)
 	IRQ_DMA_Ch2_3		= 10,
 #endif
 #if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_F415)
 	IRQ_DMA1_Stream0	= 11,
-#elif defined(MCU_G070) || defined(MCU_G071)
+#elif defined(MCU_G070) || defined(MCU_G071) || defined(STM32U0)
 	IRQ_DMA_Ch4_5_6_7	= 11,
 #elif defined(MCU_L433) || defined(MCU_L476)
 	IRQ_DMA_CH1			= 11,
@@ -88,17 +92,19 @@ typedef enum
 	IRQ_ADC				= 12,
 #elif defined(MCU_L433) || defined(MCU_L476)
 	IRQ_DMA_CH2			= 12,
+#elif defined(STM32U0)
+	IRQ_ADC_COMP        = 12,
 #endif
 #if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_F415)
 	IRQ_DMA1_Stream2	= 13,
-#elif defined(MCU_G070) || defined(MCU_G071)
+#elif defined(MCU_G070) || defined(MCU_G071) || defined(STM32U0)
 	IRQ_TIM1_BRK_UP_TRG	= 13,
 #elif defined(MCU_L433) || defined(MCU_L476)
 	IRQ_DMA_CH3			= 13,
 #endif
 #if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_F415)
 	IRQ_DMA1_Stream3	= 14,
-#elif defined(MCU_G070) || defined(MCU_G071)
+#elif defined(MCU_G070) || defined(MCU_G071) || defined(STM32U0)
 	IRQ_TIM1_CC			= 14,
 #elif defined(MCU_L433) || defined(MCU_L476)
 	IRQ_DMA_CH4			= 14,
@@ -107,49 +113,59 @@ typedef enum
 	IRQ_DMA1_Stream4	= 15,
 #elif defined(MCU_L433) || defined(MCU_L476)
 	IRQ_DMA_CH5			= 15,
+#elif defined(STM32U0)
+	IRQ_TIM2            = 15,
 #endif
 #if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_F415)
 	IRQ_DMA1_Stream5	= 16,
-#elif defined(MCU_G070) || defined(MCU_G071)
+#elif defined(MCU_G070) || defined(MCU_G071) || defined(STM32U0)
 	IRQ_TIM3			= 16,
 #elif defined(MCU_L433) || defined(MCU_L476)
 	IRQ_DMA_CH6			= 16,
 #endif
 #if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_F415)
 	IRQ_DMA1_Stream6	= 17,
-#elif defined(MCU_G070) || defined(MCU_G071)
+#elif defined(MCU_G070) || defined(MCU_G071) || defined(STM32U0)
 	IRQ_TIM6			= 17,
 #elif defined(MCU_L433) || defined(MCU_L476)
 	IRQ_DMA_CH7			= 17,
 #endif
 #if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_L433) || defined(MCU_F415) || defined(MCU_L476)
 	IRQ_ADC				= 18,
-#elif defined(MCU_G070) || defined(MCU_G071)
+#elif defined(MCU_G070) || defined(MCU_G071) || defined(STM32U0)
 	IRQ_TIM7			= 18,
 #endif
 #if defined(MCU_F446) || defined(MCU_L433) || defined(MCU_F415) || defined(MCU_L476)
 	IRQ_CAN1_TX			= 19,
 #elif defined(MCU_G070) || defined(MCU_G071)
 	IRQ_TIM14			= 19,
+#elif defined(STM32U0)
+	IRQ_TIM15           = 19,
 #endif
 #if defined(MCU_F446) || defined(MCU_L433) || defined(MCU_F415) || defined(MCU_L476)
-	IRQ_CAN1_RX0		= 20,
+	IRQ_CAN1_RX0        = 20,
 #elif defined(MCU_G070) || defined(MCU_G071)
-	IRQ_TIM15			= 20,
+	IRQ_TIM15           = 20,
+#elif defined(STM32U0)
+	IRQ_TIM16           = 20,
 #endif
 #if defined(MCU_F446) || defined(MCU_L433) || defined(MCU_F415) || defined(MCU_L476)
 	IRQ_CAN1_RX1		= 21,
 #elif defined(MCU_G070) || defined(MCU_G071)
 	IRQ_TIM16			= 21,
+#elif defined(STM32U0)
+	IRQ_TSC             = 21,
 #endif
 #if defined(MCU_F446) || defined(MCU_L433) || defined(MCU_F415) || defined(MCU_L476)
 	IRQ_CAN1_SCE		= 22,
 #elif defined(MCU_G070) || defined(MCU_G071)
 	IRQ_TIM17			= 22,
+#elif defined(STM32U0)
+	IRQ_LCD             = 22,
 #endif
 #if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_L433) || defined(MCU_F415) || defined(MCU_L476)
 	IRQ_EXTI9_5 		= 23,
-#elif defined(MCU_G070) || defined(MCU_G071)
+#elif defined(MCU_G070) || defined(MCU_G071) || defined(STM32U0)
 	IRQ_I2C1			= 23,
 #endif
 #if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_F415)
@@ -158,12 +174,14 @@ typedef enum
 	IRQ_I2C2			= 24,
 #elif defined(MCU_L433) || defined(MCU_L476)
 	IRQ_TIM1_BRK_TIM15	= 24,
+#elif defined(STM32U0)
+	IRQ_I2C2_3_4        = 24,
 #endif
 #if defined(MCU_F410)
 	IRQ_TIM1_UP			= 25,
 #elif defined(MCU_F446) || defined(MCU_F415)
 	IRQ_TIM1_UP_TIM10	= 25,
-#elif defined(MCU_G070) || defined(MCU_G071)
+#elif defined(MCU_G070) || defined(MCU_G071) || defined(STM32U0)
 	IRQ_SPI1			= 25,
 #elif defined(MCU_L433) || defined(MCU_L476)
 	IRQ_TIM1_UP_TIM16	= 25,
@@ -174,30 +192,36 @@ typedef enum
 	IRQ_SPI2				= 26,
 #elif defined(MCU_L433) || defined(MCU_L476)
 	IRQ_TIM1_TRG_COM		= 26,
+#elif defined(STM32U0)
+	IRQ_SPI2_3              = 26,
 #endif
 #if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_L433) || defined(MCU_F415) || defined(MCU_L476)
 	IRQ_TIM1_CC				= 27,
-#elif defined(MCU_G070) || defined(MCU_G071)
+#elif defined(MCU_G070) || defined(MCU_G071) || defined(STM32U0)
 	IRQ_USART1				= 27,
 #endif
 #if defined(MCU_F446) || defined(MCU_L433) || defined(MCU_F415) || defined(MCU_L476)
 	IRQ_TIM2				= 28,
-#elif defined(MCU_G070) || defined(MCU_G071)
+#elif defined(MCU_G070) || defined(MCU_G071) || defined(STM32U0)
 	IRQ_USART2				= 28,
 #endif
 #if defined(MCU_F446) || defined(MCU_L433) || defined(MCU_F415) || defined(MCU_L476)
 	IRQ_TIM3				= 29,
 #elif defined(MCU_G070) || defined(MCU_G071)
 	IRQ_USART3_4			= 29,
+#elif defined(STM32U0)
+	IRQ_USART3_LPUART1      = 29,
 #endif
 #if defined(MCU_F446) || defined(MCU_F415) || defined(MCU_L476)
 	IRQ_TIM4				= 30,
 #elif defined(MCU_G071)
 	IRQ_CEC					= 30,
+#elif defined(STM32U0)
+	IRQ_USART4_LPUART3      = 30,
 #endif
 #if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_L433) || defined(MCU_F415) || defined(MCU_L476)
 	IRQ_I2C1_EV 			= 31,
-#elif defined(MCU_G071)
+#elif defined(MCU_G071) || defined(STM32U0)
 	IRQ_AES_RNG				= 31,
 #endif
 #if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_L433) || defined(MCU_F415) || defined(MCU_L476)
@@ -461,6 +485,10 @@ typedef enum
 extern void NVIC_EnableIRQ(dtIRQs IRQ);
 extern void NVIC_SetPriority(dtIRQs IRQ, uint8 IrqLevel);
 extern void NVIC_DisableIRQ(dtIRQs IRQ);
+#endif
+
+#if defined(STM32U0)
+extern void NCIV_SetSharedIsrHandler(dtIRQs isrNum, uint8 handlerNum, void (*handler)(void));
 #endif
 
 #endif /* NVIC_NVIC_H_ */
