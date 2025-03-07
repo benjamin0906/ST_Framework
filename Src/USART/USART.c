@@ -10,6 +10,10 @@
 #include "RCC.h"
 #include "NVIC.h"
 
+#if defined(STM32U0)
+#include "RegDefs/USART_regdef.h"
+#endif
+
 #if defined(MCU_F446) || defined(MCU_G070) || defined(MCU_F410) || defined(MCU_L433) || defined(MCU_G071) || defined(MCU_F415) || defined(MCU_L476) || defined(STM32U0)
 #if defined(MCU_G070) || defined(MCU_G071) || defined(STM32U0)
 /* Not every USART instances has the same features. USART1 and 2 have full functionality but USART 3 and 4 have only basic functionality */
