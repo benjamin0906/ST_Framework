@@ -9,7 +9,7 @@
 #define RCC_RCC_H_
 
 #include "types.h"
-#include "../Src/RCC/RCC_Types.h"
+#include "RegDefs/RCC_regdef.h"
 
 #if defined(MCU_F446) || defined(MCU_G070) || defined(MCU_F410) || defined(MCU_L433) || defined(MCU_G071) || defined(MCU_F415) || defined(MCU_L476) || defined(STM32U0)
 typedef enum
@@ -583,10 +583,16 @@ typedef enum eRccSysClockCfg
 	SysClock_LSE,
 } dtRccSysClockCfg;
 
+typedef enum
+{
+    Clock_Clear     = 0,
+    Clock_Set   = 1,
+} dtClockSetOrClear;
+
 typedef struct RccClockTreeCfg
 {
 	dtRccSysClockCfg SysClockCfg;
-	dtPLLCFGR PllCfg;
+	dtRCC_PLLCFGR PllCfg;
 	uint8 LsiClock :1;
 	uint8 AhbPrescaler :4;
 	uint8 ApbPrescaler :4;

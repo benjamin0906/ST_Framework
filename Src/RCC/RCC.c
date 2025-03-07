@@ -5,12 +5,18 @@
  *      Author: Bodnár Benjamin
  */
 
-#include "RCC_Types.h"
+
 #include "RCC.h"
 #include "RCC_RTC.h"
 #include "Pwr.h"
 #include "Flash.h"
 #include "config.h"
+
+#if defined(STM32U0)
+#include "RegDefs/RCC_regdef.h"
+#elif
+#include "RCC_Types.h"
+#endif
 
 #if defined(MCU_G070) || defined(STM32U0)
 #define HSI_CLOCK_FREQUENCY 16000000
@@ -136,24 +142,24 @@ void RCC_ClockTreeInit(const dtRccClockTreeCfg config)
 
 	/* Clock Init */
 	if(     (config.SysClockCfg == SysClock_HSE)            //if system clock is from external
-        ||  (config.PllCfg.Fields.PLLSRC == PLL_SRC_HSE)    //if pll is from external
+        ||  (config.PllCfg.B.PLLSRC == PLL_SRC_HSE)    //if pll is from external
 		||  (config.RtcClockSel == RTC_SRC_HSE32)           //if RTC is from external
 		||  (config.UsbClockSel == USB_SRC_HSE)             //if USB is from external
 		)
 	{
-		RCC->CR.Fields.HSEON = 1;
-		while(RCC->CR.Fields.HSERDY == 0);
+		RCC->CR.B.HSEON = 1;
+		while(RCC->CR.B.HSERDY == 0);
 	}
 	else
 	{
-		RCC->CR.Fields.HSION = 1;
-		while(RCC->CR.Fields.HSIRDY == 0);
+		RCC->CR.B.HSION = 1;
+		while(RCC->CR.B.HSIRDY == 0);
 	}
 
 	if(config.LsiClock != 0)
 	{
-		RCC->CSR.Fields.LSION = 1;
-		while(RCC->CSR.Fields.LSIRDY == 0);
+		RCC->CSR.B.LSION = 1;
+		while(RCC->CSR.B.LSIRDY == 0);
 	}
 
 	/* PLL init */
@@ -164,8 +170,8 @@ void RCC_ClockTreeInit(const dtRccClockTreeCfg config)
 		)
 	{
 		RCC->PLLCFGR = config.PllCfg;
-		RCC->CR.Fields.PLLON = 1;
-		while(RCC->CR.Fields.PLLRDY == 0);
+		RCC->CR.B.PLLON = 1;
+		while(RCC->CR.B.PLLRDY == 0);
 	}
 
 	switch(config.SysClockCfg)
@@ -208,15 +214,15 @@ void RCC_ClockTreeInit(const dtRccClockTreeCfg config)
 		}
 #endif
 	/* AHB init */
-	RCC->CFGR.Fields.HPRE = config.AhbPrescaler;
-	RCC->CFGR.Fields.PPRE = config.ApbPrescaler;
+	RCC->CFGR.B.HPRE = config.AhbPrescaler;
+	RCC->CFGR.B.PPRE = config.ApbPrescaler;
 
-	RCC->CFGR.Fields.SW = config.SysClockCfg;
-	while(RCC->CFGR.Fields.SWS != config.SysClockCfg);
+	RCC->CFGR.B.SW = config.SysClockCfg;
+	while(RCC->CFGR.B.SWS != config.SysClockCfg);
 
-	RCC->CCIPR.Fields.ADCSEL = config.AdcClockSel;
-	RCC->CCIPR.Fields.USART1SEL = config.UsartClockSel;
-	RCC->CCIPR.Fields.USART2SEL = config.UsartClockSel;
+	RCC->CCIPR.B.ADCSEL = config.AdcClockSel;
+	RCC->CCIPR.B.USART1SEL = config.UsartClockSel;
+	RCC->CCIPR.B.USART2SEL = config.UsartClockSel;
 }
 
 void RCC_ClockEnable(dtRCCClock Clock, dtRCCClockSets Value)
@@ -241,8 +247,10 @@ void RCC_ClockEnable(dtRCCClock Clock, dtRCCClockSets Value)
 	}
 #if defined(MCU_G070) || defined(MCU_G071)
 	uint32 *Pointer = &GroupPtr->IOP.Word + BusId;
-#elif defined(MCU_F446) || defined(MCU_F410) || defined(MCU_L433) || defined(MCU_F415) || defined(MCU_L476) || defined(STM32U0)
+#elif defined(MCU_F446) || defined(MCU_F410) || defined(MCU_L433) || defined(MCU_F415) || defined(MCU_L476)
 	uint32 *Pointer = &GroupPtr->AHB1.Word + BusId;
+#elif defined(STM32U0)
+    uint32 *Pointer = &GroupPtr->AHB.U + BusId;
 #endif
 	if(SetOrClear == Clock_Set) *Pointer |= ClockMask;
 	else *Pointer &= ClockMask;
@@ -301,55 +309,55 @@ void RCC_ClockSet(dtRccInitConfig Config)
 		ClockFreq = Config.Clock;
 		if(Config.CrystalOrInternal == Crystal)
 		{
-			RCC->CR.Fields.HSEON = 1;
+			RCC->CR.B.HSEON = 1;
 #ifdef MODULE_TEST
-			RCC->CR.Fields.HSERDY = 1;
+			RCC->CR.B.HSERDY = 1;
 #endif
-			while(RCC->CR.Fields.HSERDY == 0);
+			while(RCC->CR.B.HSERDY == 0);
 #if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_F415)
-			RCC->PLLCFGR.Fields.PLLSRC = 1;
+			RCC->PLLCFGR.B.PLLSRC = 1;
 #elif defined(MCU_G070) || defined(MCU_G071) || defined(MCU_L476)
-			RCC->PLLCFGR.Fields.PLLSRC = 3;
+			RCC->PLLCFGR.B.PLLSRC = 3;
 #endif
 		}
 		else
 		{
-			RCC->CR.Fields.HSION = 1;
+			RCC->CR.B.HSION = 1;
 #ifdef MODULE_TEST
-			RCC->CR.Fields.HSIRDY = 1;
+			RCC->CR.B.HSIRDY = 1;
 #endif
-			while(RCC->CR.Fields.HSIRDY == 0);
+			while(RCC->CR.B.HSIRDY == 0);
 #if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_F415)
-			RCC->PLLCFGR.Fields.PLLSRC = 0;
+			RCC->PLLCFGR.B.PLLSRC = 0;
 #elif defined(MCU_G070) || defined(MCU_G071) || defined(MCU_L476)
-			RCC->PLLCFGR.Fields.PLLSRC = 2;
+			RCC->PLLCFGR.B.PLLSRC = 2;
 #endif
 		}
 
 #if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_F415)
 		/* We use the MSI clock, being by default 4MHz, for the PLL so it not need to divide. */
-		RCC->PLLCFGR.Fields.PLLM = DividerM-1;
+		RCC->PLLCFGR.B.PLLM = DividerM-1;
 #elif defined(MCU_G070) || defined(MCU_G071) || defined(MCU_L476)
-		RCC->PLLCFGR.Fields.PLLM = DividerM-2;
+		RCC->PLLCFGR.B.PLLM = DividerM-2;
 #endif
 
 		/* 4MHz * 40 = 160 MHz for VCO frequency */
-		RCC->PLLCFGR.Fields.PLLN = MultiplierN-1;
+		RCC->PLLCFGR.B.PLLN = MultiplierN-1;
 #if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_F415)
-		RCC->PLLCFGR.Fields.PLLP = DividerP-1;
-		RCC->PLLCFGR.Fields.PLLQ = Config.PLL_QDiv;
+		RCC->PLLCFGR.B.PLLP = DividerP-1;
+		RCC->PLLCFGR.B.PLLQ = Config.PLL_QDiv;
 #elif defined(MCU_G070) || defined(MCU_G071)
-		RCC->PLLCFGR.Fields.PLLR = DividerR-1;
+		RCC->PLLCFGR.B.PLLR = DividerR-1;
 #elif defined(MCU_L476)
-		RCC->PLLCFGR.Fields.PLLR = DividerR-1;
-		RCC->PLLCFGR.Fields.PLLQ = Config.PLL_QDiv;
-		RCC->PLLCFGR.Fields.PLLREN = 1;
+		RCC->PLLCFGR.B.PLLR = DividerR-1;
+		RCC->PLLCFGR.B.PLLQ = Config.PLL_QDiv;
+		RCC->PLLCFGR.B.PLLREN = 1;
 #endif
-		RCC->CR.Fields.PLLON = 1;
+		RCC->CR.B.PLLON = 1;
 #ifdef MODULE_TEST
-		RCC->CR.Fields.PLLRDY = 1;
+		RCC->CR.B.PLLRDY = 1;
 #endif
-		while(RCC->CR.Fields.PLLRDY == 0);
+		while(RCC->CR.B.PLLRDY == 0);
 
 #if defined(MCU_G070) || defined(MCU_G071)
 		if(ClockFreq <= 16000000) Pwr_SetVos(2);
@@ -376,37 +384,37 @@ void RCC_ClockSet(dtRccInitConfig Config)
 #endif
 
 #if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_F415)
-		if(Config.APB2_Presc == APB_Presc1) RCC->CFGR.Fields.PPRE2 = 0;
-		else RCC->CFGR.Fields.PPRE2 = 0x4 | (Config.APB2_Presc-1);
+		if(Config.APB2_Presc == APB_Presc1) RCC->CFGR.B.PPRE2 = 0;
+		else RCC->CFGR.B.PPRE2 = 0x4 | (Config.APB2_Presc-1);
 
-		if(Config.APB1_Presc == APB_Presc1) RCC->CFGR.Fields.PPRE1 = 0;
-		else RCC->CFGR.Fields.PPRE1 = 0x4 | (Config.APB1_Presc-1);
+		if(Config.APB1_Presc == APB_Presc1) RCC->CFGR.B.PPRE1 = 0;
+		else RCC->CFGR.B.PPRE1 = 0x4 | (Config.APB1_Presc-1);
 #elif defined(MCU_G070) || defined(MCU_G071)
-		if(Config.APB1_Presc == APB_Presc1) RCC->CFGR.Fields.PPRE = 0;
-		else RCC->CFGR.Fields.PPRE = 0x4 | (Config.APB1_Presc-1);
+		if(Config.APB1_Presc == APB_Presc1) RCC->CFGR.B.PPRE = 0;
+		else RCC->CFGR.B.PPRE = 0x4 | (Config.APB1_Presc-1);
 #endif
-		if(Config.AHB_Presc == AHB_Presc1) RCC->CFGR.Fields.HPRE = 0;
-		else RCC->CFGR.Fields.HPRE = 0x8 | (Config.AHB_Presc-1);
+		if(Config.AHB_Presc == AHB_Presc1) RCC->CFGR.B.HPRE = 0;
+		else RCC->CFGR.B.HPRE = 0x8 | (Config.AHB_Presc-1);
 
 #if defined(MCU_G070) || defined(MCU_G071)
-		RCC->PLLCFGR.Fields.PLLREN = 1;
+		RCC->PLLCFGR.B.PLLREN = 1;
 #endif
 
 #if defined(MCU_L476)
-		RCC->CFGR.Fields.SW = 3;
-		while(RCC->CFGR.Fields.SWS != 3);
+		RCC->CFGR.B.SW = 3;
+		while(RCC->CFGR.B.SWS != 3);
 #else
-		RCC->CFGR.Fields.SW = 2;
+		RCC->CFGR.B.SW = 2;
 #ifdef MODULE_TEST
-		RCC->CFGR.Fields.SWS = 2;
+		RCC->CFGR.B.SWS = 2;
 #endif
-		while(RCC->CFGR.Fields.SWS != 2);
+		while(RCC->CFGR.B.SWS != 2);
 #if defined(MCU_L433) || defined(MCU_L476)
 		if(Config.PLL_SAI_EN != 0)
         {
             RCC->PLLSAI1CFGR.Word = Config.PLL_SAI_Conf;
-            RCC->CR.Fields.PLLSAI1ON = 1;
-            while(RCC->CR.Fields.PLLSAI1RDY == 0);
+            RCC->CR.B.PLLSAI1ON = 1;
+            while(RCC->CR.B.PLLSAI1RDY == 0);
             RCC->DCKCFGR2 = 0x08000000;
         }
 #endif
@@ -417,14 +425,14 @@ void RCC_ClockSet(dtRccInitConfig Config)
 static inline uint32 RCC_PllFreq(void)
 {
     uint32 PllOutput = 0;
-    switch(RCC->PLLCFGR.Fields.PLLSRC)
+    switch(RCC->PLLCFGR.B.PLLSRC)
     {
         case 0x0:
             /* No clock */
             break;
         case 0x1:
 #if defined(MCU_L476) || defined(MCU_L433)
-            PllOutput = MsiFrequencies100kHz[RCC->CR.Fields.MSIRANGE]*100000;
+            PllOutput = MsiFrequencies100kHz[RCC->CR.B.MSIRANGE]*100000;
 #endif
             break;
         case 0x2:
@@ -434,9 +442,9 @@ static inline uint32 RCC_PllFreq(void)
             PllOutput = EXTERNAL_OSC_FREQUENCY;
             break;
     }
-    PllOutput*=RCC->PLLCFGR.Fields.PLLN;
-    PllOutput /= RCC->PLLCFGR.Fields.PLLM+1;
-    PllOutput /= 2+ (RCC->PLLCFGR.Fields.PLLR << 2);
+    PllOutput*=RCC->PLLCFGR.B.PLLN;
+    PllOutput /= RCC->PLLCFGR.B.PLLM+1;
+    PllOutput /= 2+ (RCC->PLLCFGR.B.PLLR << 2);
     return PllOutput;
 }
 
@@ -454,27 +462,27 @@ uint32 RCC_GetClock(dtBus bus)
 #endif
 		break;
 	case PllRClock:
-		if(RCC->PLLCFGR.Fields.PLLSRC == PLL_SRC_HSI)
+		if(RCC->PLLCFGR.B.PLLSRC == PLL_SRC_HSI)
 		{
 			ret = HSI_CLOCK_FREQUENCY;
 		}
-		else if(RCC->PLLCFGR.Fields.PLLSRC == PLL_SRC_HSE)
+		else if(RCC->PLLCFGR.B.PLLSRC == PLL_SRC_HSE)
 		{
 #if defined (HSE_CLOCK_FREQUENCY)
 			ret = HSE_CLOCK_FREQUENCY;
 #endif
 		}
-		ret *= RCC->PLLCFGR.Fields.PLLN;
-		ret /= (RCC->PLLCFGR.Fields.PLLM + 1);
-		ret /= (RCC->PLLCFGR.Fields.PLLR + 1);
+		ret *= RCC->PLLCFGR.B.PLLN;
+		ret /= (RCC->PLLCFGR.B.PLLM + 1);
+		ret /= (RCC->PLLCFGR.B.PLLR + 1);
 		break;
 	case AhbClock:
 		ret = RCC_GetClock(SysClock);
-		if((RCC->CFGR.Fields.HPRE & 0x8) != 0)
+		if((RCC->CFGR.B.HPRE & 0x8) != 0)
 		{
-			ret >>= (RCC->CFGR.Fields.HPRE & 0x7);
+			ret >>= (RCC->CFGR.B.HPRE & 0x7);
 			ret >>= 1;
-			if((RCC->CFGR.Fields.HPRE & 0x4) != 0)
+			if((RCC->CFGR.B.HPRE & 0x4) != 0)
 			{
 				ret >>= 1;
 			}
@@ -482,23 +490,23 @@ uint32 RCC_GetClock(dtBus bus)
 		break;
 	case ApbClock:
 		ret = RCC_GetClock(AhbClock);
-		if((RCC->CFGR.Fields.PPRE & 0x4) != 0)
+		if((RCC->CFGR.B.PPRE & 0x4) != 0)
 		{
 			ret >>= 1;
-			ret >>= (RCC->CFGR.Fields.PPRE & 0x3);
+			ret >>= (RCC->CFGR.B.PPRE & 0x3);
 		}
 		break;
 #if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_L433) || defined(MCU_F415) || defined(MCU_L476)
 	case ApbTimClock:
 		ret = RCC_GetClock(ApbClock);
-		if((RCC->CFGR.Fields.PPRE & 0x4) != 0)
+		if((RCC->CFGR.B.PPRE & 0x4) != 0)
 		{
 			ret <<= 1;
 		}
 		break;
 #endif
 	case SysClock:
-		switch(RCC->CFGR.Fields.SWS)
+		switch(RCC->CFGR.B.SWS)
 		{
 		case 0x0: //HSI selected as system clock
 			ret = HSI_CLOCK_FREQUENCY;
@@ -527,8 +535,8 @@ uint32 RCC_GetClock(dtBus bus)
 
 void RCC_RTCDomainConfig(dtRCCRtcConfig Config)
 {
-	RCC->BDCR.Fields.RTC_SEL = Config.RTCClock;
-	RCC->BDCR.Fields.RTCEN = Config.RTCClockEnable;
+	RCC->BDCR.B.RTC_SEL = Config.RTCClock;
+	RCC->BDCR.B.RTCEN = Config.RTCClockEnable;
 }
 #else
 #warning "NO CPU IS DEFINED"
