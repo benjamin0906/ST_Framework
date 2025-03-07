@@ -554,6 +554,7 @@ typedef struct
 } dtRccInitConfig;
 
 #define PLL_SRC_NONE 0
+#define PLL_SRC_MSI 1
 #define PLL_SRC_HSI 2
 #define PLL_SRC_HSE 3
 
@@ -576,6 +577,9 @@ typedef struct
 
 typedef enum eRccSysClockCfg
 {
+#if defined(STM32U0)
+    SysClock_MSI,
+#endif
 	SysClock_HSI,
 	SysClock_HSE,
 	SysClock_PLL,
@@ -601,8 +605,9 @@ typedef struct RccClockTreeCfg
 	uint8 AdcClockSel: 2;
 	uint8 RtcClockSel: 2;
 	uint8 UsbClockSel: 1;
+#if defined(STM32G071)
 	uint8 I2SClockSel: 2;
-
+#endif
 } dtRccClockTreeCfg;
 
 extern void RCC_ClockEnable(dtRCCClock Clock, dtRCCClockSets Value);

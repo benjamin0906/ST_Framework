@@ -142,7 +142,7 @@ void RCC_ClockTreeInit(const dtRccClockTreeCfg config)
 
 	/* Clock Init */
 	if(     (config.SysClockCfg == SysClock_HSE)            //if system clock is from external
-        ||  (config.PllCfg.B.PLLSRC == PLL_SRC_HSE)    //if pll is from external
+        ||  (config.PllCfg.B.PLLSRC == PLL_SRC_HSE)         //if pll is from external
 		||  (config.RtcClockSel == RTC_SRC_HSE32)           //if RTC is from external
 		||  (config.UsbClockSel == USB_SRC_HSE)             //if USB is from external
 		)
@@ -152,8 +152,19 @@ void RCC_ClockTreeInit(const dtRccClockTreeCfg config)
 	}
 	else
 	{
-		RCC->CR.B.HSION = 1;
-		while(RCC->CR.B.HSIRDY == 0);
+	    if((config.SysClockCfg == SysClock_HSI) || (config.PllCfg.B.PLLSRC == PLL_SRC_HSI))
+	    {
+	        RCC->CR.B.HSION = 1;
+	        while(RCC->CR.B.HSIRDY == 0);
+	    }
+	    else
+	    {
+	        if((config.SysClockCfg == SysClock_MSI) || (config.PllCfg.B.PLLSRC == PLL_SRC_MSI))
+	        {
+	            RCC->CR.B.MSION = 1;
+	            while(RCC->CR.B.MSIRDY == 0);
+	        }
+	    }
 	}
 
 	if(config.LsiClock != 0)
@@ -166,7 +177,9 @@ void RCC_ClockTreeInit(const dtRccClockTreeCfg config)
 	if(     (config.SysClockCfg == SysClock_PLL)
         ||  (config.UsbClockSel == USB_SRC_PLLQ)
 		||  (config.AdcClockSel == ADC_SRC_PLL)
+#if defined(STM32G071)
 		||  (config.I2SClockSel == I2S_SRC_PLL)
+#endif
 		)
 	{
 		RCC->PLLCFGR = config.PllCfg;
@@ -183,7 +196,7 @@ void RCC_ClockTreeInit(const dtRccClockTreeCfg config)
 #if defined(HSE_CLOCK_FREQUENCY)
 		sysClock = HSE_CLOCK_FREQUENCY
 #else
-		sysClock = 0;
+		sysClock = 0;//TODO
 #endif
 		break;
 	case SysClock_PLL:
@@ -193,6 +206,10 @@ void RCC_ClockTreeInit(const dtRccClockTreeCfg config)
 		break;
 	case SysClock_LSE:
 		break;
+#if defined(STM32U0)
+	case SysClock_MSI:
+	    break;
+#endif
 	}
 
 #if defined(MCU_G070) || defined(MCU_G071)
@@ -206,10 +223,10 @@ void RCC_ClockTreeInit(const dtRccClockTreeCfg config)
 			do
 			{
 				lRange--;
-				for(lLatency = 0; sysClock > ((uint32)VCoreLatencyFreqTable[lLatency][lRange]*1000000) && (lLatency < sizeof(VCoreLatencyFreqTable[0])); lLatency++);
+				for(lLatency = 0; (lLatency < sizeof(VCoreLatencyFreqTable[0])) && (sysClock > ((uint32)VCoreLatencyFreqTable[lRange][lLatency]*1000000)); lLatency++);
 			}
-			while((sysClock > ((uint32)VCoreLatencyFreqTable[lLatency][lRange]*1000000)) && (lRange > 0));
-			Pwr_SetVos(lRange);
+			while((sysClock > ((uint32)VCoreLatencyFreqTable[lRange][lLatency]*1000000)) && (lRange > 0));
+			Pwr_SetVos(lRange+1);
 			while(FLASH_SetLatency(lLatency) != E_OK);
 		}
 #endif
