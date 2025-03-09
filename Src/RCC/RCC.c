@@ -525,20 +525,34 @@ uint32 RCC_GetClock(dtBus bus)
 	case SysClock:
 		switch(RCC->CFGR.B.SWS)
 		{
-		case 0x0: //HSI selected as system clock
+#if defined(STM32U0)
+		case SysClock_MSI:
+		    const uint8 rangeTable[] = {1, 2, 4, 8, 16, 24, 32, 48};
+		    ret = rangeTable[RCC->CR.B.MSIRANGE];
+		    if(RCC->CR.B.MSIRANGE <= 3)
+		    {
+		        ret *= 100000;
+		    }
+		    else
+		    {
+		        ret *= 1000000;
+		    }
+		    break;
+#endif
+		case SysClock_HSI: //HSI selected as system clock
 			ret = HSI_CLOCK_FREQUENCY;
 			break;
-		case 0x1: //HSE selected as system clock
+		case SysClock_HSE: //HSE selected as system clock
 #if defined (HSE_CLOCK_FREQUENCY)
 		    ret = HSE_CLOCK_FREQUENCY;
 #endif
 			break;
-		case 0x2: //PLL selected as system clock
+		case SysClock_PLL: //PLL selected as system clock
 			ret = RCC_GetClock(PllRClock);
 			break;
-		case 0x3: //LSI selected as system clock
+		case SysClock_LSI: //LSI selected as system clock
 			break;
-		case 0x4: //LSE selected as system clock
+		case SysClock_LSE: //LSE selected as system clock
 			break;
 		}
 		break;
