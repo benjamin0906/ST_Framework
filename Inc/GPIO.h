@@ -31,7 +31,7 @@ typedef enum
 	PortA_15,
 #endif
 #if defined(STM32U0) || defined(STM32L4)
-	PortB_0,
+	PortB_0 = 0x10,
 	PortB_1,
 	PortB_2,
 	PortB_3,
@@ -49,7 +49,7 @@ typedef enum
 	PortB_15,
 #endif
 #if defined(STM32U0) || defined(STM32L4)
-	PortC_0,
+	PortC_0 = 0x20,
 	PortC_1,
 	PortC_2,
 	PortC_3,
@@ -67,7 +67,7 @@ typedef enum
 	PortC_15,
 #endif
 #if defined(STM32U0) || defined(STM32L4)
-	PortD_0,
+	PortD_0 = 0x30,
 	PortD_1,
 	PortD_2,
 	PortD_3,
@@ -85,7 +85,7 @@ typedef enum
 	PortD_15,
 #endif
 #if defined(STM32U0) || defined(STM32L4)
-	PortE_0,
+	PortE_0 = 0x40,
 	PortE_1,
 	PortE_2,
 	PortE_3,
@@ -103,7 +103,7 @@ typedef enum
 	PortE_15,
 #endif
 #if defined(STM32U0) || defined(STM32L4)
-	PortF_0,
+	PortF_0 = 0x50,
 	PortF_1,
 	PortF_2,
 	PortF_3,
@@ -121,7 +121,7 @@ typedef enum
 	PortF_15,
 #endif
 #if defined(STM32L4)
-	PortG_0,
+	PortG_0 = 0x60,
 	PortG_1,
 	PortG_2,
 	PortG_3,
@@ -139,7 +139,7 @@ typedef enum
 	PortG_15,
 #endif
 #if defined(STM32L4)
-	PortH_0,
+	PortH_0 = 0x70,
 	PortH_1,
 	PortH_2,
 	PortH_3,
@@ -204,10 +204,11 @@ enum eGPIO_Pulling
 
 typedef struct
 {
-	uint32 Mode	:6;
-	uint32 Type :1;
-	uint32 Speed:2;
-	uint32 PUPD	:2;
+	uint32 Mode	    :6;
+	uint32 Type     :1;
+	uint32 Speed    :2;
+	uint32 PUPD	    :2;
+	uint32 DefState :1;
 } dtGPIOConfig;
 
 typedef enum
@@ -217,7 +218,7 @@ typedef enum
 	Toggle,
 } dtPortValue;
 
-extern void GPIO_PinInit(dtGPIOs Gpio, dtGPIOConfig Config);
+extern void GPIO_PinInit(dtGPIOs Gpio, const dtGPIOConfig Config);
 extern void GPIO_PinDeinit(dtGPIOs Gpio);
 extern void GPIO_Set(dtGPIOs Gpio, dtPortValue Value);
 extern uint8 GPIO_Get(dtGPIOs Gpio);

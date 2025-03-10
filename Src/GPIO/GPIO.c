@@ -106,7 +106,7 @@ static dtGPIO *const GPIOH = (dtGPIO*) &TestGPIOH;dtGPIO *
 #endif
 /* ----------End of register definition section---------- */
 
-void GPIO_PinInit(dtGPIOs Gpio, dtGPIOConfig Config);
+void GPIO_PinInit(dtGPIOs Gpio, const dtGPIOConfig Config);
 void GPIO_PinDeinit(dtGPIOs Gpio);
 void GPIO_Set(dtGPIOs Gpio, dtPortValue Value);
 uint8 GPIO_Get(dtGPIOs Gpio);
@@ -116,7 +116,7 @@ static inline dtGPIO* GetPort(dtGPIOs Gpio);
 static inline dtGPIOx* GetPort(dtGPIOs Gpio);
 #endif
 
-void GPIO_PinInit(dtGPIOs Gpio, dtGPIOConfig Config)
+void GPIO_PinInit(dtGPIOs Gpio, const dtGPIOConfig Config)
 {
 	uint32 FieldId = (Gpio & 0xF)<<1;
 	uint32 ClearMask = ~(3 << FieldId);
@@ -129,7 +129,18 @@ void GPIO_PinInit(dtGPIOs Gpio, dtGPIOConfig Config)
 		{
 			/* Nothing to do */
 		}
-		else if(Config.Mode == Output) Temp->MODER.U |= 1 << FieldId;
+		else if(Config.Mode == Output)
+		{
+	        if(Config.DefState == 0)
+	        {
+	            Temp->ODR.U &= ~(1<<(Gpio & 0xF));
+	        }
+	        else
+	        {
+	            Temp->ODR.U |= (1<<(Gpio & 0xF));
+	        }
+		    Temp->MODER.U |= 1 << FieldId;
+		}
 		else if(Config.Mode == Analog) Temp->MODER.U |= 3 << FieldId;
 		else
 		{
