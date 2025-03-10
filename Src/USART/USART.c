@@ -11,17 +11,17 @@
 #include "NVIC.h"
 
 #if defined(STM32U0)
-#include "RegDefs/USART_regdef.h"
+#include "RegDefs/USART_reg.h"
 #endif
 
 #if defined(MCU_F446) || defined(MCU_G070) || defined(MCU_F410) || defined(MCU_L433) || defined(MCU_G071) || defined(MCU_F415) || defined(MCU_L476) || defined(STM32U0)
 #if defined(MCU_G070) || defined(MCU_G071) || defined(STM32U0)
 /* Not every USART instances has the same features. USART1 and 2 have full functionality but USART 3 and 4 have only basic functionality */
 /* The registers of the module can only be accessed 32 bit operations */
-static dtUSART *const USART[4] = {  (dtUSART*)0x40013800,
-							        (dtUSART*)0x40004400,
-							        (dtUSART*)0x40004800,
-							        (dtUSART*)0x40004C00};
+static dtUSART *const USART[4] = {  (dtUSART*)MODULE_USART1,
+							        (dtUSART*)MODULE_USART2,
+							        (dtUSART*)MODULE_USART3,
+							        (dtUSART*)MODULE_USART4};
 #elif defined(MCU_F415)
 static dtUSART *const USART[8] = {  (dtUSART*)0x40011000,
 							        (dtUSART*)0x40004400,
@@ -176,7 +176,7 @@ void USART_Init(dtUSARTInstance Instance, dtUSARTConfig Config)
 
 void USART_Send(dtUSARTInstance Instance, const uint8 *Data, uint8 DataSize)
 {
-#if defined(MCU_G070) || defined(MCU_G071)
+#if defined(MCU_G070) || defined(MCU_G071) || defined(STM32U0)
 	if(DataSize > 0)
 	{
 		/* Calculate the end of index of the TxClearIndex */
@@ -245,7 +245,7 @@ void USART_Send(dtUSARTInstance Instance, const uint8 *Data, uint8 DataSize)
 uint8 USART_GetRxData(dtUSARTInstance Instance, uint8 *const outPtr)
 {
 	uint8 ret = 0;
-#if defined(MCU_G070) || defined(MCU_G071)
+#if defined(MCU_G070) || defined(MCU_G071) || defined(STM32U0)
 	switch(Instance)
 	{
 	case USART1:
@@ -379,16 +379,19 @@ void USART_Disable(dtUSARTInstance Instance)
 uint8 USART_Transmitting(dtUSARTInstance Instance)
 {
 	/* If TCFNFIE is set the module is transmitting */
-#if defined(MCU_G070) || defined(MCU_G071)
+#if defined(MCU_G070) || defined(MCU_G071) || defined(STM32U0)
 	return (USART[Instance]->CR1.Fields.TXFNFIE != 0) || (USART[Instance]->ISR.Fields.TC == 0);
 #elif defined(MCU_F446) || defined(MCU_F415)
 	return (USART[Instance]->CR1.Fields.TXEIE != 0) || (USART[Instance]->SR.Fields.TC == 0);
 #endif
 }
 
-#if defined(MCU_G070) || defined(MCU_G071)
 #if defined(USART2_TX_FIFO_SIZE) && defined(USART2_RX_FIFO_SIZE)
+#if defined(MCU_G070) || defined(MCU_G071)
 void USART2_IRQHandler(void)
+#elif defined(STM32U0)
+void USART2_LPUART2_IRQHandler(void)
+#endif
 {
 	if((USART[1]->CR1.Fields.TXFNFIE != 0) && (USART[1]->ISR.Fields.TXFNF != 0))
 	{
@@ -408,7 +411,7 @@ void USART2_IRQHandler(void)
 	}
 	if(USART[1]->ISR.Fields.ORE != 0) USART[1]->ICR.Fields.ORECF = 1;
 }
-#endif
+
 #endif
 
 #if defined(MCU_G070) || defined(MCU_G071)
