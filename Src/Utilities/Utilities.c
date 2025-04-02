@@ -232,7 +232,7 @@ uint32 FloatToQ(uint8 *str, uint8 Q)
  *        _ _ _ _ _ _ _ _
  *       |_|_|_|_|_|_|_|_|
  *   */
-void MemCpyRigth(uint8 *Src, uint8 *Dst, uint32 Length)
+void MemCpyRigth(const uint8 *const Src, uint8 *const Dst, uint32 Length)
 {
 	while(Length != 0)
 	{

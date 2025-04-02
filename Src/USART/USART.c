@@ -300,7 +300,7 @@ uint8 USART_GetRxData(dtUSARTInstance Instance, uint8 *const outPtr)
 uint8 USART_GetTxFifoFreeSize(dtUSARTInstance Instance)
 {
 	uint8 ret = 0;
-#if defined(MCU_G070) || defined(MCU_G071)
+#if defined(MCU_G070) || defined(MCU_G071) || defined(STM32U0)
 	switch(Instance)
 	{
 	case USART1:
