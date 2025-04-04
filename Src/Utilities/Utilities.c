@@ -126,6 +126,31 @@ uint32 DecStrToNum32(uint8 *str)
 	return ret;
 }
 
+uint8 HexStrToNum8(uint8 *str)
+{
+    uint8 ret = 0;
+    uint8 looper = 0;
+
+    while(looper < 2)
+    {
+        ret <<= 4;
+        if((str[looper] >= 'a') && (str[looper] <= 'f'))
+        {
+            ret += str[looper] - 87;
+        }
+        else if((str[looper] >= 'A') && (str[looper] <= 'F'))
+        {
+            ret += str[looper] - 55;
+        }
+        else if((str[looper] >= '0') && (str[looper] <= '9'))
+        {
+            ret += str[looper] - '0';
+        }
+        looper++;
+    }
+    return ret;
+}
+
 uint8 DecStrToNum(uint8 *str, uint8 *num)
 {
 	uint8 ret = 0;
