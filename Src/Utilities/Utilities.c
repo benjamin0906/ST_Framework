@@ -241,6 +241,16 @@ void MemCpyRigth(const uint8 *const Src, uint8 *const Dst, uint32 Length)
 	}
 }
 
+void MemCpyLeft(const uint8 *const src, uint8 *const dst, uint32 length)
+{
+    uint32 index = 0;
+    while(index < length)
+    {
+        dst[index] = src[index];
+        index++;
+    }
+}
+
 uint8 FixPNumToStr(uint32 num, uint8 qRes, uint8 fractionalDigits, uint8 *const str)
 {
 	uint32 tNum = 0;
