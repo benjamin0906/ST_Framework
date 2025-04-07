@@ -35,7 +35,7 @@ enum eStopBits
 
 typedef struct
 {
-	uint16	Baud;
+	uint32	Baud;
 	uint8	Parity		:2;
 	uint8	StopBits	:2;
 } dtUSARTConfig;

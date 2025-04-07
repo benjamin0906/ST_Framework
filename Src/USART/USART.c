@@ -164,9 +164,16 @@ void USART_Init(dtUSARTInstance Instance, dtUSARTConfig Config)
 		break;
 	case USART3:
 	case USART4:
+#if defined(MCU_G070) || defined(MCU_G0701)
 #if defined(USART3_TX_FIFO_SIZE) && defined(USART3_RX_FIFO_SIZE)
 		NVIC_SetPriority(IRQ_USART3_4,2);
 		NVIC_EnableIRQ(IRQ_USART3_4);
+#endif
+#elif defined(STM32U0)
+#if defined(USART4_TX_FIFO_SIZE) && defined(USART4_RX_FIFO_SIZE)
+        //NVIC_SetPriority(IRQ_USART4_LPUART3,0);
+        NVIC_EnableIRQ(IRQ_USART4_LPUART3);
+#endif
 #endif
 		break;
 	}
@@ -230,8 +237,8 @@ void USART_Send(dtUSARTInstance Instance, const uint8 *Data, uint8 DataSize)
 			/* Fill the buffer with the data */
 			while(Data < EndIndex)
 			{
-				USART3Data.TxFiFo[USART3Data.TxWriteIndex++] = *Data++;
-				USART3Data.TxWriteIndex &= USART4_TX_FIFO_SIZE;
+				USART4Data.TxFiFo[USART4Data.TxWriteIndex++] = *Data++;
+				USART4Data.TxWriteIndex &= USART4_TX_FIFO_SIZE;
 			}
 			USART[Instance]->CR1.Fields.TXFNFIE = 1;
 		}
@@ -435,6 +442,30 @@ void USART3_USART4_LPUART1_IRQHandler(void)
 		USART3Data.RxWriteIndex &= USART3_RX_FIFO_SIZE;
 	}
 	if(USART[2]->ISR.Fields.ORE != 0) USART[2]->ICR.Fields.ORECF = 1;
+}
+#endif
+#endif
+#if defined(STM32U0)
+#if defined(USART4_TX_FIFO_SIZE)  && defined(USART4_RX_FIFO_SIZE)
+void USART4_IRQHandler(void)
+{
+    if((USART[3]->CR1.Fields.TXFNFIE != 0) && (USART[3]->ISR.Fields.TXFNF != 0))
+    {
+        USART[3]->TDR.TDR = USART4Data.TxFiFo[USART4Data.TxReadIndex++];
+        USART4Data.TxReadIndex &= USART4_TX_FIFO_SIZE;
+
+        /* If there is no more data to send disable the tx-empty interrupt */
+        if(USART4Data.TxReadIndex == USART4Data.TxWriteIndex)
+        {
+            USART_CR1_CLEAR_BIT(USART4, CR1_BIT_TXFNFIE);
+        }
+    }
+    if(USART[3]->ISR.Fields.RXFNE != 0)
+    {
+        USART4Data.RxFiFo[USART4Data.RxWriteIndex++] = USART[3]->RDR.Fields.RDR;
+        USART4Data.RxWriteIndex &= USART4_RX_FIFO_SIZE;
+    }
+    if(USART[3]->ISR.Fields.ORE != 0) USART[3]->ICR.Fields.ORECF = 1;
 }
 #endif
 #endif
