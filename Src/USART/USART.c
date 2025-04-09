@@ -294,8 +294,12 @@ uint8 USART_GetRxData(dtUSARTInstance Instance, uint8 *const outPtr)
 #if defined(USART4_TX_FIFO_SIZE) && defined(USART4_RX_FIFO_SIZE)
 		if(USART4Data.RxReadIndex != USART4Data.RxWriteIndex)
 		{
-			ret = USART4Data.RxFiFo[USART4Data.RxReadIndex++];
-			USART4Data.RxReadIndex &= USART4_RX_FIFO_SIZE;
+		    ret = 1;
+            if(outPtr != 0)
+            {
+                *outPtr = USART4Data.RxFiFo[USART4Data.RxReadIndex++];
+                USART4Data.RxReadIndex &= USART4_RX_FIFO_SIZE;
+            }
 		}
 #endif
 		break;
