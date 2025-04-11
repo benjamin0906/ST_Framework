@@ -310,6 +310,7 @@ uint8 FixPNumToStr(uint32 num, uint8 qRes, uint8 fractionalDigits, uint8 *const 
 			fractionalDigits--;
 		}
     }
+    str[ret] = 0;
     return ret;
 }
 
