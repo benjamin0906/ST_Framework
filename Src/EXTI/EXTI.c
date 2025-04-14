@@ -174,6 +174,61 @@ void RTC_WKUP_IRQHandler(void)
 {
 
 }
+#elif defined(STM32U0)
+#include "RegDefs/EXTI_reg.h"
+
+static dtEXTI *const EXTI = MODULE_EXTI;
+
+void EXTI_LineSet(dtEXTILines Line, dtEXTIEdge EdgeType, dtEXTIPort PortType, dtEXTIMask ExtiMasks)
+{
+    if((Line <= EXTI_I2C1_Wake))
+    {
+        /* Configurable interrupts */
+        if(Line <= EXTI_DAC_SUPPLY)
+        {
+            uint32 Mask = 1 << Line;
+            Mask = ~Mask;
+
+            /* Zeroing the line by default, it will set only if the EdgeType is not EXTI_NoEdge */
+            EXTI->GenConfEvents.RSTR.B.Lines &= Mask;
+            EXTI->GenConfEvents.FTSR.B.Lines &= Mask;
+            Mask = ~Mask;
+            if((EdgeType == EXTI_RisingEdge) || (EdgeType == EXTI_BothEdge)) EXTI->GenConfEvents.RSTR.B.Lines |= Mask;
+            if((EdgeType == EXTI_FallingEdge) || (EdgeType == EXTI_BothEdge)) EXTI->GenConfEvents.FTSR.B.Lines |= Mask;
+        }
+
+        /* Set the used port to the GPIO EXTI line if the Line is one of them */
+        if(Line <= EXTI_Exti15) EXTI->ExtiCr[Line] = PortType;
+
+        if(Line <= EXTI_LPUART2)
+        {
+            uint32 Mask = 1 << Line;
+            Mask = ~Mask;
+            EXTI->EMR1 &= Mask;
+            EXTI->IMR1 &= Mask;
+            Mask = ~Mask;
+            if((ExtiMasks == EXTI_EventMask) || (ExtiMasks == EXTI_BothMask))
+            {
+                EXTI->EMR1 |= Mask;
+            }
+            if((ExtiMasks == EXTI_InterruptMask) || (ExtiMasks == EXTI_BothMask))
+            {
+                EXTI->IMR1 |= Mask;
+            }
+        }
+        else
+        {
+            uint32 Mask = 1 << (Line-32);
+            Mask = ~Mask;
+            EXTI->EMR2 &= Mask;
+            EXTI->IMR2 &= Mask;
+            Mask = ~Mask;
+            if((ExtiMasks == EXTI_EventMask) || (ExtiMasks == EXTI_BothMask)) EXTI->EMR2 |= Mask;
+            if((ExtiMasks == EXTI_InterruptMask) || (ExtiMasks == EXTI_BothMask)) EXTI->IMR2 |= Mask;
+        }
+    }
+}
+
 #endif
 
 

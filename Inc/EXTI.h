@@ -113,6 +113,77 @@ typedef enum
 extern void IExti_Config(uint8 ExtiLine, dtExtiConfig Config, void (*IrqHandler)(void));
 extern void IExti_ClearPending(uint8 ExtiLine);
 
+#elif defined(STM32U0)
+typedef enum
+{
+    EXTI_Exti0,
+    EXTI_Exti1,
+    EXTI_Exti2,
+    EXTI_Exti3,
+    EXTI_Exti4,
+    EXTI_Exti5,
+    EXTI_Exti6,
+    EXTI_Exti7,
+    EXTI_Exti8,
+    EXTI_Exti9,
+    EXTI_Exti10,
+    EXTI_Exti11,
+    EXTI_Exti12,
+    EXTI_Exti13,
+    EXTI_Exti14,
+    EXTI_Exti15,
+    EXTI_PVD_Out,
+    EXTI_COMP1_Out,
+    EXTI_COMP2_Out,
+    EXTI_VDDUSB,
+    EXTI_ADC_SUPPLY,
+    EXTI_DAC_SUPPLY     = 21,
+    EXTI_LCD_WAKEUP     = 22,
+    EXTI_I2C3_Wake      = 23,
+    EXTI_LPTIM1,
+    EXTI_LPTIM2,
+    EXTI_LPTIM3,
+    EXTI_LSE_CSS,
+    EXTI_RTC,
+    EXTI_TAMP,
+    EXTI_LPUART1,
+    EXTI_LPUART2,
+    EXTI_LPUART3,
+    EXTI_I2C1_Wake,
+    EXTI_USART1,
+    EXTI_USART2,
+    EXTI_USB,
+    EXTI_WWDG,
+} dtEXTILines;
+
+typedef enum
+{
+    EXTI_NoEdge,
+    EXTI_RisingEdge,
+    EXTI_FallingEdge,
+    EXTI_BothEdge,
+} dtEXTIEdge;
+
+typedef enum
+{
+    EXTI_PortA,
+    EXTI_PortB,
+    EXTI_PortC,
+    EXTI_PortD,
+    EXTI_PortF  = 0x05,
+} dtEXTIPort;
+
+typedef enum
+{
+    EXTI_NoMask,
+    EXTI_EventMask,
+    EXTI_InterruptMask,
+    EXTI_BothMask,
+} dtEXTIMask;
+
+extern void EXTI_LineSet(dtEXTILines Line, dtEXTIEdge EdgeType, dtEXTIPort PortType, dtEXTIMask ExtiMasks);
+
+
 #endif
 
 #endif /* INC_EXTI_H_ */
