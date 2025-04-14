@@ -11,8 +11,8 @@
 #include "types.h"
 #include "DMA_ExtTypes.h"
 
-#define DMA1                        0
-#define DMA2                        1
+#define DMA1_INSTANCE               0
+#define DMA2_INSTANCE               1
 
 #define DmaStream_0                 0
 #define DmaStream_1                 1
