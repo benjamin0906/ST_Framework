@@ -136,9 +136,82 @@ static inline uint32 RCC_PllFreq(void);
 void RCC_ClockSet(dtRccInitConfig Config);
 void RCC_ClockTreeInit(const dtRccClockTreeCfg config);
 
+static inline void HseOn(void)
+{
+    dtRCC_CR tCr = RCC->CR;
+    tCr.B.HSEON = 1;
+    RCC->CR = tCr;
+    do
+    {
+        tCr = RCC->CR;
+    }while(tCr.B.HSERDY == 0);
+}
+
+static inline void HsiOn(void)
+{
+    dtRCC_CR tCr = RCC->CR;
+    tCr.B.HSION = 1;
+    RCC->CR = tCr;
+    do
+    {
+        tCr = RCC->CR;
+    }while(tCr.B.HSIRDY == 0);
+}
+
+static inline void MsiOn(void)
+{
+    dtRCC_CR tCr = RCC->CR;
+    tCr.B.MSION = 1;
+    RCC->CR = tCr;
+    do
+    {
+        tCr = RCC->CR;
+    }while(tCr.B.MSIRDY == 0);
+}
+
+static inline void LsiOn(void)
+{
+    dtRCC_CSR tCsr = RCC->CSR;
+    tCsr.B.LSION = 1;
+    RCC->CSR = tCsr;
+    do
+    {
+        tCsr = RCC->CSR;
+    }while(tCsr.B.LSIRDY == 0);
+}
+
+static inline void PllOn(uint32 pllCfgr)
+{
+    dtRCC_CR tCr = RCC->CR;
+
+    /* Disabling PLL before changing settings */
+    tCr.B.PLLON = 0;
+    RCC->CR = tCr;
+
+    /* Waiting for PLL to be stopped */
+    do
+    {
+        tCr = RCC->CR;
+    } while(tCr.B.PLLRDY == 1);
+
+    /* Changing the configuration */
+    RCC->PLLCFGR.U = pllCfgr;
+
+    /* Enabling PLL after changing settings */
+    tCr.B.PLLON = 1;
+    RCC->CR = tCr;
+
+    /* Waiting for PLL to be started */
+    do
+    {
+        tCr = RCC->CR;
+    } while(tCr.B.PLLRDY == 0);
+}
+
 void RCC_ClockTreeInit(const dtRccClockTreeCfg config)
 {
 	uint32 sysClock = 0;
+
 
 	/* Clock Init */
 	if(     (config.SysClockCfg == SysClock_HSE)            //if system clock is from external
@@ -147,30 +220,26 @@ void RCC_ClockTreeInit(const dtRccClockTreeCfg config)
 		||  (config.UsbClockSel == USB_SRC_HSE)             //if USB is from external
 		)
 	{
-		RCC->CR.B.HSEON = 1;
-		while(RCC->CR.B.HSERDY == 0);
+	    HseOn();
 	}
 	else
 	{
 	    if((config.SysClockCfg == SysClock_HSI) || (config.PllCfg.B.PLLSRC == PLL_SRC_HSI))
 	    {
-	        RCC->CR.B.HSION = 1;
-	        while(RCC->CR.B.HSIRDY == 0);
+	        HsiOn();
 	    }
 	    else
 	    {
 	        if((config.SysClockCfg == SysClock_MSI) || (config.PllCfg.B.PLLSRC == PLL_SRC_MSI))
 	        {
-	            RCC->CR.B.MSION = 1;
-	            while(RCC->CR.B.MSIRDY == 0);
+	            MsiOn();
 	        }
 	    }
 	}
 
 	if(config.LsiClock != 0)
 	{
-		RCC->CSR.B.LSION = 1;
-		while(RCC->CSR.B.LSIRDY == 0);
+	    LsiOn();
 	}
 
 	/* PLL init */
@@ -182,9 +251,7 @@ void RCC_ClockTreeInit(const dtRccClockTreeCfg config)
 #endif
 		)
 	{
-		RCC->PLLCFGR = config.PllCfg;
-		RCC->CR.B.PLLON = 1;
-		while(RCC->CR.B.PLLRDY == 0);
+	    PllOn(config.PllCfg.U);
 	}
 
 	switch(config.SysClockCfg)
@@ -231,15 +298,20 @@ void RCC_ClockTreeInit(const dtRccClockTreeCfg config)
 		}
 #endif
 	/* AHB init */
-	RCC->CFGR.B.HPRE = config.AhbPrescaler;
-	RCC->CFGR.B.PPRE = config.ApbPrescaler;
+    dtRCC_CFGR tCfgr = {.U = 0};
+    dtRCC_CCIPR tCcipr = {.U = 0};
 
-	RCC->CFGR.B.SW = config.SysClockCfg;
+    tCfgr.B.HPRE = config.AhbPrescaler;
+    tCfgr.B.PPRE = config.ApbPrescaler;
+
+    tCfgr.B.SW = config.SysClockCfg;
+	RCC->CFGR = tCfgr;
 	while(RCC->CFGR.B.SWS != config.SysClockCfg);
 
-	RCC->CCIPR.B.ADCSEL = config.AdcClockSel;
-	RCC->CCIPR.B.USART1SEL = config.UsartClockSel;
-	RCC->CCIPR.B.USART2SEL = config.UsartClockSel;
+	tCcipr.B.ADCSEL = config.AdcClockSel;
+	tCcipr.B.USART1SEL = config.UsartClockSel;
+	tCcipr.B.USART2SEL = config.UsartClockSel;
+	RCC->CCIPR = tCcipr;
 }
 
 void RCC_ClockEnable(dtRCCClock Clock, dtRCCClockSets Value)

@@ -318,6 +318,7 @@ typedef struct sRCC
     dtBusGroup      SMENR;
     uint32 :32;
     dtRCC_CCIPR     CCIPR;
+    uint32 :32;
     dtRCC_BDCR      BDCR;
     dtRCC_CSR       CSR;
     dtRCC_CRRCR     CRRCR;
