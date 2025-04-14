@@ -248,6 +248,154 @@ void RTC_STAMP_IRQHandler(void)
     RTC->SCR = tSCR;
 }
 
+#elif defined(STM32U0)
+#include "RegDefs/RTC_reg.h"
+
+static dtRTC *const RTC = MODULE_RTC;
+
+void RTC_WPUnlock(void);
+void RTC_Lock(void);
+void RTC_ClearInt(dtRTCIntMask Mask);
+
+void RTC_Init(dtRTCConfig Config)
+{
+    /* Allow write the RTC registers */
+    Pwr_RtcWp();
+
+    /* Unlock RTC registers */
+    RTC_WPUnlock();
+
+    /* Write the RTC clock domain config */
+    {
+        dtRCCRtcConfig Conf = {.RTCClock = Config.RTCClock, .RTCClockEnable = Config.RTCClockEnable};
+        RCC_RTCDomainConfig(Conf);
+    }
+
+    /* Start initialization */
+    RTC->ICSR.B.INIT = 1;
+    while(RTC->ICSR.B.INITF == 0);
+
+    RTC->CALR.B.LPCAL = Config.LpMode;
+
+    dtRTC_PRER PrerTemp = {.U = 0};
+    PrerTemp.B.PREDIV_A = Config.Presc_A;
+    PrerTemp.B.PREDIV_S = Config.Presc_S;
+    RTC->PRER = PrerTemp;
+
+    dtRTC_DR DateTemp = {.U = 0};
+    dtRTC_TR TimeTemp = {.U = 0};
+
+    DateTemp.B.YT = Config.Date.YearTens;
+    DateTemp.B.YU = Config.Date.YearUnit;
+    DateTemp.B.MT = Config.Date.MountTens;
+    DateTemp.B.MU = Config.Date.MountUnits;
+    DateTemp.B.DT = Config.Date.DayTens;
+    DateTemp.B.DU = Config.Date.DayUnits;
+
+    TimeTemp.B.HT = Config.Time.HourTens;
+    TimeTemp.B.HU = Config.Time.HourUnits;
+    TimeTemp.B.MNT = Config.Time.MinTens;
+    TimeTemp.B.MNU = Config.Time.MinUnits;
+    TimeTemp.B.ST = Config.Time.SecTens;
+    TimeTemp.B.SU = Config.Time.SecUnits;
+
+    RTC->DR = DateTemp;
+    RTC->TR = TimeTemp;
+
+    RTC->CR.B.FMT = Config.Format;
+    RTC->ICSR.B.BIN = Config.RtcMode;
+    RTC->ICSR.B.INIT = 0;
+    RTC_ClearInt(0x3f);
+    RTC_Lock();
+}
+
+/**
+ * @brief   Removes the write protection from the RTC registers
+ * @details This function writes the WPR register with the correct
+ *          values in the proper sequence so that the RTC registers
+ *          get unlocked
+ * @param   none
+ * @retval  none
+ * */
+void RTC_WPUnlock(void)
+{
+    RTC->WPR.B.KEY = 0xCA;
+    RTC->WPR.B.KEY = 0x53;
+}
+
+/**
+ * @brief   Activates the write protection of the RTC registers
+ * @details This function writes the WPR register with an incorrect
+ *          value so that the RTC registers get locked
+ * @param   none
+ * @retval  none
+ * */
+void RTC_Lock(void)
+{
+    RTC->WPR.B.KEY = 0x0;
+}
+
+uint8 RTC_SetPeriodicWake(dtRTCWuckSel CkSel, uint16 Value)
+{
+    uint8 ret = 0;
+    RTC_WPUnlock();
+    if(RTC->CR.B.WUTE != 0)
+    {
+        dtRTC_CR TempCR = RTC->CR;
+        TempCR.B.WUTE = 0;
+        RTC->CR = TempCR;
+        RTC_Lock();
+    }
+    else if(RTC->ICSR.B.WUTWF != 0)
+    {
+        dtRTC_SCR tSCR = RTC->SCR;
+        dtRTC_CR TempCR = RTC->CR;
+        dtRTC_WUTR TempWUTR = {.U = 0};
+
+        /* clearing wutf flag */
+        tSCR.B.CWUTF = 1;
+        RTC->SCR = tSCR;
+
+        /* Setting the countdown value */
+        TempWUTR.B.WUT = Value;
+        RTC->WUTR = TempWUTR;
+
+        /* enabling wake up timer, setting its clock and enabling its interrupt */
+        TempCR.B.WUTIE = 1;
+        TempCR.B.WUTE = 1;
+        TempCR.B.WUCKSEL = CkSel;
+        RTC->CR = TempCR;
+
+        RTC_Lock();
+        ret = 1;
+    }
+    return ret;
+}
+
+void RTC_ClearInt(dtRTCIntMask Mask)
+{
+    dtRTC_SCR TempScr = {.U = Mask};
+    RTC->SCR = TempScr;
+}
+
+void RTC_StopWakeUpTimer(void)
+{
+    RTC_WPUnlock();
+    dtRTC_CR TempCR = RTC->CR;
+    TempCR.B.WUTE = 0;
+    RTC->CR = TempCR;
+    RTC_Lock();
+}
+
+/**
+ * @retval  0: the given ISR is not pending
+ *          1: the given ISR is pending
+ */
+uint8 RTC_IsIntPending(dtRTCIntMask Mask)
+{
+    return (RTC->SR.U & Mask) != 0;
+}
+
 #else
 #warning "NO CPU IS DEFINED"
 #endif

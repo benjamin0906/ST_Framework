@@ -20,6 +20,12 @@ typedef struct
 	uint32 Presc_S		:15;
 	uint32 RTCClock			:2;
 	uint32 RTCClockEnable	:1;
+	/* Mode of the RTC:
+	 * 00: BCD mode
+	 * 01: Binary mode
+	 * 10: Mixed mode */
+	uint32 RtcMode          :2;
+	uint32 LpMode           :1;
 } dtRTCConfig;
 
 typedef enum
