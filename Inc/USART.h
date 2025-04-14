@@ -38,6 +38,7 @@ typedef struct
 	uint32	Baud;
 	uint8	Parity		:2;
 	uint8	StopBits	:2;
+	uint8   Swap        :1;
 } dtUSARTConfig;
 
 extern void USART_Init(dtUSARTInstance Instance, dtUSARTConfig Config);

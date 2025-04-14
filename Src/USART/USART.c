@@ -5,23 +5,25 @@
  *      Author: BodnarB
  */
 
-#include "USART_Types.h"
 #include "USART.h"
 #include "RCC.h"
 #include "NVIC.h"
+#include "config.h"
 
 #if defined(STM32U0)
 #include "RegDefs/USART_reg.h"
+#include "USART_Types.h"
+#else
 #endif
 
 #if defined(MCU_F446) || defined(MCU_G070) || defined(MCU_F410) || defined(MCU_L433) || defined(MCU_G071) || defined(MCU_F415) || defined(MCU_L476) || defined(STM32U0)
 #if defined(MCU_G070) || defined(MCU_G071) || defined(STM32U0)
 /* Not every USART instances has the same features. USART1 and 2 have full functionality but USART 3 and 4 have only basic functionality */
 /* The registers of the module can only be accessed 32 bit operations */
-static dtUSART *const USART[4] = {  (dtUSART*)MODULE_USART1,
-							        (dtUSART*)MODULE_USART2,
-							        (dtUSART*)MODULE_USART3,
-							        (dtUSART*)MODULE_USART4};
+static dtUSARTx *const USART[4] = {  (dtUSARTx*)MODULE_USART1,
+							        (dtUSARTx*)MODULE_USART2,
+							        (dtUSARTx*)MODULE_USART3,
+							        (dtUSARTx*)MODULE_USART4};
 #elif defined(MCU_F415)
 static dtUSART *const USART[8] = {  (dtUSART*)0x40011000,
 							        (dtUSART*)0x40004400,
@@ -66,28 +68,37 @@ uint8 USART_GetRxData(dtUSARTInstance Instance, uint8 *const outPtr);
 void USART_Disable(dtUSARTInstance Instance);
 uint8 USART_Transmitting(dtUSARTInstance Instance);
 
+static inline uint8 ReadRxData(dtUSARTInstance instance);
+static inline void WriteTxData(dtUSARTInstance instance, uint8 data);
+
 void USART_Init(dtUSARTInstance Instance, dtUSARTConfig Config)
 {
 #if defined(MCU_G070) || defined(MCU_G071) || defined(STM32U0)
-	if(USART[Instance]->CR1.Fields.UE == 0)
+    dtUSART_CR1 TempCR1 = USART[Instance]->CR1;
+	if(TempCR1.B.UE == 0)
 	{
-	dtCR1 TempCR1 = {.Word = 0};
+	    TempCR1.U = 0;
+	    dtUSART_PRESC tPresc = {.U = 0};
+	    dtUSART_BRR tBrr = {.U = 0};
+	    dtUSART_CR2 tCr2 = {.U = 0};
 
 	/* Set 8 databits */
-	TempCR1.Fields.M0 = 0;
-	TempCR1.Fields.M1 = 0;
+	TempCR1.B.M0 = 0;
+	TempCR1.B.M1 = 0;
 
 	/* Set parity */
-	TempCR1.Fields.PCE = 0;
+	TempCR1.B.PCE = 0;
 	if(Config.Parity != None)
 	{
-		TempCR1.Fields.PCE = 1;
-		TempCR1.Fields.PS = 0;
-		if(Config.Parity == Odd) TempCR1.Fields.PS = 1;
+		TempCR1.B.PCE = 1;
+		TempCR1.B.PS = 0;
+		if(Config.Parity == Odd) TempCR1.B.PS = 1;
 	}
 
 	/* Set stopbits */
-	USART[Instance]->CR2.Fields.STOP = Config.StopBits;
+	tCr2.B.STOP = Config.StopBits;
+
+	tCr2.B.SWAP = Config.Swap;
 
 	uint32 USARTClock = RCC_GetClock(ApbClock);
 	int32 BaudDiff = 0x7FFFFFFF;
@@ -124,29 +135,33 @@ void USART_Init(dtUSARTInstance Instance, dtUSARTConfig Config)
 			if(NewBaudDiff < BaudDiff)
 			{
 				BaudDiff = NewBaudDiff;
-				TempCR1.Fields.OVER8 = SamplingLooper;
-				USART[Instance]->PRESC.PRESCALER = PrescLooper;
-				USART[Instance]->BRR.BRR = CalculatedDiv;
+				TempCR1.B.OVER8 = SamplingLooper;
+
+				tPresc.B.PRESCALER = PrescLooper;
+				tBrr.B.BRR = CalculatedDiv;
 			}
 		}
 		while(PrescLooper != 0);
 	}
 
 	/* Enable transmitter */
-	TempCR1.Fields.TE = 1;
+	TempCR1.B.TE = 1;
 
 	/* Enable receiver */
-	TempCR1.Fields.RE = 1;
+	TempCR1.B.RE = 1;
 
 	/* Enable USART */
-	TempCR1.Fields.UE = 1;
+	TempCR1.B.UE = 1;
 
-	TempCR1.Fields.TXFNFIE = 0;
-	TempCR1.Fields.RXFNEIE = 1;
+	TempCR1.B.TXFNFIE = 0;
+	TempCR1.B.RXFNEIE = 1;
 
+	USART[Instance]->PRESC = tPresc;
+	USART[Instance]->BRR = tBrr;
+	USART[Instance]->CR2 = tCr2;
 	USART[Instance]->CR1 = TempCR1;
 
-	uint8 dummy = USART[Instance]->RDR.Fields.RDR;
+	volatile dtUSART_RDR tRDR = USART[Instance]->RDR;
 
 	switch(Instance)
 	{
@@ -240,7 +255,7 @@ void USART_Send(dtUSARTInstance Instance, const uint8 *Data, uint8 DataSize)
 				USART4Data.TxFiFo[USART4Data.TxWriteIndex++] = *Data++;
 				USART4Data.TxWriteIndex &= USART4_TX_FIFO_SIZE;
 			}
-			USART[Instance]->CR1.Fields.TXFNFIE = 1;
+			USART_CR1_SET_BIT(Instance, CR1_BIT_TXFNFIE);
 		}
 #endif
 			break;
@@ -380,10 +395,10 @@ uint8 USART_GetRxFifoFilledSize(dtUSARTInstance Instance)
 
 void USART_Disable(dtUSARTInstance Instance)
 {
-	dtCR1 TempCr1 = USART[Instance]->CR1;
-	TempCr1.Fields.UE = 0;
-	TempCr1.Fields.TE = 0;
-	TempCr1.Fields.RE = 0;
+	dtUSART_CR1 TempCr1 = USART[Instance]->CR1;
+	TempCr1.B.UE = 0;
+	TempCr1.B.TE = 0;
+	TempCr1.B.RE = 0;
 	USART[Instance]->CR1 = TempCr1;
 }
 
@@ -391,7 +406,9 @@ uint8 USART_Transmitting(dtUSARTInstance Instance)
 {
 	/* If TCFNFIE is set the module is transmitting */
 #if defined(MCU_G070) || defined(MCU_G071) || defined(STM32U0)
-	return (USART[Instance]->CR1.Fields.TXFNFIE != 0) || (USART[Instance]->ISR.Fields.TC == 0);
+    dtUSART_CR1 tCR1 = USART[Instance]->CR1;
+    dtUSART_ISR tISR = USART[Instance]->ISR;
+	return (tCR1.B.TXFNFIE != 0) || (tISR.B.TC == 0);
 #elif defined(MCU_F446) || defined(MCU_F415)
 	return (USART[Instance]->CR1.Fields.TXEIE != 0) || (USART[Instance]->SR.Fields.TC == 0);
 #endif
@@ -404,10 +421,12 @@ void USART2_IRQHandler(void)
 void USART2_LPUART2_IRQHandler(void)
 #endif
 {
-	if((USART[1]->CR1.Fields.TXFNFIE != 0) && (USART[1]->ISR.Fields.TXFNF != 0))
+    dtUSART_CR1 tCR1 = USART[USART2]->CR1;
+    dtUSART_ISR tISR = USART[USART2]->ISR;
+	if((tCR1.B.TXFNFIE != 0) && (tISR.B.TXFNF != 0))
 	{
-		USART[1]->TDR.TDR = USART2Data.TxFiFo[USART2Data.TxReadIndex++];
-		USART2Data.TxReadIndex &= USART2_TX_FIFO_SIZE;
+	    WriteTxData(USART2, USART2Data.TxFiFo[USART2Data.TxReadIndex++]);
+	    USART2Data.TxReadIndex &= USART2_TX_FIFO_SIZE;
 
 		/* If there is no more data to send disable the tx-empty interrupt */
 		if(USART2Data.TxReadIndex == USART2Data.TxWriteIndex)
@@ -415,12 +434,17 @@ void USART2_LPUART2_IRQHandler(void)
 			USART_CR1_CLEAR_BIT(USART2, CR1_BIT_TXFNFIE);
 		}
 	}
-	if(USART[1]->ISR.Fields.RXFNE != 0)
+	if(tISR.B.RXFNE != 0)
 	{
-		USART2Data.RxFiFo[USART2Data.RxWriteIndex++] = USART[1]->RDR.Fields.RDR;
+		USART2Data.RxFiFo[USART2Data.RxWriteIndex++] = ReadRxData(USART2);
 		USART2Data.RxWriteIndex &= USART2_RX_FIFO_SIZE;
 	}
-	if(USART[1]->ISR.Fields.ORE != 0) USART[1]->ICR.Fields.ORECF = 1;
+	if(tISR.B.ORE != 0)
+    {
+	    dtUSART_ICR tICR = {.U = 0};
+	    tICR.B.ORECF = 1;
+	    USART[USART2]->ICR = tICR;
+    }
 }
 
 #endif
@@ -453,9 +477,11 @@ void USART3_USART4_LPUART1_IRQHandler(void)
 #if defined(USART4_TX_FIFO_SIZE)  && defined(USART4_RX_FIFO_SIZE)
 void USART4_IRQHandler(void)
 {
-    if((USART[3]->CR1.Fields.TXFNFIE != 0) && (USART[3]->ISR.Fields.TXFNF != 0))
+    dtUSART_CR1 tCR1 = USART[USART4]->CR1;
+    dtUSART_ISR tISR = USART[USART4]->ISR;
+    if((tCR1.B.TXFNFIE != 0) && (tISR.B.TXFNF != 0))
     {
-        USART[3]->TDR.TDR = USART4Data.TxFiFo[USART4Data.TxReadIndex++];
+        WriteTxData(USART4, USART4Data.TxFiFo[USART4Data.TxReadIndex++]);
         USART4Data.TxReadIndex &= USART4_TX_FIFO_SIZE;
 
         /* If there is no more data to send disable the tx-empty interrupt */
@@ -464,13 +490,33 @@ void USART4_IRQHandler(void)
             USART_CR1_CLEAR_BIT(USART4, CR1_BIT_TXFNFIE);
         }
     }
-    if(USART[3]->ISR.Fields.RXFNE != 0)
+    if(tISR.B.RXFNE != 0)
     {
-        USART4Data.RxFiFo[USART4Data.RxWriteIndex++] = USART[3]->RDR.Fields.RDR;
+        USART4Data.RxFiFo[USART4Data.RxWriteIndex++] = ReadRxData(USART4);
         USART4Data.RxWriteIndex &= USART4_RX_FIFO_SIZE;
     }
-    if(USART[3]->ISR.Fields.ORE != 0) USART[3]->ICR.Fields.ORECF = 1;
+    if(tISR.B.ORE != 0)
+    {
+        dtUSART_ICR tICR = {.U = 0};
+        tICR.B.ORECF = 1;
+        USART[USART4]->ICR = tICR;
+    }
+
 }
+
+static inline uint8 ReadRxData(dtUSARTInstance instance)
+{
+    dtUSART_RDR tRDR = USART[instance]->RDR;
+    return tRDR.B.RDR;
+}
+
+static inline void WriteTxData(dtUSARTInstance instance, uint8 data)
+{
+    dtUSART_TDR tTDR = {.U = 0};
+    tTDR.B.TDR = data;
+    USART[instance]->TDR = tTDR;
+}
+
 #endif
 #endif
 #else
