@@ -309,7 +309,7 @@ void GPIO_PinDeinit(dtGPIOs Gpio)
     uint32 AltFieldClearMask = ~(0xF << shifter);
     dtGPIOx *Temp = GetPort(Gpio);
 
-    Temp->MODER.U &= ClearMask;
+    Temp->MODER.U |= ~ClearMask;
     if(FieldId >= 16) Temp->AFRH.U &= AltFieldClearMask;
     else Temp->AFRL.U &= AltFieldClearMask;
     Temp->PUPDR.U &= ClearMask;
