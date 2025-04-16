@@ -28,6 +28,17 @@ extern void BubbleSort(uint32 *array, uint32 len);
 extern uint8 FixPNumToStr(uint32 num, uint8 qRes, uint8 fractionalDigits, uint8 *const str);
 extern uint8 memEq(uint8 *ptr1, uint8 *ptr2, uint8 size);
 
+/**
+ * @brief   Converts string to uint8
+ * @details This function converts two characters from a given string to a 1 byte value
+ *          It does not matter is the characters are upper of lower case.
+ *          If a character are not valid hex character, its value is skipped
+ * @param [in] uint8* str       Array of the characters from which the uint8 value should be
+ *                              converted
+ * @retval uint8    the converted value
+ */
+extern uint8 HexStrToNum8(uint8 *str);
+
 #if defined(MCU_F446)
 extern float32 sqrt(float32 Number);
 extern int64 multiplyArrays(int32 *Array1, int32 *Array2, uint32 length);
