@@ -405,7 +405,7 @@ dtI2cSessionType Session[3];
 void I2C_Init(dtI2CInstance Instance, dtI2cConfig config);
 void I2C_StartPeripheral(dtI2CInstance Instance);
 void I2C_StopPeripheral(dtI2CInstance Instance);
-void I2C_Start(dtI2CInstance Instance, dtI2cSessionType SessionType, const uint8 SlaveAdd, const uint8*const RegisterAddress, uint8 RegisterLength, uint8* DataPointer, uint8 DataLength);
+int8 I2C_Start(dtI2CInstance Instance, dtI2cSessionType SessionType, const uint8 SlaveAdd, const uint8*const RegisterAddress, uint8 RegisterLength, uint8* DataPointer, uint8 DataLength);
 dtI2cSessionResult I2C_Result(dtI2CInstance Instance);
 
 void I2C_Init(dtI2CInstance Instance, dtI2cConfig config)
@@ -468,45 +468,56 @@ void I2C_StopPeripheral(dtI2CInstance Instance)
     RCC_ClockEnable(peripheral,Disable);
 }
 
-void I2C_Start(dtI2CInstance Instance, dtI2cSessionType SessionType, const uint8 SlaveAdd, const uint8 *const RegisterAddress, uint8 RegisterLength, uint8* DataPointer, uint8 DataLength)
+int8 I2C_Start(dtI2CInstance Instance, dtI2cSessionType SessionType, const uint8 SlaveAdd, const uint8 *const RegisterAddress, uint8 RegisterLength, uint8* DataPointer, uint8 DataLength)
 {
-    /* Copy the necessary infos into the own variables of the module */
-    RegisterAdd = RegisterAddress;
-    RegLen = RegisterLength;
-    Data[Instance] = DataPointer;
-    DataLen[Instance] = DataLength;
-    Session[Instance] = SessionType;
-
-    /* Set the status sign variable to busy */
-    Result[Instance] = Busy;
-    SecondStart[Instance] = 0;
-
-    /* Initiate the communication session */
-    dtI2C_CR2 tCr2 = {.U = 0};
-    tCr2.B.RD_WRN = 0;
-    tCr2.B.AUTOEND = 0;
-    tCr2.B.HEAD10R = 1;
-    //SET_WRITE_TRANSFER_REQ(Instance);
-    //CLEAR_AUTO_ENABLE(Instance);
-    //SET_7BIT_ADDRESS_MODE(Instance);
-    if(Session[Instance] != I2C_Read)
+    int8 ret = -1;
+    if(Result[Instance] == Ready)
     {
-        //DISABLE_RELOAD(Instance);
-        tCr2.B.RELOAD = 1;
+        ret = 0;
+        /* Copy the necessary infos into the own variables of the module */
+        RegisterAdd = RegisterAddress;
+        RegLen = RegisterLength;
+        Data[Instance] = DataPointer;
+        DataLen[Instance] = DataLength;
+        Session[Instance] = SessionType;
+
+        /* Set the status sign variable to busy */
+        Result[Instance] = Busy;
+        SecondStart[Instance] = 0;
+
+        /* Initiate the communication session */
+        dtI2C_CR2 tCr2 = {.U = 0};
+        tCr2.B.RD_WRN = 0;
+        tCr2.B.AUTOEND = 0;
+        tCr2.B.HEAD10R = 1;
+        //SET_WRITE_TRANSFER_REQ(Instance);
+        //CLEAR_AUTO_ENABLE(Instance);
+        //SET_7BIT_ADDRESS_MODE(Instance);
+        if(Session[Instance] != I2C_Read)
+        {
+            //DISABLE_RELOAD(Instance);
+            tCr2.B.RELOAD = 1;
+        }
+        //else ENABLE_RELOAD(Instance);
+        //SET_SLAVE_ADDRESS(Instance,SlaveAdd);
+        tCr2.B.SADD = SlaveAdd<<1;
+        tCr2.B.NBYTES = RegLen;
+        tCr2.B.START = 1;
+        //SET_TRANSFER_SIZE(Instance, RegLen);
+        //GENERATE_START(Instance);
+        I2C[Instance]->CR2 = tCr2;
     }
-    //else ENABLE_RELOAD(Instance);
-    //SET_SLAVE_ADDRESS(Instance,SlaveAdd);
-    tCr2.B.SADD = SlaveAdd<<1;
-    tCr2.B.NBYTES = RegLen;
-    tCr2.B.START = 1;
-    //SET_TRANSFER_SIZE(Instance, RegLen);
-    //GENERATE_START(Instance);
-    I2C[Instance]->CR2 = tCr2;
+    return ret;
 }
 
 dtI2cSessionResult I2C_Result(dtI2CInstance Instance)
 {
-    return Result[Instance];
+    dtI2cSessionResult ret = Result[Instance];
+    if(ret != Busy)
+    {
+        Result[Instance] = Ready;
+    }
+    return ret;
 }
 
 void I2C1_IRQHandler(void)
