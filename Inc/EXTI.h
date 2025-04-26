@@ -182,7 +182,8 @@ typedef enum
 } dtEXTIMask;
 
 extern void EXTI_LineSet(dtEXTILines Line, dtEXTIEdge EdgeType, dtEXTIPort PortType, dtEXTIMask ExtiMasks);
-
+extern uint8 EXTI_RisingPending(dtEXTILines Line);
+extern void EXTI_ClearPending(dtEXTILines Line);
 
 #endif
 

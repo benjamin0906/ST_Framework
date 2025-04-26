@@ -229,6 +229,44 @@ void EXTI_LineSet(dtEXTILines Line, dtEXTIEdge EdgeType, dtEXTIPort PortType, dt
     }
 }
 
+/* The pending registers are only set if not only the event but the interrupt generation of the line is set.
+ * So if only the event generation has been set the pending registers will be empty
+ *
+ * @param dtECTILines: the line to be checked
+ *
+ * @retval  1: event is pending
+ *          0: event is not pending
+ **/
+uint8 EXTI_RisingPending(dtEXTILines Line)
+{
+    return (EXTI->GenConfEvents.RPR.U & (1<<Line)) != 0;
+}
+
+/* The pending registers are only set if not only the event but the interrupt generation of the line is set.
+ * So if only the event generation has been set the pending registers will be empty
+ *
+ * @param dtECTILines: the line to be checked
+ *
+ * @retval  1: event is pending
+ *          0: event is not pending
+ **/
+uint8 EXTI_FallingPending(dtEXTILines Line)
+{
+    return (EXTI->GenConfEvents.FPR.U & (1<<Line)) != 0;
+}
+
+/* Clears both rising and falling flag
+ *
+ * @param dtECTILines: the line to be cleared
+ *
+ * @retval none
+ * */
+void EXTI_ClearPending(dtEXTILines Line)
+{
+    EXTI->GenConfEvents.FPR.U |= (1 << Line);
+    EXTI->GenConfEvents.RPR.U |= (1 << Line);
+}
+
 #endif
 
 
