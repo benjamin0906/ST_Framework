@@ -12,7 +12,6 @@
 float32 Power(uint8 Power, float32 Number);
 uint32 IsPassed(uint32 TimeStamp, uint32 Limit);
 uint8 StrEq(const uint8 *str1,const uint8 *str2);
-uint8 StrLen(const uint8 *const str);
 uint8 NumToHexStr(uint32 Num, uint8 *str);
 uint8 UQNumToStr(uint32 Num, uint8 QRes, uint8 QRound, uint8 *Str);
 uint32 FloatToQ(uint8 *str, uint8 Q);
@@ -69,13 +68,6 @@ uint8 StrEq(const uint8 *str1,const uint8 *str2)
 		ret++;
 	}
 	//if((*str1 == 0) || (*str2 == 0)) ret = 1;
-	return ret;
-}
-
-uint8 StrLen(const uint8 *const str)
-{
-	uint8 ret = 0;
-	while(str[ret] != 0) ret++;
 	return ret;
 }
 
@@ -156,7 +148,7 @@ uint8 DecStrToNum(uint8 *str, uint8 *num)
 	if((str != 0) && (num != 0))
 	{
 		*num = 0;
-		uint8 len = StrLen(str);
+		uint8 len = strlen(str);
 		uint8 mult=1;
 		do
 		{
@@ -451,6 +443,25 @@ __asm(  ".global memcpy\n"
         "b memcpy_cycle\n"
         "memcpy_end:\n"
         "pop {r3, r4}\n"
+        "bx lr\n");
+
+__asm(  ".global strlen                             \n"
+        ".p2align 2                                 \n"
+        ".type strlen function                      \n"
+        ".section .text.strlen, \"ax\", %progbits   \n"
+        "strlen:                                    \n"
+        "push {r1, r2}                              \n"
+        "mov r2, #0                                 \n"
+        "strlen_cycle:"
+        "ldrb r1, [r0]                              \n"
+        "cmp r1, #0                                 \n"
+        "beq strlen_end                             \n"
+        "add r0, #1\n"
+        "add r2, #1\n"
+        "b strlen_cycle\n"
+        "strlen_end:\n"
+        "mov r0, r2\n"
+        "pop {r1, r2}\n"
         "bx lr\n");
 #endif
 

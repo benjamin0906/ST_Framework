@@ -15,7 +15,6 @@
 extern float32 Power(uint8 Power, float32 Number);
 extern uint32 IsPassed(uint32 TimeStamp, uint32 Limit);
 extern uint8 StrEq(const uint8 *str1,const uint8 *str2);
-extern uint8 StrLen(const uint8 *const str);
 extern uint8 DecStrToNum(uint8 *str, uint8 *num);
 extern uint32 DecStrToNum32(uint8 *str);
 extern uint32 FloatToQ(uint8 *str, uint8 Q);
@@ -56,6 +55,8 @@ extern void memcpy_reverse(void *const src, void *const dst, uint32 size);
 extern void memcpy_reverse_16bit(void *src, void *dst, uint32 size);
 extern void memcpy_reverse_32bit(void *src, void *dst, uint32 size);
 extern void memset_32bit(void *array, uint32 value, uint32 size);
+
+extern uint32 strlen(const uint8* const str);
 
 extern void changeEndiannessArray(uint32 *array, uint32 length);
 
