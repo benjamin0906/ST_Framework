@@ -48,16 +48,24 @@ static dtUSART *const USART[6] = {  (dtUSART*)0x40011000,
                                     (dtUSART*)0x40011400};
 #endif
 #if defined(USART1_TX_FIFO_SIZE) && defined(USART1_RX_FIFO_SIZE)
-static dtUSART1Data USART1Data;
+uint8 TxFiFoUsart1[USART1_TX_FIFO_SIZE+1];
+uint8 RxFiFoUsart1[USART1_RX_FIFO_SIZE+1];
+static dtUSARTxData USART1Data = {.rxFifo = RxFiFoUsart1, .txFifo = TxFiFoUsart1};
 #endif
 #if defined(USART2_TX_FIFO_SIZE) && defined(USART2_RX_FIFO_SIZE)
-static dtUSART2Data USART2Data;
+uint8 TxFiFoUsart2[USART4_TX_FIFO_SIZE+1];
+uint8 RxFiFoUsart2[USART4_RX_FIFO_SIZE+1];
+static dtUSARTxData USART2Data = {.rxFifo = RxFiFoUsart2, .txFifo = TxFiFoUsart2};
 #endif
 #if defined(USART3_TX_FIFO_SIZE) && defined(USART3_RX_FIFO_SIZE)
-static dtUSART3Data USART3Data;
+uint8 TxFiFoUsart3[USART3_TX_FIFO_SIZE+1];
+uint8 RxFiFoUsart3[USART3_RX_FIFO_SIZE+1];
+static dtUSARTxData USART3Data = {.rxFifo = RxFiFoUsart3, .txFifo = TxFiFoUsart3};
 #endif
 #if defined(USART4_TX_FIFO_SIZE) && defined(USART4_RX_FIFO_SIZE)
-static dtUSART4Data USART4Data;
+uint8 TxFiFoUsart4[USART4_TX_FIFO_SIZE+1];
+uint8 RxFiFoUsart4[USART4_RX_FIFO_SIZE+1];
+static dtUSARTxData USART4Data = {.rxFifo = RxFiFoUsart4, .txFifo = TxFiFoUsart4};
 #endif
 
 void USART_Init(dtUSARTInstance Instance, dtUSARTConfig Config);
@@ -197,125 +205,87 @@ void USART_Init(dtUSARTInstance Instance, dtUSARTConfig Config)
 void USART_Send(dtUSARTInstance Instance, const uint8 *Data, uint8 DataSize)
 {
 #if defined(MCU_G070) || defined(MCU_G071) || defined(STM32U0)
-	if(DataSize > 0)
-	{
-		/* Calculate the end of index of the TxClearIndex */
-		uint8 *EndIndex = Data + DataSize;
+		dtUSARTxData *tBuff;
+		uint8 mask;
 
 		switch(Instance)
 		{
 		case USART1:
 #if defined(USART1_TX_FIFO_SIZE) && defined(USART1_RX_FIFO_SIZE)
-		{
-			/* Fill the buffer with the data */
-			while(Data < EndIndex)
-			{
-				USART3Data.TxFiFo[USART3Data.TxWriteIndex++] = *Data++;
-				USART3Data.TxWriteIndex &= USART1_TX_FIFO_SIZE;
-			}
-			USART[Instance]->CR1.Fields.TXFNFIE = 1;
-		}
+		    tBuff = &USART1Data;
+            mask = USART1_TX_FIFO_SIZE;
 #endif
 			break;
 		case USART2:
 #if defined(USART2_TX_FIFO_SIZE) && defined(USART2_RX_FIFO_SIZE)
-		{
-			/* Fill the buffer with the data */
-		    while(Data < EndIndex)
-			{
-				USART2Data.TxFiFo[USART2Data.TxWriteIndex++] = *Data++;
-				USART2Data.TxWriteIndex &= USART2_TX_FIFO_SIZE;
-			}
-			USART_CR1_SET_BIT(Instance, CR1_BIT_TXFNFIE);
-		}
+		    tBuff = &USART2Data;
+		    mask = USART2_TX_FIFO_SIZE;
 #endif
 			break;
 		case USART3:
 #if defined(USART3_TX_FIFO_SIZE) && defined(USART3_RX_FIFO_SIZE)
-		{
-			/* Fill the buffer with the data */
-			while(Data < EndIndex)
-			{
-				USART3Data.TxFiFo[USART3Data.TxWriteIndex++] = *Data;
-				Data++;
-				USART3Data.TxWriteIndex &= USART3_TX_FIFO_SIZE;
-			}
-			USART_CR1_SET_BIT(Instance, CR1_BIT_TXFNFIE);
-		}
+		    tBuff = &USART3Data;
+            mask = USART3_TX_FIFO_SIZE;
 #endif
 			break;
 		case USART4:
 #if defined(USART4_TX_FIFO_SIZE) && defined(USART4_RX_FIFO_SIZE)
-		{
-			/* Fill the buffer with the data */
-			while(Data < EndIndex)
-			{
-				USART4Data.TxFiFo[USART4Data.TxWriteIndex++] = *Data++;
-				USART4Data.TxWriteIndex &= USART4_TX_FIFO_SIZE;
-			}
-			USART_CR1_SET_BIT(Instance, CR1_BIT_TXFNFIE);
-		}
+			tBuff = &USART4Data;
+            mask = USART4_TX_FIFO_SIZE;
 #endif
 			break;
 		}
-	}
+		while(DataSize > 0)
+        {
+		    tBuff->txFifo[tBuff->TxWriteIndex++] = *Data++;
+		    tBuff->TxWriteIndex &= mask;
+		    DataSize--;
+        }
+		USART_CR1_SET_BIT(Instance, CR1_BIT_TXFNFIE);
 #endif
 }
 
 uint8 USART_GetRxData(dtUSARTInstance Instance, uint8 *const outPtr)
 {
 	uint8 ret = 0;
+    dtUSARTxData *tBuff = 0;
+    uint8 mask;
 #if defined(MCU_G070) || defined(MCU_G071) || defined(STM32U0)
 	switch(Instance)
 	{
 	case USART1:
 #if defined(USART1_TX_FIFO_SIZE) && defined(USART1_RX_FIFO_SIZE)
-		if(USART1Data.RxReadIndex != USART1Data.RxWriteIndex)
-		{
-			ret = USART1Data.RxFiFo[USART1Data.RxReadIndex++];
-			USART1Data.RxReadIndex &= USART1_RX_FIFO_SIZE;
-		}
+        tBuff = &USART1Data;
+        mask = USART1_RX_FIFO_SIZE;
 #endif
 		break;
 	case USART2:
 #if defined(USART2_TX_FIFO_SIZE) && defined(USART2_RX_FIFO_SIZE)
-		if(USART2Data.RxReadIndex != USART2Data.RxWriteIndex)
-		{
-			ret = 1;
-			if(outPtr != 0)
-			{
-				*outPtr = USART2Data.RxFiFo[USART2Data.RxReadIndex++];
-				USART2Data.RxReadIndex &= USART2_RX_FIFO_SIZE;
-			}
-		}
+        tBuff = &USART2Data;
+        mask = USART2_RX_FIFO_SIZE;
 #endif
 		break;
 	case USART3:
 #if defined(USART3_TX_FIFO_SIZE) && defined(USART3_RX_FIFO_SIZE)
-		if(USART3Data.RxReadIndex != USART3Data.RxWriteIndex)
-		{
-			ret = 1;
-			if(outPtr != 0)
-			{
-				*outPtr = USART3Data.RxFiFo[USART3Data.RxReadIndex++];
-				USART3Data.RxReadIndex &= USART3_RX_FIFO_SIZE;
-			}
-		}
+        tBuff = &USART3Data;
+        mask = USART3_RX_FIFO_SIZE;
 #endif
 		break;
 	case USART4:
 #if defined(USART4_TX_FIFO_SIZE) && defined(USART4_RX_FIFO_SIZE)
-		if(USART4Data.RxReadIndex != USART4Data.RxWriteIndex)
-		{
-		    ret = 1;
-            if(outPtr != 0)
-            {
-                *outPtr = USART4Data.RxFiFo[USART4Data.RxReadIndex++];
-                USART4Data.RxReadIndex &= USART4_RX_FIFO_SIZE;
-            }
-		}
+        tBuff = &USART4Data;
+        mask = USART4_RX_FIFO_SIZE;
 #endif
 		break;
+	}
+	if(tBuff->RxReadIndex != tBuff->RxWriteIndex)
+	{
+	    ret = 1;
+	    if(outPtr != 0)
+	    {
+	        *outPtr = tBuff->rxFifo[tBuff->RxReadIndex++];
+	        tBuff->RxReadIndex &= mask;
+	    }
 	}
 #endif
 	return ret;
@@ -423,7 +393,7 @@ void USART2_LPUART2_IRQHandler(void)
     dtUSART_ISR tISR = USART[USART2]->ISR;
 	if((tCR1.B.TXFNFIE != 0) && (tISR.B.TXFNF != 0))
 	{
-	    WriteTxData(USART2, USART2Data.TxFiFo[USART2Data.TxReadIndex++]);
+	    WriteTxData(USART2, USART2Data.txFifo[USART2Data.TxReadIndex++]);
 	    USART2Data.TxReadIndex &= USART2_TX_FIFO_SIZE;
 
 		/* If there is no more data to send disable the tx-empty interrupt */
@@ -434,7 +404,7 @@ void USART2_LPUART2_IRQHandler(void)
 	}
 	if(tISR.B.RXFNE != 0)
 	{
-		USART2Data.RxFiFo[USART2Data.RxWriteIndex++] = ReadRxData(USART2);
+		USART2Data.rxFifo[USART2Data.RxWriteIndex++] = ReadRxData(USART2);
 		USART2Data.RxWriteIndex &= USART2_RX_FIFO_SIZE;
 	}
 	if(tISR.B.ORE != 0)
@@ -479,7 +449,7 @@ void USART4_IRQHandler(void)
     dtUSART_ISR tISR = USART[USART4]->ISR;
     if((tCR1.B.TXFNFIE != 0) && (tISR.B.TXFNF != 0))
     {
-        WriteTxData(USART4, USART4Data.TxFiFo[USART4Data.TxReadIndex++]);
+        WriteTxData(USART4, USART4Data.txFifo[USART4Data.TxReadIndex++]);
         USART4Data.TxReadIndex &= USART4_TX_FIFO_SIZE;
 
         /* If there is no more data to send disable the tx-empty interrupt */
@@ -490,7 +460,7 @@ void USART4_IRQHandler(void)
     }
     if(tISR.B.RXFNE != 0)
     {
-        USART4Data.RxFiFo[USART4Data.RxWriteIndex++] = ReadRxData(USART4);
+        USART4Data.rxFifo[USART4Data.RxWriteIndex++] = ReadRxData(USART4);
         USART4Data.RxWriteIndex &= USART4_RX_FIFO_SIZE;
     }
     if(tISR.B.ORE != 0)
