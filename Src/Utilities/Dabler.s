@@ -2,7 +2,7 @@
 .cpu cortex-m0plus
 .thumb
 .global Dabler
-.section .text:Dabler
+.section .text.Dabler, "ax", %progbits
 .type Dabler %function
 Dabler:
 	/* First argument (R0): Number to transform into string

@@ -20,8 +20,6 @@ extern uint8 DecStrToNum(uint8 *str, uint8 *num);
 extern uint32 DecStrToNum32(uint8 *str);
 extern uint32 FloatToQ(uint8 *str, uint8 Q);
 extern uint8 NumToHexStr(uint32 Num, uint8 *str);
-extern void MemCpyRigth(const uint8 *const Src, uint8 *const Dst, uint32 Length);
-extern void MemCpyLeft(const uint8 *const src, uint8 *const dst, uint32 length);
 extern uint8 UQNumToStr(uint32 Num, uint8 QRes, uint8 QRound, uint8 *Str);
 extern void Delay(uint32 Msec);
 extern void BubbleSort(uint32 *array, uint32 len);
@@ -41,12 +39,23 @@ extern uint8 HexStrToNum8(uint8 *str);
 
 #if defined(MCU_F446)
 extern float32 sqrt(float32 Number);
+#endif
 extern int64 multiplyArrays(int32 *Array1, int32 *Array2, uint32 length);
-extern void memcpy_reverse_8bit(void *src, void *dst, uint32 size);
+
+/**
+ * @brief   memcpy function in reverse direction
+ * @details This function copies data from the first argument to the second argument
+ *          in length of the third argument. The function copies the values beginning
+ *          at the end of the function
+ * @param [in] void *src    - the source pointer from which the data is being copied
+ *        [out] void *dst   - the destination pointer to which the data is being copied
+ *        [in] uint32 size  - the amount of bytes to be copied
+ * @retval none
+ */
+extern void memcpy_reverse(void *const src, void *const dst, uint32 size);
 extern void memcpy_reverse_16bit(void *src, void *dst, uint32 size);
 extern void memcpy_reverse_32bit(void *src, void *dst, uint32 size);
 extern void memset_32bit(void *array, uint32 value, uint32 size);
-#endif
 
 extern void changeEndiannessArray(uint32 *array, uint32 length);
 

@@ -19,7 +19,6 @@ uint32 FloatToQ(uint8 *str, uint8 Q);
 void Delay(uint32 Msec);
 uint8 memEq(uint8 *ptr1, uint8 *ptr2, uint8 size);
 
-
 uint8 memEq(uint8 *ptr1, uint8 *ptr2, uint8 size)
 {
 	while((size > 0) && (*ptr1 == *ptr2))
@@ -246,36 +245,6 @@ uint32 FloatToQ(uint8 *str, uint8 Q)
 	return Num;
 }
 
-/* Copies the data in length from the Src to the Dst
- * and first the end of the array will be filled
- *
- *        _ _ _ _ _ _ _ _
- * start |_|_|_|_|_|_|_|_| end
- *        | |         | |
- *        n (n-1) ... 2 1
- *        | |         | |
- *        _ _ _ _ _ _ _ _
- *       |_|_|_|_|_|_|_|_|
- *   */
-void MemCpyRigth(const uint8 *const Src, uint8 *const Dst, uint32 Length)
-{
-	while(Length != 0)
-	{
-		Length--;
-		Dst[Length] = Src[Length];
-	}
-}
-
-void MemCpyLeft(const uint8 *const src, uint8 *const dst, uint32 length)
-{
-    uint32 index = 0;
-    while(index < length)
-    {
-        dst[index] = src[index];
-        index++;
-    }
-}
-
 uint8 FixPNumToStr(uint32 num, uint8 qRes, uint8 fractionalDigits, uint8 *const str)
 {
 	uint32 tNum = 0;
@@ -448,6 +417,41 @@ __asm(  ".globl memcpy_reverse_8bit             \n"
         "bx lr                                  \n"
 
 );
+#elif defined(STM32U0)
+__asm(  ".global memcpy_reverse                             \n"
+        ".p2align 2                                         \n"
+        ".type memcpy_reverse, %function                    \n"
+        ".section .text.memcpy_reverse, \"ax\", %progbits   \n"
+        "memcpy_reverse:                                    \n"
+        "push {r3}                                          \n"
+        "memcpy_reverse_cycle:                              \n"
+        "sub r2, #1                                         \n"
+        "bcc memcpy_reverse_end                             \n"
+        "ldrb r3, [r0, r2]                                  \n"
+        "strb r3, [r1, r2]                                  \n"
+        "b memcpy_reverse_cycle                             \n"
+        "memcpy_reverse_end:                                \n"
+        "pop {r3}                                           \n"
+        "bx lr                                              \n"
+);
+
+__asm(  ".global memcpy\n"
+        ".p2align 2\n"
+        ".type memcpy function\n"
+        ".section .text.memcpy, \"ax\", %progbits\n"
+        "memcpy:\n"
+        "push {r3, r4}\n"
+        "mov r4, #0\n"
+        "memcpy_cycle:\n"
+        "sub r2, #1\n"
+        "bcc memcpy_end\n"
+        "ldrb r3, [r0, r4]\n"
+        "strb r3, [r1, r4]\n"
+        "add r4, #1\n"
+        "b memcpy_cycle\n"
+        "memcpy_end:\n"
+        "pop {r3, r4}\n"
+        "bx lr\n");
 #endif
 
 #if defined(MCU_F446) ||  defined(MCU_F410) || defined(MCU_L433) || defined(MCU_G071) || defined(MCU_F415) || defined(MCU_L476)
