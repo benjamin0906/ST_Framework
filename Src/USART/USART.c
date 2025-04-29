@@ -82,23 +82,21 @@ void USART_Init(dtUSARTInstance Instance, dtUSARTConfig Config)
 	    dtUSART_BRR tBrr = {.U = 0};
 	    dtUSART_CR2 tCr2 = {.U = 0};
 
-	/* Set 8 databits */
-	TempCR1.B.M0 = 0;
-	TempCR1.B.M1 = 0;
+        /* Set 8 databits */
+        TempCR1.B.M0 = 0;
+        TempCR1.B.M1 = 0;
 
-	/* Set parity */
-	TempCR1.B.PCE = 0;
-	if(Config.Parity != None)
-	{
-		TempCR1.B.PCE = 1;
-		TempCR1.B.PS = 0;
-		if(Config.Parity == Odd) TempCR1.B.PS = 1;
-	}
+        /* Set parity */
+        if(Config.Parity != None)
+        {
+            TempCR1.B.PCE = 1;
+            if(Config.Parity == Odd) TempCR1.B.PS = 1;
+        }
 
-	/* Set stopbits */
-	tCr2.B.STOP = Config.StopBits;
+        /* Set stopbits */
+        tCr2.B.STOP = Config.StopBits;
 
-	tCr2.B.SWAP = Config.Swap;
+        tCr2.B.SWAP = Config.Swap;
 
 	uint32 USARTClock = RCC_GetClock(ApbClock);
 	int32 BaudDiff = 0x7FFFFFFF;
@@ -223,7 +221,7 @@ void USART_Send(dtUSARTInstance Instance, const uint8 *Data, uint8 DataSize)
 #if defined(USART2_TX_FIFO_SIZE) && defined(USART2_RX_FIFO_SIZE)
 		{
 			/* Fill the buffer with the data */
-			while(Data < EndIndex)
+		    while(Data < EndIndex)
 			{
 				USART2Data.TxFiFo[USART2Data.TxWriteIndex++] = *Data++;
 				USART2Data.TxWriteIndex &= USART2_TX_FIFO_SIZE;
