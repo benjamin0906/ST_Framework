@@ -251,7 +251,7 @@ void RTC_STAMP_IRQHandler(void)
 #elif defined(STM32U0)
 #include "RegDefs/RTC_reg.h"
 
-static dtRTC *const RTC = MODULE_RTC;
+static volatile dtRTC *const RTC = MODULE_RTC;
 
 void RTC_WPUnlock(void);
 void RTC_Lock(void);

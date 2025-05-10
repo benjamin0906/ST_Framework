@@ -20,7 +20,7 @@
 #if defined(MCU_G070) || defined(MCU_G071) || defined(STM32U0)
 /* Not every USART instances has the same features. USART1 and 2 have full functionality but USART 3 and 4 have only basic functionality */
 /* The registers of the module can only be accessed 32 bit operations */
-static dtUSARTx *const USART[4] = { (dtUSARTx*)MODULE_USART1,
+static volatile dtUSARTx *const USART[4] = { (dtUSARTx*)MODULE_USART1,
 							        (dtUSARTx*)MODULE_USART2,
 							        (dtUSARTx*)MODULE_USART3,
 							        (dtUSARTx*)MODULE_USART4};

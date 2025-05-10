@@ -24,7 +24,7 @@
 
 #ifndef MODULE_TEST
 #if defined(MCU_L476) || defined(MCU_G070) || defined(MCU_L433) || defined(MCU_G071) || defined(STM32U0)
-static dtRCC *const RCC = (dtRCC*) (0x40021000);
+static volatile dtRCC *const RCC = (dtRCC*) (0x40021000);
 #elif defined(MCU_F446) || defined(MCU_F410) || defined(MCU_F415)
 static dtRCC *const RCC = (dtRCC*) (0x40023800);
 #endif
