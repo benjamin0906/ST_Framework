@@ -53,8 +53,8 @@ uint8 RxFiFoUsart1[USART1_RX_FIFO_SIZE+1];
 static dtUSARTxData USART1Data = {.rxFifo = RxFiFoUsart1, .txFifo = TxFiFoUsart1};
 #endif
 #if defined(USART2_TX_FIFO_SIZE) && defined(USART2_RX_FIFO_SIZE)
-uint8 TxFiFoUsart2[USART4_TX_FIFO_SIZE+1];
-uint8 RxFiFoUsart2[USART4_RX_FIFO_SIZE+1];
+uint8 TxFiFoUsart2[USART2_TX_FIFO_SIZE+1];
+uint8 RxFiFoUsart2[USART2_RX_FIFO_SIZE+1];
 static dtUSARTxData USART2Data = {.rxFifo = RxFiFoUsart2, .txFifo = TxFiFoUsart2};
 #endif
 #if defined(USART3_TX_FIFO_SIZE) && defined(USART3_RX_FIFO_SIZE)
