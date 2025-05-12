@@ -251,7 +251,10 @@ void RCC_ClockTreeInit(const dtRccClockTreeCfg config)
 #endif
 		)
 	{
-	    PllOn(config.PllCfg.U);
+	    if(RCC->CR.B.PLLON == 0)
+        {
+	        PllOn(config.PllCfg.U);
+        }
 	}
 
 	switch(config.SysClockCfg)

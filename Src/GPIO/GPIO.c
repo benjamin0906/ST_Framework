@@ -21,7 +21,7 @@ static dtGPIO *const GPIOA = (dtGPIO*) 0x48000000;
 #elif defined(MCU_G070) || defined(MCU_G071)
 static dtGPIO *const GPIOA = (dtGPIO*) 0x50000000;
 #elif defined(STM32U0)
-static dtGPIO *const GPIO = (dtGPIO*) 0x50000000;
+static volatile dtGPIO *const GPIO = (dtGPIO*) 0x50000000;
 #endif
 #if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_F415)
 static dtGPIO *const GPIOB = (dtGPIO*) 0x40020400;

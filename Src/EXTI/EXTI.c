@@ -177,7 +177,7 @@ void RTC_WKUP_IRQHandler(void)
 #elif defined(STM32U0)
 #include "RegDefs/EXTI_reg.h"
 
-static dtEXTI *const EXTI = MODULE_EXTI;
+static volatile dtEXTI *const EXTI = MODULE_EXTI;
 
 void EXTI_LineSet(dtEXTILines Line, dtEXTIEdge EdgeType, dtEXTIPort PortType, dtEXTIMask ExtiMasks)
 {

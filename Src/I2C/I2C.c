@@ -392,7 +392,7 @@ void I2C2_EV_IRQHandler(void)
 }
 
 
-static dtI2C *const I2C[3] = {MODULE_I2C_1, MODULE_I2C_2, MODULE_I2C_3};
+static volatile dtI2C *const I2C[3] = {MODULE_I2C_1, MODULE_I2C_2, MODULE_I2C_3};
 
 static const uint8 *RegisterAdd;
 static uint8 RegLen;

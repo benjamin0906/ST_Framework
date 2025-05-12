@@ -13,7 +13,7 @@
 #endif
 /* The registers of the module can only be accessed by 16 or 32 bit operations */
 #if defined(STM32U0)
-static dtPWR *const PWR = (dtPWR*)(0x40007000);
+static volatile dtPWR *const PWR = (dtPWR*)(0x40007000);
 #endif
 
 #if defined(MCU_F446) || defined(MCU_G070) || defined(MCU_F410) || defined(MCU_L433) || defined(MCU_G071) || defined(MCU_F415) || defined(MCU_L476) || defined(STM32U0)
