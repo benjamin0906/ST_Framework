@@ -83,6 +83,11 @@ void USART_Init(dtUSARTInstance Instance, dtUSARTConfig Config)
 {
 #if defined(MCU_G070) || defined(MCU_G071) || defined(STM32U0)
     dtUSART_CR1 TempCR1 = USART[Instance]->CR1;
+    if(TempCR1.B.UE != 0)
+    {
+        TempCR1.B.UE = 0;
+        USART[Instance]->CR1 = TempCR1;
+    }
 	if(TempCR1.B.UE == 0)
 	{
 	    TempCR1.U = 0;
