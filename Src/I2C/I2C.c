@@ -598,11 +598,14 @@ void I2C1_IRQHandler(void)
     else if(tISR.B.STOPF != 0)
     {
         CLEAR_STOP_FLAG(I2C1);
-        Result[I2C1] = Done;
         if(tISR.B.NACKF != 0)
         {
             CLEAR_NACK_FLAG(I2C1);
             Result[I2C1] = Error;
+        }
+        else
+        {
+            Result[I2C1] = Done;
         }
     }
 }
