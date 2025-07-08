@@ -12,7 +12,8 @@
 static dtSysTick *const SysTick = (dtSysTick*)0xE000E010;
 static uint32 Tick;
 
-void    SysTick_Init(uint32 ReloadValue);
+void SysTick_Init(uint32 ReloadValue);
+void SysTick_Stop(void);
 #if (OS_IS_USED == STD_OFF)
 uint32  SysTick_GetTicks(void);
 #endif
@@ -42,6 +43,17 @@ void SysTick_Init(uint32 ReloadValue)
     tCSR.Fields.ClkSource = 1;
     tCSR.Fields.Enable = 1;
 
+    SysTick->CSR = tCSR;
+}
+
+/** @brief  This function stops the SysTick
+ *  @param  none
+ *  @retval none
+ */
+void SysTick_Stop(void)
+{
+    dtSYST_CSR tCSR = SysTick->CSR;
+    tCSR.Fields.Enable = 0;
     SysTick->CSR = tCSR;
 }
 
