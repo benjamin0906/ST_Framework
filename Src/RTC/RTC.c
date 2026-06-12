@@ -236,7 +236,7 @@ uint8 RTC_IsIntPending(dtRTCIntMask Mask)
 	return 0;
 #endif
 }
-
+#if defined(MCU_G071) || defined(MCU_G070)
 void RTC_STAMP_IRQHandler(void)
 {
     dtRTC_MISR tMISR = RTC->MISR;
@@ -247,6 +247,7 @@ void RTC_STAMP_IRQHandler(void)
     }
     RTC->SCR = tSCR;
 }
+#endif
 
 #elif defined(STM32U0)
 #include "RegDefs/RTC_reg.h"

@@ -237,6 +237,27 @@ typedef struct sGPIO_BRR_Bits
     uint32      :16;
 } dtGPIO_BRR_Bits;
 
+typedef struct sGPIO_ASCR_Bits
+{
+    uint32 ASC0  :1;
+    uint32 ASC1  :1;
+    uint32 ASC2  :1;
+    uint32 ASC3  :1;
+    uint32 ASC4  :1;
+    uint32 ASC5  :1;
+    uint32 ASC6  :1;
+    uint32 ASC7  :1;
+    uint32 ASC8  :1;
+    uint32 ASC9  :1;
+    uint32 ASC10 :1;
+    uint32 ASC11 :1;
+    uint32 ASC12 :1;
+    uint32 ASC13 :1;
+    uint32 ASC14 :1;
+    uint32 ASC15 :1;
+    uint32      :16;
+} dtGPIO_ASCR_Bits;
+
 REGDEF(GPIO, MODER)
 REGDEF(GPIO, OTYPER)
 REGDEF(GPIO, OSPEEDR)
@@ -248,6 +269,7 @@ REGDEF(GPIO, LCKR)
 REGDEF(GPIO, AFRL)
 REGDEF(GPIO, AFRH)
 REGDEF(GPIO, BRR)
+REGDEF(GPIO, ASCR)
 
 typedef struct sGPIOx
 {
@@ -262,12 +284,17 @@ typedef struct sGPIOx
     dtGPIO_AFRL     AFRL;
     dtGPIO_AFRH     AFRH;
     dtGPIO_BRR      BRR;
-    uint8           Padding[980];
+    dtGPIO_ASCR     ASCR;
+    uint8           Padding[976];
 } dtGPIOx;
 
 typedef struct sGPIO
 {
+#if defined(STM32U0)
     dtGPIOx GPIOs[6];
+#elif defined(STM32L4)
+    dtGPIOx GPIOs[8];
+#endif
 } dtGPIO;
 
 #endif /* INC_REGDEFS_GPIO_REGDEF_H_ */

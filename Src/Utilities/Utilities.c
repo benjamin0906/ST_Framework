@@ -17,6 +17,11 @@ uint8 UQNumToStr(uint32 Num, uint8 QRes, uint8 QRound, uint8 *Str);
 uint32 FloatToQ(uint8 *str, uint8 Q);
 void Delay(uint32 Msec);
 uint8 memEq(uint8 *ptr1, uint8 *ptr2, uint8 size);
+uint32 strlen(const uint8* const str);
+void memcpy_reverse(void *const src, void *const dst, uint32 size);
+void memcpy_reverse_16bit(void *src, void *dst, uint32 size);
+void memcpy_reverse_32bit(void *src, void *dst, uint32 size);
+void memset_32bit(void *array, uint32 value, uint32 size);
 
 uint8 memEq(uint8 *ptr1, uint8 *ptr2, uint8 size)
 {
@@ -315,7 +320,7 @@ uint8 UQNumToStr(uint32 Num, uint8 QRes, uint8 QRound, uint8 *Str)
 
 		uint8 Length = Dabler(WholePart, Str);
 
-		MemCpyRigth(Str, Str+(QRound - Length), QRound);
+		memcpy_reverse(Str, Str+(QRound - Length), QRound); //TODO: check is needed if this memcpy function is the proper one
 
 		while(Length < QRound)
 		{
@@ -409,7 +414,7 @@ __asm(  ".globl memcpy_reverse_8bit             \n"
         "bx lr                                  \n"
 
 );
-#elif defined(STM32U0)
+#elif defined(STM32U0) || defined(STM32L4)
 __asm(  ".global memcpy_reverse                             \n"
         ".p2align 2                                         \n"
         ".type memcpy_reverse, %function                    \n"

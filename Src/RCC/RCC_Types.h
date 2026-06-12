@@ -1786,10 +1786,10 @@ typedef struct
 #endif
 
 
-typedef enum
+/*typedef enum
 {
 	Clock_Clear 	= 0,
 	Clock_Set 	= 1,
-} dtClockSetOrClear;
+} dtClockSetOrClear;*/
 
 #endif /* RCC_RCC_TYPES_H_ */

@@ -10,7 +10,7 @@
 
 #include "RegDefs/TIM6_7_regdef.h"
 
-#if defined(STM32U0)
+#if defined(STM32U0) || defined(STM32L4)
 
 #define MODULE_TIM6_7 ((dtTIM6_7*)0x40001000)
 

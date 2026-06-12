@@ -199,7 +199,7 @@ uint8 ADC_IsAdcStopped(void)
 
 uint32* ADC_DataPtr(void)
 {
-	return &ADC->DR;
+	return &ADC->DR.Word;
 }
 
 void ADC_SetExtTrigMode(dtAdcExtTrigMode TrigMode)

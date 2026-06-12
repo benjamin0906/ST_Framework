@@ -12,7 +12,7 @@
 #include "RCC.h"
 #include "config.h"
 
-#if defined(MCU_F446) || defined(MCU_G070) || defined(MCU_F410) || defined(MCU_L433) || defined(MCU_G071) || defined(MCU_F415) || defined(MCU_L476)
+#if defined(MCU_F446) || defined(MCU_G070) || defined(MCU_F410) || defined(MCU_L433) || defined(MCU_G071) || defined(MCU_F415)
 #include "I2C_Types.h"
 static dtI2C *const I2C[2] = {(dtI2C*)0x40005400,
 						(dtI2C*)0x40005800};
@@ -135,7 +135,7 @@ dtI2cSessionResult I2C_Result(dtI2CInstance Instance)
 {
 	return Result[Instance];
 }
-
+#if defined(MCU_L433) || defined(MCU_F415) || defined(MCU_F446) || defined(MCU_G071) || defined(MCU_G070)
 #if defined(MCU_G071) || defined(MCU_G070)
 void I2C1_IRQHandler(void)
 #elif defined(MCU_L433) || defined(MCU_F415) || defined(MCU_L476) || defined(MCU_F446)
@@ -216,10 +216,11 @@ void I2C1_EV_IRQHandler(void)
 		}
 	}
 }
-
+#endif
+#if defined(MCU_L433) || defined(MCU_F415) || defined(MCU_F446) || defined(MCU_G071) || defined(MCU_G070)
 #if defined(MCU_G071) || defined(MCU_G070)
 void I2C2_IRQHandler(void)
-#elif defined(MCU_L433) || defined(MCU_F415) || defined(MCU_L476) || defined(MCU_F446)
+#elif defined(MCU_L433) || defined(MCU_F415) || defined(MCU_F446)
 void I2C2_EV_IRQHandler(void)
 #endif
 {
@@ -297,7 +298,8 @@ void I2C2_EV_IRQHandler(void)
 			}
 		}
 }
-#elif defined(STM32U0)
+#endif
+#elif defined(STM32U0) || defined(STM32L4)
 #include "RegDefs/I2C_reg.h"
 
 #define SET_WRITE_TRANSFER_REQ(Instance)    \
@@ -410,7 +412,11 @@ dtI2cSessionResult I2C_Result(dtI2CInstance Instance);
 
 void I2C_Init(dtI2CInstance Instance, dtI2cConfig config)
 {
-    dtIRQs irq = IRQ_I2C1;
+#if defined(STM32U0)
+    dtIRQs irq_map[] = {IRQ_I2C1, IRQ_I2C2_3_4};
+#elif defined(STM32L4)
+    dtIRQs irq_map[] = {IRQ_I2C1_EV, IRQ_I2C2_EV, IRQ_I2C3_EV};
+#endif
     if(I2C[Instance]->CR1.B.PE == 0)
     {
         dtI2C_CR1 tCr = {.U = 0};
@@ -427,11 +433,7 @@ void I2C_Init(dtI2CInstance Instance, dtI2cConfig config)
         I2C[Instance]->TIMINGR.U = config.TimingReg;
         I2C[Instance]->CR1 = tCr;
     }
-    if(Instance != I2C1)
-    {
-        irq = IRQ_I2C2_3_4;
-    }
-    NVIC_EnableIRQ(irq);
+    NVIC_EnableIRQ(irq_map[Instance]);
 }
 
 void I2C_StartPeripheral(dtI2CInstance Instance)

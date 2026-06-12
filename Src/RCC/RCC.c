@@ -13,8 +13,12 @@
 #include "config.h"
 
 #if defined(STM32U0)
+#define MSI_CLOCK
+#endif
+
+#if defined(STM32U0) || defined(STM32L4)
 #include "RegDefs/RCC_regdef.h"
-#elif
+#else
 #include "RCC_Types.h"
 #endif
 
@@ -128,6 +132,12 @@ const uint8 AhbPrescalerShiftingValue[8] = {1, 2, 3, 4, 6, 7, 8, 9};
 const uint8 Apb1PrescalerShiftValues[4] = {1, 2, 3, 4};
 const uint8 Apb2PrescalerShiftValues[4] = {1, 2, 3, 4};
 #endif
+#if defined(STM32L4)
+static const uint8 VCoreLatencyFreqTable[2][5] = {
+													{16, 32, 48, 64, 80},
+													{6,  12, 18, 26, 26},
+};
+#endif
 
 void RCC_ClockEnable(dtRCCClock Clock, dtRCCClockSets Value);
 uint32 RCC_GetClock(dtBus Bus);
@@ -228,6 +238,7 @@ void RCC_ClockTreeInit(const dtRccClockTreeCfg config)
 	    {
 	        HsiOn();
 	    }
+#if defined(MSI_CLOCK)
 	    else
 	    {
 	        if((config.SysClockCfg == SysClock_MSI) || (config.PllCfg.B.PLLSRC == PLL_SRC_MSI))
@@ -235,6 +246,7 @@ void RCC_ClockTreeInit(const dtRccClockTreeCfg config)
 	            MsiOn();
 	        }
 	    }
+#endif
 	}
 
 	if(config.LsiClock != 0)
@@ -286,7 +298,7 @@ void RCC_ClockTreeInit(const dtRccClockTreeCfg config)
 		if(sysClock <= 16000000) Pwr_SetVos(2);
 		else Pwr_SetVos(1);
 		Flash_SetLatency(sysClock);
-#elif defined(STM32U0)
+#elif defined(STM32U0) || defined(STM32L4)
 		{
 			uint8 lLatency = 0;
 			uint8 lRange = sizeof(VCoreLatencyFreqTable)/sizeof(VCoreLatencyFreqTable[0]);
@@ -305,7 +317,12 @@ void RCC_ClockTreeInit(const dtRccClockTreeCfg config)
     dtRCC_CCIPR tCcipr = {.U = 0};
 
     tCfgr.B.HPRE = config.AhbPrescaler;
+#if defined(STM32U0)
     tCfgr.B.PPRE = config.ApbPrescaler;
+#elif defined(STM32L4)
+    tCfgr.B.PPRE1 = config.Apb1Prescaler;
+    tCfgr.B.PPRE2 = config.Apb2Prescaler;
+#endif
 
     tCfgr.B.SW = config.SysClockCfg;
 	RCC->CFGR = tCfgr;
@@ -340,7 +357,7 @@ void RCC_ClockEnable(dtRCCClock Clock, dtRCCClockSets Value)
 #if defined(MCU_G070) || defined(MCU_G071)
 	uint32 *Pointer = &GroupPtr->IOP.Word + BusId;
 #elif defined(MCU_F446) || defined(MCU_F410) || defined(MCU_L433) || defined(MCU_F415) || defined(MCU_L476)
-	uint32 *Pointer = &GroupPtr->AHB1.Word + BusId;
+	uint32 *Pointer = &GroupPtr->AHB1.U + BusId;
 #elif defined(STM32U0)
     uint32 *Pointer = &GroupPtr->AHB.U + BusId;
 #endif
@@ -464,7 +481,7 @@ void RCC_ClockSet(dtRccInitConfig Config)
 		if(ClockFreq <= 144000000) Pwr_SetVos(0);
 		else Pwr_SetVos(1);
 		Flash_SetLatency(ClockFreq, SUPPLY_VOLTAGE);
-#elif defined(MCU_L476)
+#elif defined(MCU_L476_old)
 		if(ClockFreq <= 26000000) Pwr_SetVos(2);
 		else Pwr_SetVos(1);
 		Flash_SetLatency(ClockFreq);
@@ -564,9 +581,15 @@ uint32 RCC_GetClock(dtBus bus)
 			ret = HSE_CLOCK_FREQUENCY;
 #endif
 		}
+#if defined(STM32L4)
+		ret *= RCC->PLLCFGR.B.PLLN;
+		ret /= (RCC->PLLCFGR.B.PLLM + 1);
+		ret >>= (RCC->PLLCFGR.B.PLLR + 1);
+#else
 		ret *= RCC->PLLCFGR.B.PLLN;
 		ret /= (RCC->PLLCFGR.B.PLLM + 1);
 		ret /= (RCC->PLLCFGR.B.PLLR + 1);
+#endif
 		break;
 	case AhbClock:
 		ret = RCC_GetClock(SysClock);
@@ -580,6 +603,7 @@ uint32 RCC_GetClock(dtBus bus)
 			}
 		}
 		break;
+#if defined(STM32U0)
 	case ApbClock:
 		ret = RCC_GetClock(AhbClock);
 		if((RCC->CFGR.B.PPRE & 0x4) != 0)
@@ -596,6 +620,38 @@ uint32 RCC_GetClock(dtBus bus)
 			ret <<= 1;
 		}
 		break;
+#endif
+#endif
+#if defined(STM32L4)
+	case APB1_Clock:
+		ret = RCC_GetClock(AhbClock);
+		if((RCC->CFGR.B.PPRE1 & 0x4) != 0)
+		{
+			ret >>= 1 + (RCC->CFGR.B.PPRE1 & 3);
+		}
+		break;
+	case APB2_Clock:
+		ret = RCC_GetClock(AhbClock);
+		if((RCC->CFGR.B.PPRE2 & 0x4) != 0)
+		{
+			ret >>= 1 + (RCC->CFGR.B.PPRE2 & 3);
+		}
+		break;
+	case APB1_TimerClock:
+		ret = RCC_GetClock(APB1_Clock);
+		if((RCC->CFGR.B.PPRE1 >= 4))
+		{
+			ret <<= 1;
+		}
+		break;
+	case APB2_TimerClock:
+		ret = RCC_GetClock(APB2_Clock);
+		if((RCC->CFGR.B.PPRE2 >= 4))
+		{
+			ret <<= 1;
+		}
+		break;
+
 #endif
 	case SysClock:
 		switch(RCC->CFGR.B.SWS)

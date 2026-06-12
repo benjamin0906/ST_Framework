@@ -5,9 +5,9 @@
  *      Author: BodnarB
  */
 
-#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_G070) || defined(MCU_G071) || defined(MCU_L433) || defined(MCU_F415) || defined(MCU_L476)
+#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_G070) || defined(MCU_G071) || defined(MCU_L433) || defined(MCU_F415)
 #include "GPIO_Types.h"
-#elif defined(STM32U0)
+#elif defined(STM32U0) || defined(STM32L4)
 #include "RegDefs/GPIO_regdef.h"
 #endif
 #include "GPIO.h"
@@ -16,12 +16,14 @@
 #ifndef MODULE_TEST
 #if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_F415)
 static dtGPIO *const GPIOA = (dtGPIO*) 0x40020000;
-#elif defined(MCU_L433) || defined(MCU_L476)
+#elif defined(MCU_L433)
 static dtGPIO *const GPIOA = (dtGPIO*) 0x48000000;
 #elif defined(MCU_G070) || defined(MCU_G071)
 static dtGPIO *const GPIOA = (dtGPIO*) 0x50000000;
 #elif defined(STM32U0)
 static volatile dtGPIO *const GPIO = (dtGPIO*) 0x50000000;
+#elif defined(STM32L4)
+static volatile dtGPIO *const GPIO = (dtGPIO*) 0x48000000;
 #endif
 #if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_F415)
 static dtGPIO *const GPIOB = (dtGPIO*) 0x40020400;
@@ -110,9 +112,9 @@ void GPIO_PinInit(dtGPIOs Gpio, const dtGPIOConfig Config);
 void GPIO_PinDeinit(dtGPIOs Gpio);
 void GPIO_Set(dtGPIOs Gpio, dtPortValue Value);
 uint8 GPIO_Get(dtGPIOs Gpio);
-#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_G070) || defined(MCU_G071) || defined(MCU_L433) || defined(MCU_F415) || defined(MCU_L476)
+#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_G070) || defined(MCU_G071) || defined(MCU_L433) || defined(MCU_F415)
 static inline dtGPIO* GetPort(dtGPIOs Gpio);
-#elif defined(STM32U0)
+#elif defined(STM32U0) || defined(STM32L4)
 static inline dtGPIOx* GetPort(dtGPIOs Gpio);
 #endif
 
@@ -191,7 +193,7 @@ uint8 GPIO_Get(dtGPIOs Gpio)
 	ret = GetPort(Gpio)->IDR.U>>Pin & 1;
 	return ret;
 }
-#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_G070) || defined(MCU_G071) || defined(MCU_L433) || defined(MCU_F415) || defined(MCU_L476)
+#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_G070) || defined(MCU_G071) || defined(MCU_L433) || defined(MCU_F415)
 static inline dtGPIO* GetPort(dtGPIOs Gpio)
 {
 	dtGPIO *Temp = 0;
@@ -294,7 +296,7 @@ static inline dtGPIO* GetPort(dtGPIOs Gpio)
 	}
 	return Temp;
 }
-#elif defined(STM32U0)
+#elif defined(STM32U0) || defined(STM32L4)
 static inline dtGPIOx* GetPort(dtGPIOs Gpio)
 {
     return &GPIO->GPIOs[Gpio>>4];

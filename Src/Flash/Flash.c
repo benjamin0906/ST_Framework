@@ -9,17 +9,17 @@
 #include "Flash.h"
 #include "Pwr.h"
 
-#if defined(STM32U0)
+#if defined(STM32U0) || defined(STM32L4)
 #include "RegDefs/FLASH_regdef.h"
 
-#define MAX_LATENCY 2
+#define MAX_LATENCY 4
 #endif
 
 #if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_F415)
 static dtFlash *const Flash = (dtFlash*)(0x40023C00);
-#elif defined(MCU_G070) || defined(MCU_G071) || defined(MCU_L476)
+#elif defined(MCU_G070) || defined(MCU_G071)
 static dtFlash *const Flash = (dtFlash*)(0x40022000);
-#elif defined(STM32U0)
+#elif defined(STM32U0) || defined(STM32L4)
 static dtFLASH *const FLASH =(dtFLASH*)(0x40022000);
 #endif
 
@@ -168,7 +168,7 @@ dtSetLatRet Flash_SetLatency(uint32 clock)
 	if(Flash->ACR.Fields.LATENCY != Latency) ret = LatFailed;
 	return ret;
 }
-#elif defined(MCU_L476)
+#elif defined(MCU_L476_old)
 dtSetLatRet Flash_SetLatency(uint32 clock)
 {
 	uint8 Latency = 2;
@@ -192,7 +192,7 @@ dtSetLatRet Flash_SetLatency(uint32 clock)
 	if(Flash->ACR.Fields.LATENCY != Latency) ret = LatFailed;
 	return ret;
 }
-#elif defined(STM32U0)
+#elif defined(STM32U0) || defined(STM32L4)
 Std_ReturnType FLASH_SetLatency(uint8 latency)
 {
     Std_ReturnType ret = E_NOT_OK;

@@ -7,7 +7,7 @@
 
 #include "RegDefs/TIM6_7_reg.h"
 #include "TIM6_7.h"
-#if defined(STM32U0)
+#if defined(STM32U0) || defined(STM32L4)
 static dtTIM6_7 *const TIM6_7 = MODULE_TIM6_7;
 #endif
 

@@ -10,7 +10,7 @@
 #include "NVIC.h"
 #include "config.h"
 
-#if defined(STM32U0)
+#if defined(STM32U0) || defined(STM32L4)
 #include "RegDefs/USART_reg.h"
 #include "USART_Types.h"
 #else
@@ -34,11 +34,7 @@ static dtUSART *const USART[8] = {  (dtUSART*)0x40011000,
 							        (dtUSART*)0x40007800,
 							        (dtUSART*)0x40007C00};
 #elif defined(MCU_L476)
-static dtUSART *const USART[5] = {  (dtUSART*)0x40013800,
-							        (dtUSART*)0x40004400,
-							        (dtUSART*)0x40004800,
-							        (dtUSART*)0x40004C00,
-							        (dtUSART*)0x40005000};
+static dtUSARTx *const USART[5] = {MODULE_USART1, MODULE_USART2, MODULE_USART3, MODULE_USART4, MODULE_USART5};
 #elif defined(MCU_F446)
 static dtUSART *const USART[6] = {  (dtUSART*)0x40011000,
                                     (dtUSART*)0x40004400,

@@ -479,11 +479,18 @@ typedef enum
 	HsiClock,
 	HseClock,
 	PllRClock,
+#if defined(STM32U0)
 	ApbClock,
-#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_L433) || defined(MCU_F415) || defined(MCU_L476)
+#elif defined(STM32L4)
+	APB1_Clock,
+	APB1_TimerClock,
+	APB2_Clock,
+	APB2_TimerClock,
+#endif
+#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_L433) || defined(MCU_F415)
 	ApbTimClock,
 #endif
-#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_F415) || defined(MCU_L476)
+#if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_F415)
 	APB2_Peripheral,
 	APB2_Timer,
 #endif
@@ -577,7 +584,7 @@ typedef struct
 
 typedef enum eRccSysClockCfg
 {
-#if defined(STM32U0)
+#if defined(STM32U0) || defined(STM32L4)
     SysClock_MSI,
 #endif
 	SysClock_HSI,
@@ -599,7 +606,12 @@ typedef struct RccClockTreeCfg
 	dtRCC_PLLCFGR PllCfg;
 	uint8 LsiClock :1;
 	uint8 AhbPrescaler :4;
+#if defined(STM32U0)
 	uint8 ApbPrescaler :4;
+#elif defined(STM32L4)
+	uint8 Apb1Prescaler :4;
+	uint8 Apb2Prescaler :4;
+#endif
 	uint8 UsartClockSel :2;
 	uint8 I2CClockSel: 2;
 	uint8 AdcClockSel: 2;

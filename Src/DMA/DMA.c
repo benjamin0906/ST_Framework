@@ -396,8 +396,8 @@ void IDMA_Config(const dtDmaConfig *const Config, void (*IrqHandler)(uint8 Flags
         streamCfgReg.Word = 0;
 
         /* Setting memory addresses */
-        descriptorPtr->CPAR = Config->PerPtr;
-        descriptorPtr->CMAR = Config->MemPtr;
+        descriptorPtr->CPAR = (uint32)Config->PerPtr;
+        descriptorPtr->CMAR = (uint32)Config->MemPtr;
 
         DMA[Config->Instance]->CSELR.Word &= ~((uint32) 0xF << (Config->Stream << 2));
         DMA[Config->Instance]->CSELR.Word |= ((uint32) Config->RequestChannel << (Config->Stream << 2));
@@ -500,8 +500,8 @@ void DMA_StartWithNew(dtDMAInstance Instance, dtDmaStream DmaChannel, uint16 Amo
     }
 #elif defined(MCU_L476)
     /* Setting memory addresses */
-    DMA[Instance]->CH[DmaChannel].CPAR = Peripheral_Src;
-    DMA[Instance]->CH[DmaChannel].CMAR = Memory_Dst;
+    DMA[Instance]->CH[DmaChannel].CPAR = (uint32)Peripheral_Src;
+    DMA[Instance]->CH[DmaChannel].CMAR = (uint32)Memory_Dst;
 
     /* Adding the number of transactions */
     DMA[Instance]->CH[DmaChannel].CNDTR.Word = Amount;
