@@ -5,24 +5,27 @@
  *      Author: Benjamin
  */
 
-#include "VREFBUF_Types.h"
 #include "VREFBUF.h"
+#include "RegDefs/VREFBUF_reg.h"
 
-static dtVREFBUF *const VREFBUF	= (dtVREFBUF*)(0x40010030);
+#if defined(STM32L4)
+static volatile dtVREFBUF *const VREFBUF = MODULE_VREFBUF;
 
 void VREFBUF_Set(dtVoltScale Config);
 uint8 VREFBUF_Status(void);
 
 void VREFBUF_Set(dtVoltScale Config)
 {
-	dtVrefBuf_CSR Temp = {.Word = 0};
-	Temp.Fields.ENVR = 1;
-	Temp.Fields.VRS = Config;
-	Temp.Fields.HIZ = 0;
-	VREFBUF->CSR = Temp;
+	dtVREFBUF_CSR tCSR = {.U = 0};
+	tCSR.B.ENVR = 1;
+	tCSR.B.VRS = Config;
+	tCSR.B.HIZ = 0;
+	VREFBUF->CSR = tCSR;
 }
 
 uint8 VREFBUF_Status(void)
 {
-	return VREFBUF->CSR.Fields.VRR;
+    dtVREFBUF_CSR tCSR = VREFBUF->CSR;
+	return tCSR.B.VRR;
 }
+#endif /* defined(STM32L4) */

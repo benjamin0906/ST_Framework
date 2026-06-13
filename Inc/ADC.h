@@ -20,43 +20,6 @@ typedef enum
 
 typedef struct
 {
-	/* auto power relation mode, 0: on, 1 off (always powered) */
-	uint32 AutoOff		:1;
-
-	/* 1: next conversation start only after reading the previous result */
-	uint32 WaitMode		:1;
-
-	/* 0: single conversation mode; 1: continuous mode */
-	uint32 ContMode		:1;
-
-	/* 0: old result is kept if overran, 1: new result is kept if overran */
-	uint32 OverRun		:1;
-
-	uint32 LeftAlign	:1;
-
-	/* 0b00: 12 bits
-	 * 0b01: 10 bits
-	 * 0b10: 8 bits
-	 * 0b11: 6 bits
-	 */
-	uint32 Resolution	:2;
-
-	uint32 ClkMode		:2;
-	uint32 OVSEn		:1;
-	uint32 OVS			:3;
-	uint32 OVSShift		:3;
-	uint32 SMP1			:3;
-	uint32 SMP2			:3;
-	uint32 ClkDiv		:4;
-	uint32 Interrupt	:2;
-	uint32 ExtTrigger	:3;
-	uint32 ExtEn        :1;
-	uint32 DmaEn        :1;
-	uint32 DmaCircMode  :1;
-} dtAdcConfig;
-
-typedef struct
-{
 	uint8 dmaCircMode :1;
 	uint8 dmaEnable :1;
 } dtDmaSettings;
@@ -104,6 +67,64 @@ typedef enum
 	AdcBothEdgeTrig,
 } dtAdcExtTrigMode;
 
+typedef struct sAdcChannelCfg
+{
+    uint8 ChannelNum    :5;
+    uint8 SamplingTime  :3;
+    uint16 *const Result;
+} dtAdcChannelConfig;
+
+typedef struct sAdcConfig
+{
+    uint32 Continuos    :1;
+    uint32 Overrun      :1;
+    uint32 ExtTrigEvent :4;
+    uint32 LeftAlignment:1;
+    uint32 Resolution   :2;
+    uint32 Prescaler    :4;
+    dtAdcExtTrigMode    TriggerMode;
+    dtAdcChannelConfig  Sequence[16];
+} dtAdcConfig;
+#if defined(STM32L4)
+extern void ADC_Init(const dtAdcConfig *const Config);
+extern void ADC_Trigger(void);
+#else
+typedef struct
+{
+    /* auto power relation mode, 0: on, 1 off (always powered) */
+    uint32 AutoOff      :1;
+
+    /* 1: next conversation start only after reading the previous result */
+    uint32 WaitMode     :1;
+
+    /* 0: single conversation mode; 1: continuous mode */
+    uint32 ContMode     :1;
+
+    /* 0: old result is kept if overran, 1: new result is kept if overran */
+    uint32 OverRun      :1;
+
+    uint32 LeftAlign    :1;
+
+    /* 0b00: 12 bits
+     * 0b01: 10 bits
+     * 0b10: 8 bits
+     * 0b11: 6 bits
+     */
+    uint32 Resolution   :2;
+
+    uint32 ClkMode      :2;
+    uint32 OVSEn        :1;
+    uint32 OVS          :3;
+    uint32 OVSShift     :3;
+    uint32 SMP1         :3;
+    uint32 SMP2         :3;
+    uint32 ClkDiv       :4;
+    uint32 Interrupt    :2;
+    uint32 ExtTrigger   :3;
+    uint32 ExtEn        :1;
+    uint32 DmaEn        :1;
+    uint32 DmaCircMode  :1;
+} dtAdcConfig;
 extern void ADC_Init(dtAdcConfig Config);
 extern void ADC_DmaSet(dtDmaSettings setting);
 extern void ADC_SetChConfig(dtAdcCh Ch, dtAdcSmp Smp);
@@ -122,5 +143,5 @@ extern void ADC_SetExtTrigMode(dtAdcExtTrigMode TrigMode);
 extern uint8 ADC_IsSeqComplete(void);
 extern uint8 ADC_IsAdcStopped(void);
 extern uint32* ADC_DataPtr(void);
-
+#endif
 #endif /* INC_ADC_H_ */

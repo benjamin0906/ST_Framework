@@ -120,13 +120,15 @@ static inline dtGPIOx* GetPort(dtGPIOs Gpio);
 
 void GPIO_PinInit(dtGPIOs Gpio, const dtGPIOConfig Config)
 {
-	uint32 FieldId = (Gpio & 0xF)<<1;
+    uint16 ChId = Gpio & 0xF;
+	uint32 FieldId = ChId << 1;
 	uint32 ClearMask = ~(3 << FieldId);
 	dtGPIOx *Temp = GetPort(Gpio);
 	if(Temp != 0)
 	{
 		/* Setting the mode and the alternate function. */
 		Temp->MODER.U &= ClearMask;
+		Temp->ASCR.U &= ~(1 << ChId);
 		if(Config.Mode == Input)
 		{
 			/* Nothing to do */
@@ -143,7 +145,11 @@ void GPIO_PinInit(dtGPIOs Gpio, const dtGPIOConfig Config)
 	        }
 		    Temp->MODER.U |= 1 << FieldId;
 		}
-		else if(Config.Mode == Analog) Temp->MODER.U |= 3 << FieldId;
+		else if(Config.Mode == Analog)
+		{
+		    Temp->MODER.U |= 3 << FieldId;
+		    Temp->ASCR.U |= 1 << ChId;
+		}
 		else
 		{
 			Temp->MODER.U |= 2 << FieldId;

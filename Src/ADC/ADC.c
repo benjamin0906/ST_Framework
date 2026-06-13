@@ -5,10 +5,10 @@
  *      Author: Benjamin
  */
 
-#include "ADC_Types.h"
 #include "ADC.h"
 #include "NVIC.h"
-#if defined(MCU_F446) || defined(MCU_G070) || defined(MCU_F410) || defined(MCU_L433) || defined(MCU_G071) || defined(MCU_F415) || defined(MCU_L476)
+#if defined(MCU_F446) || defined(MCU_G070) || defined(MCU_F410) || defined(MCU_L433) || defined(MCU_G071) || defined(MCU_F415)
+#include "ADC_Types.h"
 static dtADC *const ADC = (dtADC*)(0x40012400);
 static void (*DataHandler)(uint16);
 
@@ -297,6 +297,152 @@ void ADC_COMP_IRQHandler(void)
 
 	/* Clearing the flag which caused the interrupt */
 	ADC->ISR = ClearFlag;
+}
+#elif defined(STM32L4)
+
+#include "RegDefs/ADC_reg.h"
+#include "GPIO.h"
+
+static volatile dtADC *const ADC = MODULE_ADC;
+static uint16 *Results[16];
+static uint8 ResultIndex;
+
+void ADC_Init(const dtAdcConfig *const Config)
+{
+    uint16 i = 0;
+    dtADC_CR tCR = ADC->ADC1.CR;
+    dtADC_CFGR tCFGR = ADC->ADC1.CFGR;
+    dtADC_SQR1 tSQR1 = ADC->ADC1.SQR1;
+    dtADC_SQR2 tSQR2 = ADC->ADC1.SQR2;
+    dtADC_SQR3 tSQR3 = ADC->ADC1.SQR3;
+    dtADC_SQR4 tSQR4 = ADC->ADC1.SQR4;
+    dtADC_SMPR1 tSMPR1 = {.U = 0};
+    dtADC_SMPR2 tSMPR2 = {.U = 0};
+    dtADC_IER tIER = {.U = 0};
+    dtADC_CCR tCCR = {.U = 0};
+
+    /* Clock setting */
+    tCCR.B.PRESC = Config->Prescaler;
+    ADC->COMMON.CCR = tCCR;
+
+    /* Calibration procedure */
+    tCR.B.ADEN = 0;
+    tCR.B.ADCALDIF = 0;
+    tCR.B.DEEPPWD = 0;
+    ADC->ADC1.CR = tCR;
+    tCR.B.ADVREGEN = 1;
+    ADC->ADC1.CR = tCR;
+    while(i < 50000) i++;
+    tCR.B.ADCAL = 1;
+    ADC->ADC1.CR = tCR;
+    do
+    {
+        tCR = ADC->ADC1.CR;
+    } while(tCR.B.ADCAL != 0);
+
+    /* ADC module initialization */
+    tCFGR.B.CONT = Config->Continuos;
+    tCFGR.B.OVRMOD = Config->Overrun;
+    tCFGR.B.EXTEN = Config->TriggerMode;
+    tCFGR.B.EXTSEL = Config->ExtTrigEvent;
+    tCFGR.B.ALIGN = Config->LeftAlignment;
+    tCFGR.B.RES = Config->Resolution;
+
+    /* ADC sequence initialization */
+    tSQR1.U = 0;
+    tSQR2.U = 0;
+    tSQR3.U = 0;
+    tSQR4.U = 0;
+    int8 chNum = 0;
+    for(i = 0; i < 16; i++)
+    {
+        if(Config->Sequence[i].Result != 0)
+        {
+            /* Channel IDs */
+            if(chNum < 4)
+            {
+                tSQR1.U |= (Config->Sequence[i].ChannelNum << (6 + 6 * chNum));
+            }
+            else if(chNum < 9)
+            {
+                tSQR2.U |= (Config->Sequence[i].ChannelNum << (6 * (chNum - 4)));
+            }
+            else if(chNum < 14)
+            {
+                tSQR3.U |= (Config->Sequence[i].ChannelNum << (6 * (chNum - 9)));
+            }
+            else
+            {
+                tSQR2.U |= (Config->Sequence[i].ChannelNum << (6 * (chNum - 14)));
+            }
+
+            /* Sample times */
+            if(chNum < 10)
+            {
+                tSMPR1.U |= (Config->Sequence[i].SamplingTime << (3 * chNum));
+            }
+            else
+            {
+                tSMPR2.U |= (Config->Sequence[i].SamplingTime << (3 * (chNum - 10)));
+            }
+
+            /* Saving result pointer */
+            Results[chNum] = Config->Sequence[i].Result;
+
+            chNum++;
+        }
+    }
+    tSQR1.B.L = chNum - 1;
+
+    ADC->ADC1.ISR.U = 0xFFFFFFFF; //Clearing all of the pending flags
+    tIER.B.EOC = 1;
+    tIER.B.EOS = 1;
+    ADC->ADC1.IER = tIER;
+    NVIC_EnableIRQ(IRQ_ADC);
+
+    tCR.B.ADEN = 1;
+
+    ADC->ADC1.SMPR1 = tSMPR1;
+    ADC->ADC1.SMPR2 = tSMPR2;
+    ADC->ADC1.SQR1 = tSQR1;
+    ADC->ADC1.SQR2 = tSQR2;
+    ADC->ADC1.SQR3 = tSQR3;
+    ADC->ADC1.SQR4 = tSQR4;
+    ADC->ADC1.CFGR = tCFGR;
+    ADC->ADC1.CR = tCR;
+}
+
+void ADC_Trigger(void)
+{
+    dtADC_CR tCR = ADC->ADC1.CR;
+    if((tCR.B.ADEN != 0) && (tCR.B.ADSTART == 0))
+    {
+        tCR.B.ADSTART = 1;
+        ADC->ADC1.CR = tCR;
+    }
+}
+
+void ADC1_2_IRQHandler(void)
+{
+    dtADC_ISR tISR = ADC->ADC1.ISR;
+    dtADC_IER tIER = ADC->ADC1.IER;
+    if((tISR.U & tIER.U) != 0)
+    {
+        if(tISR.B.EOC != 0)
+        {
+            dtADC_DR tDR = ADC->ADC1.DR;
+            //*Results[ResultIndex++] = tDR.B.RDATA;
+            *Results[ResultIndex] = tDR.B.RDATA;
+            ResultIndex++;
+        }
+        if(tISR.B.EOS != 0)
+        {
+            ResultIndex = 0;
+
+            GPIO_Set(PortB_3, Clear);
+        }
+        ADC->ADC1.ISR.U = tISR.U;
+    }
 }
 #else
 #warning "NO CPU IS DEFINED"
