@@ -9,6 +9,7 @@
 #define INC_STM32C0_MEMMAP_H_
 
 #include "RegDefs/STM32C0_GPIO_regdef.h"
+#include "RegDefs/STM32C0_I2C_regdef.h"
 #include "RegDefs/STM32C0_TIM14_regdef.h"
 
 #if defined(STM32C0)
@@ -28,6 +29,13 @@
 
 #define TIM14_BASE (0x40002000UL)
 #define TIM14_C0 ((volatile dtTIM14_C0 *const)TIM14_BASE)
+
+#define I2C1_BASE (0x40005400UL)
+#define I2C2_BASE (0x40005800UL)
+
+#define I2C_C0  ((volatile dtI2C_C0_Map *const)I2C1_BASE)
+#define I2C1_C0 (&I2C_C0->I2C1)
+#define I2C2_C0 (&I2C_C0->I2C2)
 
 #endif
 
