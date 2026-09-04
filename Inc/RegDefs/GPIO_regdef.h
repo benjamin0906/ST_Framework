@@ -11,6 +11,7 @@
 #include "RegDefs/regdef_helper.h"
 #include "types.h"
 
+#if defined(STM32U0) || defined(STM32L4)
 typedef struct sGPIO_MODER_Bits
 {
     uint32 MODE0:2;
@@ -269,6 +270,7 @@ REGDEF(GPIO, LCKR)
 REGDEF(GPIO, AFRL)
 REGDEF(GPIO, AFRH)
 REGDEF(GPIO, BRR)
+
 REGDEF(GPIO, ASCR)
 
 typedef struct sGPIOx
@@ -296,5 +298,11 @@ typedef struct sGPIO
     dtGPIOx GPIOs[8];
 #endif
 } dtGPIO;
+#elif defined(STM32C0)
+#include "RegDefs/STM32C0_GPIO_regdef.h"
+
+typedef dtGPIOx_C0 dtGPIOx;
+typedef dtGPIO_C0  dtGPIO;
+#endif
 
 #endif /* INC_REGDEFS_GPIO_REGDEF_H_ */

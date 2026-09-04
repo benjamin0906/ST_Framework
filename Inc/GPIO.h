@@ -10,6 +10,11 @@
 
 #include "types.h"
 
+#if defined(STM32C0)
+#include "GPIO_C0.h"
+typedef dtGPIOs_C0 dtGPIOs;
+#else
+
 typedef enum
 {
 #if defined(STM32U0) || defined(STM32L4)
@@ -29,8 +34,7 @@ typedef enum
 	PortA_13,
 	PortA_14,
 	PortA_15,
-#endif
-#if defined(STM32U0) || defined(STM32L4)
+
 	PortB_0 = 0x10,
 	PortB_1,
 	PortB_2,
@@ -47,8 +51,7 @@ typedef enum
 	PortB_13,
 	PortB_14,
 	PortB_15,
-#endif
-#if defined(STM32U0) || defined(STM32L4)
+
 	PortC_0 = 0x20,
 	PortC_1,
 	PortC_2,
@@ -65,8 +68,7 @@ typedef enum
 	PortC_13,
 	PortC_14,
 	PortC_15,
-#endif
-#if defined(STM32U0) || defined(STM32L4)
+
 	PortD_0 = 0x30,
 	PortD_1,
 	PortD_2,
@@ -83,8 +85,7 @@ typedef enum
 	PortD_13,
 	PortD_14,
 	PortD_15,
-#endif
-#if defined(STM32U0) || defined(STM32L4)
+
 	PortE_0 = 0x40,
 	PortE_1,
 	PortE_2,
@@ -101,8 +102,7 @@ typedef enum
 	PortE_13,
 	PortE_14,
 	PortE_15,
-#endif
-#if defined(STM32U0) || defined(STM32L4)
+
 	PortF_0 = 0x50,
 	PortF_1,
 	PortF_2,
@@ -119,6 +119,8 @@ typedef enum
 	PortF_13,
 	PortF_14,
 	PortF_15,
+#else
+	GPIO_NoPort = 0,
 #endif
 #if defined(STM32L4)
 	PortG_0 = 0x60,
@@ -157,6 +159,8 @@ typedef enum
 	PortH_15,
 #endif
 } dtGPIOs;
+
+#endif
 
 enum eGPIO_MODE
 {
