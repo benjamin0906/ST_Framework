@@ -5,14 +5,15 @@
  *      Author: Bodnár Benjamin
  */
 
-#include "Flash_Types.h"
 #include "Flash.h"
 #include "Pwr.h"
 
-#if defined(STM32U0) || defined(STM32L4)
+#if defined(STM32U0) || defined(STM32L4) || defined(STM32C0)
 #include "RegDefs/FLASH_regdef.h"
 
 #define MAX_LATENCY 4
+#else
+#include "Flash_Types.h"
 #endif
 
 #if defined(MCU_F446) || defined(MCU_F410) || defined(MCU_F415)
@@ -21,6 +22,8 @@ static dtFlash *const Flash = (dtFlash*)(0x40023C00);
 static dtFlash *const Flash = (dtFlash*)(0x40022000);
 #elif defined(STM32U0) || defined(STM32L4)
 static dtFLASH *const FLASH =(dtFLASH*)(0x40022000);
+#elif  defined(STM32C0)
+static dtFLASH *const Flash = (dtFLASH*)(0x40022000);
 #endif
 
 #if defined(MCU_F410) || defined(MCU_F446)
@@ -208,4 +211,17 @@ Std_ReturnType FLASH_SetLatency(uint8 latency)
     }
     return ret;
 }
+#elif defined(STM32C0)
+
+dtSetLatRet Flash_SetLatency(uint32 clock)
+{
+	uint8 Latency = 1;
+	dtSetLatRet ret = LatIsSet;
+	if(clock > 24000000) Latency = 1;
+	else Latency = 0;
+	Flash->ACR.B.LATENCY = Latency;
+	if(Flash->ACR.B.LATENCY != Latency) ret = LatFailed;
+	return ret;
+}
+
 #endif

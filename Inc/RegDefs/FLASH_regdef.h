@@ -482,6 +482,200 @@ typedef struct sFLASH
     dtFLASH_WRP2BR      WRP2BR;     //0x50
 } dtFLASH;
 
+#elif defined(STM32C0)
+
+typedef struct sFLASH_ACR
+{
+	uint32 LATENCY  :3;
+	uint32          :5;
+	uint32 PRFTEN   :1;
+	uint32 ICEN     :1;
+	uint32          :1;
+	uint32 ICRST    :1;
+	uint32          :4;
+	uint32 EMPTY    :1;
+	uint32          :1;
+	uint32 DBG_SWEN :1;
+	uint32          :13;
+} dtFLASH_ACR_Bits;
+
+typedef struct sFLASH_KEYR
+{
+	uint32 KEYR     :32;
+} dtFLASH_KEYR_Bits;
+
+typedef struct sFLASH_OPTKEYR
+{
+	uint32 OPTKEY   :32;
+} dtFLASH_OPTKEYR_Bits;
+
+typedef struct sFLASH_SR
+{
+	uint32 EOP          :1;
+	uint32 OPERR        :1;
+	uint32              :1;
+	uint32 PROGERR      :1;
+	uint32 WRPERR       :1;
+	uint32 PGAERR       :1;
+	uint32 SIZERR       :1;
+	uint32 PGSERR       :1;
+	uint32 MISERR       :1;
+	uint32 FASTERR      :1;
+	uint32              :4;
+	uint32 RDERR        :1;
+	uint32 OPTVERR      :1;
+	uint32 BSY1         :1;
+	uint32              :1;
+	uint32 CFGBSY       :1;
+	uint32              :13;
+} dtFLASH_SR_Bits;
+
+typedef struct sFLASH_CR
+{
+	uint32 PG           :1;
+	uint32 PER          :1;
+	uint32 MER1         :1;
+	uint32 PNB          :6;
+	uint32              :6;
+	uint32 STRT         :1;
+	uint32 OPTSTRT      :1;
+	uint32 FSTPG        :1;
+	uint32              :5;
+	uint32 EOPIE        :1;
+	uint32 ERRIE        :1;
+	uint32 RDERRIE      :1;
+	uint32 OBL_LAUNCH   :1;
+	uint32 SEC_PROT     :1;
+	uint32              :1;
+	uint32 OPTLOCK      :1;
+	uint32 LOCK         :1;
+} dtFLASH_CR_Bits;
+
+typedef struct sFLASH_OPTR
+{
+    uint32 RDP                      :8;
+    uint32 BOR_EN                   :1;
+    uint32 BORR_LEV                 :2;
+    uint32 BORF_LEV                 :2;
+    uint32 NRST_STOP                :1;
+    uint32 NRST_STDBY               :1;
+    uint32 NRST_SHDW                :1;
+    uint32 IWDG_SW                  :1;
+    uint32 IWDG_STOP                :1;
+    uint32 IWDG_STBY                :1;
+    uint32 WWDG_SW                  :1;
+    uint32                          :1;
+    uint32 HSE_NOT_REMAPPED         :1;
+    uint32 RAM_PARITY_CHECK         :1;
+    uint32 SECURE_MUXING_EN         :1;
+    uint32 NBOOT_SEL                :1;
+    uint32 NBOOT1                   :1;
+    uint32 NBOOT0                   :1;
+    uint32 NRST_MODE                :2;
+    uint32 IRHEN                    :1;
+    uint32 FDCAN_BL_CK              :2;
+} dtFLASH_OPTR_Bits;
+
+typedef struct sFLASH_PCROP1ASR_Bits
+{
+	uint32 PCROP1A_STRT	:9;
+	uint32				:22;
+} dtFLASH_PCROP1ASR_Bits;
+
+typedef struct sFLASH_PCROP1AER_Bits
+{
+	uint32 PCROP1A_END	:9;
+	uint32				:22;
+	uint32 PCROP_RDP	:1;
+} dtFLASH_PCROP1AER_Bits;
+
+typedef struct sFLASH_WRP1AR
+{
+	uint32 WRP1A_STRT       :7;
+    uint32                  :9;
+    uint32 WRP1A_END        :7;
+    uint32                  :9;
+} dtFLASH_WRP1AR_Bits;
+
+typedef struct sFLASH_WRP1BR
+{
+	uint32 WRP1B_STRT       :7;
+    uint32                  :9;
+    uint32 WRP1B_END        :7;
+    uint32                  :9;
+} dtFLASH_WRP1BR_Bits;
+
+typedef struct sFLASH_PCROP1BSR_Bits
+{
+	uint32 PCROP1B_STRT	:9;
+	uint32				:23;
+} dtFLASH_PCROP1BSR_Bits;
+
+typedef struct sFLASH_PCROP1BER_Bits
+{
+	uint32 PCROP1B_END	:9;
+	uint32				:23;
+} dtFLASH_PCROP1BER_Bits;
+
+typedef struct sFLASH_SECR
+{
+	uint32 SEC_SIZE     :7;
+    uint32              :9;
+    uint32 BOOT_LOCK    :1;
+    uint32              :15;
+} dtFLASH_SECR_Bits;
+
+REGDEF(FLASH, ACR);
+REGDEF(FLASH, KEYR);
+REGDEF(FLASH, OPTKEYR);
+REGDEF(FLASH, SR);
+REGDEF(FLASH, CR);
+REGDEF(FLASH, OPTR);
+REGDEF(FLASH, PCROP1ASR);
+REGDEF(FLASH, PCROP1AER);
+REGDEF(FLASH, WRP1AR);
+REGDEF(FLASH, WRP1BR);
+REGDEF(FLASH, PCROP1BSR);
+REGDEF(FLASH, PCROP1BER);
+REGDEF(FLASH, SECR);
+
+typedef struct sFLASH
+{
+    dtFLASH_ACR         ACR;        //0x00
+    uint32 :32;                     //0x04
+    dtFLASH_KEYR        KEYR;       //0x08
+    dtFLASH_OPTKEYR     OPTKEYR;    //0x0C
+    dtFLASH_SR          SR;         //0x10
+    dtFLASH_CR          CR;         //0x14
+    uint32 :32;       				//0x18
+    uint32 :32;                     //0x1C
+    dtFLASH_OPTR        OPTR;       //0x20
+    dtFLASH_PCROP1ASR 	PCROP1ASR;  //0x24
+    dtFLASH_PCROP1AER	PCROP1AER;  //0x28
+    dtFLASH_WRP1AR      WRP1AR;     //0x2C
+    dtFLASH_WRP1BR      WRP1BR;     //0x30
+    dtFLASH_PCROP1BSR	PCROP1BSR;  //0x34
+    dtFLASH_PCROP1BER	PCROP1BER;  //0x38
+    uint32 :32;                     //0x3C
+    uint32 :32;                     //0x40
+    uint32 :32;                     //0x44
+    uint32 :32;                     //0x48
+    uint32 :32;                     //0x4C
+    uint32 :32;                     //0x50
+    uint32 :32;                     //0x54
+    uint32 :32;                     //0x58
+    uint32 :32;                     //0x5C
+    uint32 :32;                     //0x60
+    uint32 :32;                     //0x64
+    uint32 :32;                     //0x68
+    uint32 :32;                     //0x6C
+    uint32 :32;                     //0x70
+    uint32 :32;                     //0x74
+    uint32 :32;                     //0x78
+    uint32 :32;                     //0x7C
+    dtFLASH_SECR        SECR;       //0x80
+} dtFLASH;
+
 #endif
 
 #endif /* INC_REGDEFS_FLASH_REGDEF_H_ */
