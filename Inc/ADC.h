@@ -88,8 +88,8 @@ typedef struct sAdcConfig
 #if defined(STM32L4)
 extern void ADC_Init(const dtAdcConfig *const Config);
 extern void ADC_Trigger(void);
-#else
-typedef struct
+#elif 0
+typedef struct sAdcConfig
 {
     /* auto power relation mode, 0: on, 1 off (always powered) */
     uint32 AutoOff      :1;

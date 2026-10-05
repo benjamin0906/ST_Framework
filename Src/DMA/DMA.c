@@ -424,8 +424,8 @@ void IDMA_Config(const dtDmaConfig *const Config, void (*IrqHandler)(uint8 Flags
 
 void DMA_Start(dtDMAInstance Instance, dtDmaStream DmaChannel, uint16 Amount)
 {
-    DISABLE();
 #if defined(MCU_F446)
+    DISABLE();
     switch(DmaChannel)
     {
         case DmaStream_0:
@@ -460,14 +460,14 @@ void DMA_Start(dtDMAInstance Instance, dtDmaStream DmaChannel, uint16 Amount)
 
     /* Adding the number of transactions */
     DMA[Instance]->CH[DmaChannel].CNDTR.Word = Amount;
-#endif
     ENABLE();
+#endif
 }
 
 void DMA_StartWithNew(dtDMAInstance Instance, dtDmaStream DmaChannel, uint16 Amount, void *Peripheral_Src, void *Memory_Dst)
 {
-    DISABLE();
 #if defined(MCU_F446)
+    DISABLE();
     DMA[Instance]->CH[DmaChannel].PAR = Peripheral_Src;
     DMA[Instance]->CH[DmaChannel].MAR0 = Memory_Dst;
     DMA[Instance]->CH[DmaChannel].S0NDTR.Word = Amount;
@@ -508,8 +508,8 @@ void DMA_StartWithNew(dtDMAInstance Instance, dtDmaStream DmaChannel, uint16 Amo
 
     /* Clearing every flag related to the current channel */
     DMA[Instance]->ICFR.Word |= (uint32) 0xF << (DmaChannel << 2);
-#endif
     ENABLE();
+#endif
 }
 
 uint8 IDMA_IsFree(dtDMAInstance Instance, dtDmaStream DmaChannel)
@@ -523,13 +523,17 @@ uint8 IDMA_IsFree(dtDMAInstance Instance, dtDmaStream DmaChannel)
     dtDMA_CCRx tempCCR = DMA[Instance]->CH[DmaChannel].CCR;
     dtCNDTRx tempCNDTR = DMA[Instance]->CH[DmaChannel].CNDTR;
     return (tempCCR.Field.EN == 0) || (tempCNDTR.Field.NDT == 0);
+#else
+    return 0xFF;
 #endif
 }
 
 
 void DMA_Stop(dtDMAInstance Instance, dtDmaStream DmaChannel)
 {
+#if defined(MCU_F446)
     DISABLE();
+#endif
 }
 
 

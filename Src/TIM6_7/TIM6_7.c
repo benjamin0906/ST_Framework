@@ -7,6 +7,9 @@
 
 #include "RegDefs/TIM6_7_reg.h"
 #include "TIM6_7.h"
+
+#if defined(MODULE_TIM6_7)
+
 #if defined(STM32U0) || defined(STM32L4)
 static dtTIM6_7 *const TIM6_7 = MODULE_TIM6_7;
 #endif
@@ -58,3 +61,5 @@ void TIM6_7_Stop(dtTIM6_7_ID id)
     tCR1.B.CEN = 0;
     TIM6_7->TIM6_7[id].CR1 = tCR1;
 }
+
+#endif /* defined(MODULE_TIM6_7) */

@@ -27,10 +27,11 @@ typedef enum
 	Pwr_LPM_Standby,
 	Pwr_LPM_Shutdown,
 } dtLowPwrModes;
-#endif
 
 extern void Pwr_SetVos(uint8 mode);
 extern uint8 Pwr_GetVos(void);
 extern void Pwr_LowPowerMode(dtLowPwrModes Mode);
+
+#endif
 
 #endif /* PWR_PWR_H_ */
