@@ -8,11 +8,11 @@
 #include "Pwr_Types.h"
 #include "Pwr.h"
 
-#if defined(STM32U0) || defined(STM32L4)
+#if defined(STM32U0) || defined(STM32L4) || defined(STM32C0)
 #include "RegDefs/Pwr_regdef.h"
 #endif
 /* The registers of the module can only be accessed by 16 or 32 bit operations */
-#if defined(STM32U0) || defined(STM32L4)
+#if defined(STM32U0) || defined(STM32L4) || defined(STM32C0)
 static volatile dtPWR *const PWR = (dtPWR*)(0x40007000);
 #endif
 
@@ -82,6 +82,17 @@ void Pwr_LowPowerMode(dtLowPwrModes Mode)
 	PWR->CR1 = tCR1;
 #endif
 }
+
+#elif defined(STM32C0)
+
+/* This function is an interface to set the mode of low-power operation */
+void Pwr_LowPowerMode(dtLowPwrModes Mode)
+{
+	dtPWR_CR1 tCR1 = PWR->CR1;
+    tCR1.B.LPMS = Mode;
+	PWR->CR1 = tCR1;
+}
+
 #else
 #warning "NO CPU IS DEFINED"
 #endif

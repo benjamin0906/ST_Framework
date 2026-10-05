@@ -30,6 +30,16 @@ typedef enum
 
 extern void Pwr_SetVos(uint8 mode);
 extern uint8 Pwr_GetVos(void);
+
+#elif defined(STM32C0)
+
+typedef enum eLpModes
+{
+	Pwr_LPM_Stop 	= 0x0,
+	Pwr_LPM_Standby = 0x3,
+	Pwr_LPM_Shutdown,
+} dtLowPwrModes;
+
 extern void Pwr_LowPowerMode(dtLowPwrModes Mode);
 
 #endif
