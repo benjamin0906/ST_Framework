@@ -707,6 +707,249 @@ typedef struct sRCC
     dtRCC_CCIPR2     CRRCR2;
 } dtRCC;
 
+#elif defined(STM32C0)
+
+typedef struct sRCC_CR_Bits
+{
+    uint32              :1;
+    uint32  SYSDIV      :1;
+    uint32  HSIKERDIV   :3;
+    uint32  HSION       :1;
+    uint32  HSIKERON    :1;
+    uint32  HSIRDY      :1;
+    uint32  HSIDIV      :3;
+    uint32              :2;
+    uint32  HSEON       :1;
+    uint32  HSERDY      :1;
+    uint32  HSEBYP      :1;
+    uint32  CSSON       :1;
+    uint32              :2;
+    uint32  HSIUSB48ON  :1;
+    uint32  HSIUSB48RDY :1;
+    uint32              :8;
+} dtRCC_CR_Bits;
+
+typedef struct sRCC_ICSCR_Bits
+{
+    uint32  HSI_CAL     :8;
+    uint32  HSI_TRIM    :7;
+    uint32              :17;
+} dtRCC_ICSCR_Bits;
+
+typedef struct sRCC_CFGR_Bits
+{
+        uint32  SW          :3;
+        uint32  SWS         :3;
+        uint32              :2;
+        uint32  HPRE        :4;
+        uint32  PPRE        :3;
+        uint32  		    :1;
+        uint32  MCO2SEL     :4;
+        uint32  MCO2PRE     :4;
+        uint32  MCOSEL      :4;
+        uint32  MCOPRE      :4;
+} dtRCC_CFGR_Bits;
+
+typedef struct sRCC_CRRCR_Bits
+{
+    uint32  HSIUSB48CAL :9;
+    uint32              :23;
+} dtRCC_CRRCR_Bits;
+
+typedef struct sRCC_CIER_Bits
+{
+    uint32  LSIRDYIE     :1;
+    uint32  LSERDYIE     :1;
+    uint32  HSIUSB48RDYIE:1;
+    uint32  HSIRDYIE     :1;
+    uint32  HSERDYIE     :1;
+    uint32               :27;
+} dtRCC_CIER_Bits;
+
+typedef struct sRCC_CIFR_Bits
+{
+    uint32  LSIRDYF     :1;
+    uint32  LSERDYF     :1;
+    uint32  HSIUSB48RDYC:1;
+    uint32  HSIRDYF     :1;
+    uint32  HSERDYF     :1;
+    uint32              :3;
+    uint32  CSSF        :1;
+    uint32  LSECSSF     :1;
+    uint32              :22;
+} dtRCC_CIFR_Bits;
+
+typedef struct sRCC_CICR_Bits
+{
+    uint32  LSIRDYC     :1;
+    uint32  LSERDYC     :1;
+    uint32  HSIUSB48RDYC:1;
+    uint32  HSIRDYC     :1;
+    uint32  HSERDYC     :1;
+    uint32              :3;
+    uint32  CSSC        :1;
+    uint32  LSECSSC     :1;
+    uint32              :22;
+} dtRCC_CICR_Bits;
+
+typedef struct sRCC_AHB_Bits
+{
+    uint32  DMA1        :1;
+    uint32              :7;
+    uint32  FLASH       :1;
+    uint32              :3;
+    uint32  CRC         :1;
+    uint32              :19;
+} dtRCC_AHB_Bits;
+
+typedef struct sRCC_IOP_Bits
+{
+    uint32 GPIOA        :1;
+    uint32 GPIOB        :1;
+    uint32 GPIOC        :1;
+    uint32 GPIOD        :1;
+    uint32              :1;
+    uint32 GPIOF        :1;
+    uint32              :26;
+} dtRCC_IOP_Bits;
+
+typedef struct sRCC_APB1_Bits
+{
+    uint32 TIM2         :1;
+    uint32 TIM3         :1;
+    uint32              :10;
+    uint32 FDCAN1       :1;
+    uint32              :1;
+    uint32 SPI2         :1;
+    uint32 USB			:1;
+    uint32 CRS			:1;
+    uint32 USART2		:1;
+    uint32 USART3		:1;
+    uint32 USART4		:1;
+    uint32 				:1;
+    uint32 I2C1			:1;
+    uint32 				:5;
+    uint32 DBG			:1;
+    uint32 PWR			:1;
+    uint32 				:3;
+} dtRCC_APB1_Bits;
+
+typedef struct sRCC_APB2_Bits
+{
+    uint32  SYSCFG      :1;
+    uint32              :10;
+    uint32  TIM1        :1;
+    uint32  SPI1        :1;
+    uint32              :1;
+    uint32  USART1      :1;
+    uint32  TIM14       :1;
+    uint32  TIM15       :1;
+    uint32  TIM16       :1;
+    uint32  TIM17       :1;
+    uint32              :1;
+    uint32  ADC         :1;
+    uint32              :11;
+} dtRCC_APB2_Bits;
+
+typedef struct sRCC_CCIPR_Bits
+{
+    uint32 USART1SEL    :2;
+    uint32              :6;
+    uint32 FDCAN        :2;
+    uint32 			    :2;
+    uint32 I2C1SEL      :2;
+    uint32 I2S1SEL      :2;
+    uint32       		:14;
+    uint32 ADCSEL       :2;
+} dtRCC_CCIPR_Bits;
+
+typedef struct sRCC_CCIPR2_Bits
+{
+    uint32              :12;
+    uint32 USBSEL       :1;
+    uint32       		:19;
+} dtRCC_CCIPR2_Bits;
+
+typedef struct sRCC_CSR_Bits
+{
+    uint32  LSEON       :1;
+    uint32  LSERDY      :1;
+    uint32  LSEBYP      :1;
+    uint32  LSEDRV      :1;
+    uint32              :1;
+    uint32  LSECSSON    :1;
+    uint32  LSECSSD     :1;
+    uint32              :1;
+    uint32  RTCSEL      :2;
+    uint32              :5;
+    uint32  RTCEN       :1;
+    uint32  RTCRST      :1;
+    uint32  	        :7;
+    uint32  LSCOEN      :1;
+    uint32  LSCOSEL     :1;
+    uint32              :6;
+} dtRCC_CSR_Bits;
+
+typedef struct sRCC_CSR2_Bits
+{
+    uint32  LSION       :1;
+    uint32  LSIRDY      :1;
+    uint32              :21;
+    uint32  RMVF        :1;
+    uint32              :1;
+    uint32  OBLRSTF     :1;
+    uint32  PINRSTF     :1;
+    uint32  PWRRSTF     :1;
+    uint32  SFTRSTF     :1;
+    uint32  IWDGRSTF    :1;
+    uint32  WWDGRSTF    :1;
+    uint32  LPWRRSTF    :1;
+} dtRCC_CSR2_Bits;
+
+REGDEF(RCC, CR)
+REGDEF(RCC, ICSCR)
+REGDEF(RCC, CFGR)
+REGDEF(RCC, CRRCR)
+REGDEF(RCC, CIER)
+REGDEF(RCC, CIFR)
+REGDEF(RCC, CICR)
+REGDEF(RCC, IOP)
+REGDEF(RCC, AHB)
+REGDEF(RCC, APB1)
+REGDEF(RCC, APB2)
+REGDEF(RCC, CCIPR)
+REGDEF(RCC, CCIPR2)
+REGDEF(RCC, CSR)
+REGDEF(RCC, CSR2)
+
+typedef struct sBusGroup
+{
+    dtRCC_IOP   IOP;
+    dtRCC_AHB   AHB;
+    dtRCC_APB1  APB1;
+    dtRCC_APB2  APB2;
+} dtBusGroup;
+
+typedef struct sRCC
+{
+    dtRCC_CR        CR;
+    dtRCC_ICSCR     ICSCR;
+    dtRCC_CFGR      CFGR;
+    uint32 :32;
+    uint32 :32;
+    dtRCC_CRRCR		CRRCR;
+    dtRCC_CIER      CIER;
+    dtRCC_CIFR      CIFR;
+    dtRCC_CICR      CICR;
+    dtBusGroup      RSTR;
+    dtBusGroup      ENR;
+    dtBusGroup      SMENR;
+    dtRCC_CCIPR     CCIPR;
+    dtRCC_CCIPR2    CCIPR2;
+    dtRCC_CSR       CSR;
+    dtRCC_CSR2      CSR2;
+} dtRCC;
+
 #endif
 
 #endif /* INC_REGDEFS_RCC_REGDEF_H_ */

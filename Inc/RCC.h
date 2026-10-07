@@ -626,6 +626,53 @@ extern void RCC_ClockEnable(dtRCCClock Clock, dtRCCClockSets Value);
 extern void RCC_ClockSet(dtRccInitConfig Config);
 extern uint32 RCC_GetClock(dtBus Bus);
 extern void RCC_ClockTreeInit(const dtRccClockTreeCfg config);
+
+#elif defined(STM32C0)
+
+typedef enum eRTCClockGates
+{
+	RCC_GPIOA,
+	RCC_GPIOB,
+	RCC_GPIOC,
+	RCC_GPIOD,
+	RCC_GPIOF = 5,
+	RCC_DMA1	= 32,
+	RCC_FLASH	= 40,
+	RCC_CRC		= 44,
+	RCC_TIM2	= 64,
+	RCC_TIM3,
+	RCC_FDCAN	= 76,
+	RCC_USB,
+	RCC_SPI2,
+	RCC_CRS		= 80,
+	RCC_USART2,
+	RCC_USART3,
+	RCC_USART4,
+	RCC_I2C1    = 85,
+	RCC_I2C2,
+	RCC_DBG		= 91,
+	RCC_PWR,
+	RCC_SYSCFG 	= 96,
+	RCC_TIM1	= 107,
+	RCC_SPI1,
+	RCC_USART1	= 110,
+	RCC_TIM14,
+	RCC_TIM15,
+	RCC_TIM16,
+	RCC_TIM17,
+	RCC_ADC		= 116,
+
+} dtRTCClockGates;
+
+typedef enum
+{
+	Enable = 0,
+	Disable,
+	LpEnable,
+	LpDisable,
+	Reset,
+} dtRCCClockSets;
+
 #endif
 
 #endif /* RCC_RCC_H_ */

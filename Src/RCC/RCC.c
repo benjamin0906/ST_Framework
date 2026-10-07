@@ -16,7 +16,7 @@
 #define MSI_CLOCK
 #endif
 
-#if defined(STM32U0) || defined(STM32L4)
+#if defined(STM32U0) || defined(STM32L4) || defined(STM32C0)
 #include "RegDefs/RCC_regdef.h"
 #else
 #include "RCC_Types.h"
@@ -31,6 +31,8 @@
 static volatile dtRCC *const RCC = (dtRCC*) (0x40021000);
 #elif defined(MCU_F446) || defined(MCU_F410) || defined(MCU_F415)
 static dtRCC *const RCC = (dtRCC*) (0x40023800);
+#elif defined(STM32C0)
+static volatile dtRCC *const RCC = (dtRCC*) (0x40021000);
 #endif
 #else
 static dtRCC *const RCC = (dtRCC*)&TestRCC;
@@ -700,6 +702,31 @@ void RCC_RTCDomainConfig(dtRCCRtcConfig Config)
 	RCC->BDCR.B.RTC_SEL = Config.RTCClock;
 	RCC->BDCR.B.RTCEN = Config.RTCClockEnable;
 }
+
+#elif defined(STM32C0)
+
+void RCC_ClockEnable(dtRTCClockGates Clock, dtRCCClockSets Value)
+{
+	uint32 BusId = Clock>>5;
+	uint32 ClockMask = 1 << (Clock&0x1F);
+	volatile dtBusGroup *GroupPtr = &RCC->RSTR;
+
+	if((Value == Enable) || (Value == Disable)) GroupPtr = &RCC->ENR;
+	else if((Value == LpEnable) || (Value == LpDisable)) GroupPtr = &RCC->SMENR;
+
+	if((Value == Disable) || (Value == LpDisable))
+	{
+		uint32 *ptr = ((uint32*)GroupPtr) + BusId;
+		ClockMask = ~ClockMask;
+		*ptr |= ClockMask;
+	}
+	else
+	{
+		uint32 *ptr = ((uint32*)GroupPtr) + BusId;
+		*ptr &= ClockMask;
+	}
+}
+
 #else
 #warning "NO CPU IS DEFINED"
 #endif
