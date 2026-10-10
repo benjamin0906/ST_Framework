@@ -705,6 +705,63 @@ void RCC_RTCDomainConfig(dtRCCRtcConfig Config)
 
 #elif defined(STM32C0)
 
+static uint32 HseValue;
+
+static inline void HseOn(void)
+{
+    dtRCC_CR tCr = RCC->CR;
+    tCr.B.HSEON = 1;
+    RCC->CR = tCr;
+    do
+    {
+        tCr = RCC->CR;
+    }while(tCr.B.HSERDY == 0);
+}
+
+static inline void HsiOn(void)
+{
+    dtRCC_CR tCr = RCC->CR;
+    tCr.B.HSION = 1;
+    RCC->CR = tCr;
+    do
+    {
+        tCr = RCC->CR;
+    }while(tCr.B.HSIRDY == 0);
+}
+
+static inline void HsiUsbOn(void)
+{
+    dtRCC_CR tCr = RCC->CR;
+    tCr.B.HSIUSB48ON = 1;
+    RCC->CR = tCr;
+    do
+    {
+        tCr = RCC->CR;
+    }while(tCr.B.HSIUSB48RDY == 0);
+}
+
+static inline void LseOn(void)
+{
+    dtRCC_CSR tCsr = RCC->CSR;
+    tCsr.B.LSEON = 1;
+    RCC->CSR = tCsr;
+    do
+    {
+        tCsr = RCC->CSR;
+    }while(tCsr.B.LSERDY == 0);
+}
+
+static inline void LsiOn(void)
+{
+    dtRCC_CSR2 tCsr = RCC->CSR2;
+    tCsr.B.LSION = 1;
+    RCC->CSR2 = tCsr;
+    do
+    {
+        tCsr = RCC->CSR2;
+    }while(tCsr.B.LSIRDY == 0);
+}
+
 void RCC_ClockEnable(dtRTCClockGates Clock, dtRCCClockSets Value)
 {
 	uint32 BusId = Clock>>5;
@@ -725,6 +782,181 @@ void RCC_ClockEnable(dtRTCClockGates Clock, dtRCCClockSets Value)
 		uint32 *ptr = ((uint32*)GroupPtr) + BusId;
 		*ptr &= ClockMask;
 	}
+}
+
+void RCC_ClockTreeInit(const dtRccClockTreeCfg config)
+{
+	dtRCC_CR tCr;
+	dtRCC_CCIPR tCcipr;
+	dtRCC_CCIPR2 tCcipr2;
+	dtRCC_CFGR tCfgr;
+	dtRCC_CSR tCsr;
+	uint32 sysclock = 0;
+
+	/* Clock Init */
+	if(     (config.SysClockCfg == SysClock_HSE)            //if system clock is from external
+		||  (config.RtcClockSel == RTC_SRC_HSEDIV32)        //if RTC is from external
+		||  (config.UsbClockSel == USB_SRC_HSE)             //if USB is from external
+		||  (config.FdCanClockSel == FDCAN_SRC_HSE)
+		)
+	{
+	    HseOn();
+	}
+
+	if((config.SysClockCfg == SysClock_HSI)       || (config.Usart1ClockSel == USART1_SRC_HSIKER) || (config.I2C1ClockSel == I2C1_SRC_HSIKER) ||
+	   (config.FdCanClockSel == FDCAN_SRC_HSIKER) || (config.AdcClockSel == ADC_SRC_HSIKER)       || (config.I2SClockSel == I2S_SRC_HSIKER))
+    {
+        HsiOn();
+    }
+
+	if((config.SysClockCfg == SysClock_HSIUSB) || (config.UsbClockSel == USB_SRC_HSIUSB48))
+	{
+	    HsiUsbOn();
+	}
+
+	if(config.RtcClockSel == RTC_SRC_LSI)
+	{
+	    LsiOn();
+	}
+
+	if((config.RtcClockSel == RTC_SRC_LSE) || (config.SysClockCfg == SysClock_LSE))
+	{
+	    LseOn();
+	}
+
+	HseValue = config.HseValue;
+	switch(config.SysClockCfg)
+	{
+	    case SysClock_HSI:
+            sysclock = 48000000;
+            sysclock >>= config.HsiDiv;
+            break;
+	    case SysClock_HSIUSB:
+            sysclock = 48000000;
+	        break;
+	    case SysClock_LSI:
+	        sysclock = 32000;
+	        break;
+	    case SysClock_LSE:
+	        sysclock = 32765;
+	        break;
+	    case SysClock_HSE:
+	        sysclock = HseValue;
+	        break;
+	}
+	sysclock /= config.SysDiv;
+	if((config.AhbPrescaler >= 0x8) != 0)
+	{
+        sysclock >>= config.AhbPrescaler - 7;
+	    if(config.AhbPrescaler >= 0xC)
+	    {
+	        sysclock >>= 1;
+	    }
+	}
+	while(Flash_SetLatency(sysclock) == LatFailed);
+
+	tCr     = RCC->CR;
+	tCcipr  = RCC->CCIPR;
+	tCcipr2 = RCC->CCIPR2;
+	tCfgr   = RCC->CFGR;
+	tCsr    = RCC->CSR;
+
+	tCr.B.HSIKERDIV = config.HsikerDiv;
+	tCr.B.HSIDIV    = config.HsiDiv;
+	tCr.B.SYSDIV    = config.SysDiv;
+
+	tCcipr.B.ADCSEL     = config.AdcClockSel;
+	tCcipr.B.FDCAN      = config.FdCanClockSel;
+    tCcipr.B.I2C1SEL    = config.I2C1ClockSel;
+    tCcipr.B.I2S1SEL    = config.I2SClockSel;
+    tCcipr.B.USART1SEL  = config.Usart1ClockSel;
+
+	tCcipr2.B.USBSEL = config.UsbClockSel;
+
+	tCfgr.B.PPRE    = config.ApbPrescaler;
+	tCfgr.B.HPRE    = config.AhbPrescaler;
+	tCfgr.B.SW      = config.SysClockCfg;
+
+	tCsr.B.RTCSEL   = config.RtcClockSel;
+
+	RCC->CR     = tCr;
+	RCC->CCIPR  = tCcipr;
+	RCC->CCIPR2 = tCcipr2;
+	RCC->CFGR   = tCfgr;
+	RCC->CSR = tCsr;
+
+	while(RCC->CFGR.B.SWS != config.SysClockCfg);
+}
+
+uint32 RCC_GetClock(dtBus Bus)
+{
+    uint32 ret = 0;
+    switch(Bus)
+    {
+        case HsiClock:
+        case HsiUsbClock:
+            ret = 48000000;
+            break;
+        case HseClock:
+            ret = HseValue;
+            break;
+        case LsiClock:
+            ret = 32000;
+            break;
+        case LseClock:
+            ret = 32768;
+            break;
+        case SysClock:
+            switch(RCC->CFGR.B.SWS)
+            {
+                case 0:
+                    ret = RCC_GetClock(HsiClock);
+                    break;
+                case 1:
+                    ret = RCC_GetClock(HseClock);
+                    break;
+                case 2:
+                    ret = RCC_GetClock(HsiUsbClock);
+                    break;
+                case 3:
+                    ret = RCC_GetClock(LsiClock);
+                    break;
+                case 4:
+                    ret = RCC_GetClock(LseClock);
+                    break;
+            }
+            ret >>= RCC->CR.B.SYSDIV;
+        case AhbClock:
+            ret = RCC_GetClock(SysClock);
+            if((RCC->CFGR.B.HPRE >= 0x8) != 0)
+            {
+                ret >>= RCC->CFGR.B.HPRE - 7;
+                if(RCC->CFGR.B.HPRE >= 0xC)
+                {
+                    ret >>= 1;
+                }
+            }
+            break;
+        case ApbClock:
+            ret = RCC_GetClock(AhbClock);
+            if(RCC->CFGR.B.PPRE >= 0x4)
+            {
+                ret >>= RCC->CFGR.B.PPRE - 0x4;
+                ret >>= 1;
+            }
+            break;
+        case ApbTimClock:
+            ret = RCC_GetClock(ApbClock);
+            if(RCC->CFGR.B.PPRE >= 0x4)
+            {
+                ret <<= 1;
+            }
+            break;
+        case SysTickClock:
+            ret = RCC_GetClock(AhbClock) >> 3;
+            break;
+    }
+    return ret;
 }
 
 #else

@@ -629,6 +629,35 @@ extern void RCC_ClockTreeInit(const dtRccClockTreeCfg config);
 
 #elif defined(STM32C0)
 
+#define RTC_SRC_NONE 0
+#define RTC_SRC_LSE 1
+#define RTC_SRC_LSI 2
+#define RTC_SRC_HSEDIV32 3
+
+#define USB_SRC_HSIUSB48 0
+#define USB_SRC_HSE 1
+
+#define ADC_SRC_SYS 0
+#define ADC_SRC_HSIKER 2
+#define ADC_SRC_I2S_CKIN 3
+
+#define I2S_SRC_SYSCLK 0
+#define I2S_SRC_HSIKER 2
+#define I2S_SRC_I2S_CKIN 3
+
+#define I2C1_SRC_PCLK 0
+#define I2C1_SRC_SYSCLK 1
+#define I2C1_SRC_HSIKER 2
+
+#define USART1_SRC_PCLK 0
+#define USART1_SRC_SYSCLK 1
+#define USART1_SRC_HSIKER 2
+#define USART1_SRC_LSE 3
+
+#define FDCAN_SRC_PCLK 0
+#define FDCAN_SRC_HSIKER 1
+#define FDCAN_SRC_HSE 2
+
 typedef enum eRTCClockGates
 {
 	RCC_GPIOA,
@@ -672,6 +701,52 @@ typedef enum
 	LpDisable,
 	Reset,
 } dtRCCClockSets;
+
+typedef enum eRccSysClockCfg
+{
+	SysClock_HSI,
+	SysClock_HSE,
+	SysClock_HSIUSB,
+	SysClock_LSI,
+	SysClock_LSE,
+} dtRccSysClockCfg;
+
+typedef struct RccClockTreeCfg
+{
+    uint32 HseValue;
+	dtRccSysClockCfg SysClockCfg;
+	uint8 LsiClock      :1;
+	uint8 RtcClockSel   :2;
+	uint8 AhbPrescaler 	:4;
+	uint8 ApbPrescaler  :4;
+	uint8 HsiDiv        :3;
+	uint8 HsikerDiv 	:3;
+	uint8 SysDiv        :3;
+	uint8 Usart1ClockSel:2;
+	uint8 I2C1ClockSel  :2;
+	uint8 AdcClockSel   :2;
+	uint8 I2SClockSel   :2;
+	uint8 UsbClockSel   :1;
+	uint8 FdCanClockSel :2;
+} dtRccClockTreeCfg;
+
+typedef enum
+{
+    HsiClock,
+    HseClock,
+    HsiUsbClock,
+    LsiClock,
+    LseClock,
+    ApbClock,
+    ApbTimClock,
+    AhbClock,
+    SysClock,
+    SysTickClock,
+} dtBus;
+
+extern void RCC_ClockEnable(dtRTCClockGates Clock, dtRCCClockSets Value);
+extern uint32 RCC_GetClock(dtBus Bus);
+extern void RCC_ClockTreeInit(const dtRccClockTreeCfg config);
 
 #endif
 
