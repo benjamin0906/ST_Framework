@@ -11,6 +11,7 @@
 #include "RegDefs/STM32C0_GPIO_regdef.h"
 #include "RegDefs/STM32C0_I2C_regdef.h"
 #include "RegDefs/STM32C0_TIM14_regdef.h"
+#include "RegDefs/STM32C0_SPI_redef.h"
 
 #if defined(STM32C0)
 
@@ -36,6 +37,12 @@
 #define I2C_C0  ((volatile dtI2C_C0_Map *const)I2C1_BASE)
 #define I2C1_C0 (&I2C_C0->I2C1)
 #define I2C2_C0 (&I2C_C0->I2C2)
+
+#define SPI1_BASE (0x40013000UL)
+#define SPI2_BASE (0x40003800UL)
+
+#define SPI1 ((volatile dtSPI *const) SPI1_BASE)
+#define SPI2 ((volatile dtSPI *const) SPI2_BASE)
 
 #endif
 

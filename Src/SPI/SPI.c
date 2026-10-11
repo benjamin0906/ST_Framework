@@ -587,6 +587,147 @@ void SPI5_IRQHandler(void)
 
 }
 #endif
+#elif defined(STM32C0)
+
+#include "STM32C0_MemMap.h"
+#include "SPI.h"
+
+typedef struct
+{
+    dtSpStatus Status;
+    void* TxBuffPointer;
+    void* RxBuffPointer;
+    uint16 Length;
+    uint32 Indexer;
+    dtGPIOs ChipSelectPin;
+    uint8 CsFrame;
+} dtSpiData;
+
+static dtSpiData SpiData[2];
+
+void SPI_Init(dtSpiConf Config)
+{
+    volatile dtSPI *Instance = SPI1;
+    dtSPI_CR1 Cr1Temp = {.U = 0};
+    dtSPI_CR2 Cr2Temp = {.U = 0};
+
+    if(Config.Instance == 1)
+    {
+        Instance = SPI2;
+    }
+
+    Cr1Temp.B.BR = Config.ClockDiv;
+    Cr1Temp.B.LSBFIRST = Config.LsbOrMsb;
+
+    Cr1Temp.B.CPHA = Config.CHPA;
+    Cr1Temp.B.CPOL = Config.CPOL;
+    Cr1Temp.B.MSTR = 1;
+    Cr1Temp.B.SPE = 1;
+    Cr1Temp.B.SSM = 1;
+    Cr1Temp.B.SSI = 1;
+
+    Cr2Temp.B.DS = 7;
+    Cr2Temp.B.FRXTH = 1;
+    if(Config.DataSize == Size16Bit)
+    {
+        Cr2Temp.B.FRXTH = 0;
+        Cr2Temp.B.DS = 15;
+    }
+    Cr2Temp.B.FRF = 0;
+    Cr2Temp.B.RXNEIE = 1;
+
+    SpiData[Config.Instance].CsFrame = Config.CsFrameLength;
+
+    if(Config.CsFrameLength != 0)
+    {
+        if(Config.CsFrameLength == 1)
+        {
+            Cr2Temp.B.NSSP = 1;
+        }
+        else
+        {
+            Cr2Temp.B.NSSP = 0;
+            SpiData[Config.Instance].ChipSelectPin = Config.ChipSelectPin;
+            GPIO_Set(SpiData[Config.Instance].ChipSelectPin, Set);
+        }
+    }
+
+    Instance->CR2 = Cr2Temp;
+    Instance->CR1 = Cr1Temp;
+}
+
+void SPI_IqrHandler(dtSPI *const instance, dtSpiData *const spiData)
+{
+    uint16 tData = instance->DR;
+
+    if(spiData->Length != 0)
+    {
+        if(spiData->RxBuffPointer != 0)
+        {
+            if(instance->CR2.B.DS <= 7)
+            {
+                *((uint8*)spiData->RxBuffPointer) = (uint8)tData;
+                (uint16*)spiData->RxBuffPointer++;
+            }
+            else
+            {
+                *((uint16*)spiData->RxBuffPointer) = (uint16)tData;
+                (uint16*)spiData->RxBuffPointer++;
+            }
+        }
+        if(spiData->TxBuffPointer != 0)
+        {
+            if(instance->CR2.B.DS <= 7)
+            {
+                instance->DR = *((uint8*)spiData->TxBuffPointer);
+                (uint8*)spiData->TxBuffPointer++;
+            }
+            else
+            {
+                instance->DR = *((uint16*)spiData->TxBuffPointer);
+                (uint16*)spiData->TxBuffPointer++;
+            }
+        }
+        else
+        {
+            instance->DR = 0;
+        }
+        spiData->Length--;
+    }
+}
+
+void SPI1_IRQHandler(void)
+{
+    dtSPI_I2S *Instance = GetSpiInstance(1);
+    uint8 temp = Instance->DR.DR8;
+    if(DataInstance->Offset == 0)
+    {
+        if((DataInstance->RxBuffPointer != 0) && (DataInstance->RxLength != 0))
+        {
+            *DataInstance->RxBuffPointer = temp;
+            DataInstance->RxBuffPointer++;
+            DataInstance->RxLength--;
+        }
+    }
+    else DataInstance->Offset--;
+
+    if((DataInstance->TxBuffPointer != 0) && (DataInstance->TxLength != 0))
+    {
+        Instance->DR.DR8 = *DataInstance->TxBuffPointer;
+        DataInstance->TxBuffPointer++;
+        DataInstance->TxLength--;
+    }
+    else if((DataInstance->Offset == 0) && DataInstance->RxLength == 0)
+    {
+        GPIO_Set(GetDataOfInstance(1)->ChipSelectPin, Set);
+        GetDataOfInstance(1)->Status = SpiIdle;
+    }
+    else
+    {
+        Instance->DR.DR8 = 0;
+    }
+}
+
 #else
 #warning "NO CPU IS DEFINED"
 #endif

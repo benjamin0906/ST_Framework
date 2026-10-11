@@ -50,6 +50,7 @@ typedef struct
 	uint32 CPOL		:1;
 	uint32 CHPA		:1;
 	uint32 Instance	:3;
+	uint32 CsFrameLength :2;
 	dtGPIOs ChipSelectPin;
 } dtSpiConf;
 

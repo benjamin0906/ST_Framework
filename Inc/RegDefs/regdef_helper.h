@@ -27,4 +27,19 @@
         dt##Domain##_##RegName##_Bits B; \
 	} dt##Domain##_##RegName;
 
+#define LEN_CHECK_16(var, size) \
+    struct LengthCheck_##var \
+    { \
+    uint16 var :LEN_CHECK_NOT_EQUAL(var, size); \
+    };
+
+#define REGDEF_16(Domain, RegName) \
+    LEN_CHECK_16(dt##Domain##_##RegName##_Bits, 2) \
+    typedef union u##Domain##_##RegName \
+    { \
+        uint16 U; \
+        int16 I; \
+        dt##Domain##_##RegName##_Bits B; \
+    } dt##Domain##_##RegName;
+
 #endif /* INC_REGDEFS_REGDEF_HELPER_H_ */
