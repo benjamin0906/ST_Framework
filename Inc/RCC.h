@@ -634,8 +634,10 @@ extern void RCC_ClockTreeInit(const dtRccClockTreeCfg config);
 #define RTC_SRC_LSI 2
 #define RTC_SRC_HSEDIV32 3
 
+#if defined(STM32C071xxxx) //TODO: Proper macros are needed
 #define USB_SRC_HSIUSB48 0
 #define USB_SRC_HSE 1
+#endif
 
 #define ADC_SRC_SYS 0
 #define ADC_SRC_HSIKER 2
@@ -726,7 +728,9 @@ typedef struct RccClockTreeCfg
 	uint8 I2C1ClockSel  :2;
 	uint8 AdcClockSel   :2;
 	uint8 I2SClockSel   :2;
+#if defined(STM32C071xxxx) //TODO: Proper macros are needed
 	uint8 UsbClockSel   :1;
+#endif
 	uint8 FdCanClockSel :2;
 } dtRccClockTreeCfg;
 

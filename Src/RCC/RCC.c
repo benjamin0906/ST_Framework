@@ -720,7 +720,7 @@ static inline void HseOn(void)
 
 static inline void HsiOn(void)
 {
-    dtRCC_CR tCr = RCC->CR;
+    volatile dtRCC_CR tCr = RCC->CR;
     tCr.B.HSION = 1;
     RCC->CR = tCr;
     do
@@ -775,12 +775,12 @@ void RCC_ClockEnable(dtRTCClockGates Clock, dtRCCClockSets Value)
 	{
 		uint32 *ptr = ((uint32*)GroupPtr) + BusId;
 		ClockMask = ~ClockMask;
-		*ptr |= ClockMask;
+		*ptr &= ClockMask;
 	}
 	else
 	{
 		uint32 *ptr = ((uint32*)GroupPtr) + BusId;
-		*ptr &= ClockMask;
+		*ptr |= ClockMask;
 	}
 }
 
@@ -796,7 +796,9 @@ void RCC_ClockTreeInit(const dtRccClockTreeCfg config)
 	/* Clock Init */
 	if(     (config.SysClockCfg == SysClock_HSE)            //if system clock is from external
 		||  (config.RtcClockSel == RTC_SRC_HSEDIV32)        //if RTC is from external
+#if defined(STM32C071xxxx) //TODO: Proper macros are needed
 		||  (config.UsbClockSel == USB_SRC_HSE)             //if USB is from external
+#endif
 		||  (config.FdCanClockSel == FDCAN_SRC_HSE)
 		)
 	{
@@ -808,8 +810,11 @@ void RCC_ClockTreeInit(const dtRccClockTreeCfg config)
     {
         HsiOn();
     }
-
+#if defined(STM32C071xxxx) //TODO: Proper macros are needed
 	if((config.SysClockCfg == SysClock_HSIUSB) || (config.UsbClockSel == USB_SRC_HSIUSB48))
+#else
+    if(config.SysClockCfg == SysClock_HSIUSB)
+#endif
 	{
 	    HsiUsbOn();
 	}
@@ -870,8 +875,9 @@ void RCC_ClockTreeInit(const dtRccClockTreeCfg config)
     tCcipr.B.I2C1SEL    = config.I2C1ClockSel;
     tCcipr.B.I2S1SEL    = config.I2SClockSel;
     tCcipr.B.USART1SEL  = config.Usart1ClockSel;
-
+#if defined(STM32C071xxxx) //TODO: Proper macros are needed
 	tCcipr2.B.USBSEL = config.UsbClockSel;
+#endif
 
 	tCfgr.B.PPRE    = config.ApbPrescaler;
 	tCfgr.B.HPRE    = config.AhbPrescaler;
