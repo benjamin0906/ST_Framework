@@ -485,6 +485,46 @@ typedef enum
 extern void NVIC_EnableIRQ(dtIRQs IRQ);
 extern void NVIC_SetPriority(dtIRQs IRQ, uint8 IrqLevel);
 extern void NVIC_DisableIRQ(dtIRQs IRQ);
+#elif defined(STM32C0)
+
+typedef enum eIRQs
+{
+    IRQ_WWDG = 0,
+    IRQ_PVM,
+    IRQ_RTC,
+    IRQ_FLASH,
+    IRQ_RCC_CRS,
+    IRQ_EXTI0_1,
+    IRQ_EXTI2_3,
+    IRQ_EXTI4_15,
+    IRQ_USB,
+    IRQ_DMA1_CH1,
+    IRQ_DMA1_CH2_3,
+    IRQ_DMA1_CH4_5_6,
+    IRQ_ADC,
+    IRQ_TIM1_BRK_UP_TRG_COM,
+    IRQ_TIM1_CC,
+    IRQ_TIM2,
+    IRQ_TIM3,
+    IRQ_TIM14 = 19,
+    IRQ_TIM15,
+    IRQ_TIM16,
+    IRQ_TIM17,
+    IRQ_I2C1,
+    IRQ_I2C2,
+    IRQ_SPI1,
+    IRQ_SPI2,
+    IRQ_USART1,
+    IRQ_USART2,
+    IRQ_USART3_4,
+    IRQ_FDCAN_IT0,
+    IRQ_FDCAN_IT1,
+} dtIRQs;
+
+extern void NVIC_EnableIRQ(dtIRQs IRQ);
+extern void NVIC_SetPriority(dtIRQs IRQ, uint8 IrqLevel);
+extern void NVIC_DisableIRQ(dtIRQs IRQ);
+
 #endif
 
 #if defined(STM32U0)
