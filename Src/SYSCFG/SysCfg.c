@@ -32,4 +32,23 @@ void ISysCfg_SetExti(uint8 ExtiNum, dtSysCfgExtiConf ExtiConf)
             break;
     }
 }
+#elif defined(STM32C0)
+
+#include "STM32C0_MemMap.h"
+
+void SYSCFG_Remap(dtRemaps remap_pin, uint8 enable)
+{
+    dtSYSCFG_CFGR1 tcfgr1 = SYSCFG->CFGR1;
+    switch(remap_pin)
+    {
+        case SYSCFG_RMP_PA11:
+            tcfgr1.B.PA11_RMP = (enable != 0);
+            break;
+        case SYSCFG_RMP_PA12:
+            tcfgr1.B.PA12_RMP = (enable != 0);
+            break;
+    }
+    SYSCFG->CFGR1 = tcfgr1;
+}
+
 #endif

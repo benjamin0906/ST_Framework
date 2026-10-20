@@ -711,8 +711,8 @@ typedef struct sRCC
 
 typedef struct sRCC_CR_Bits
 {
-    uint32              :1;
-    uint32  SYSDIV      :1;
+    uint32              :2;
+    uint32  SYSDIV      :3;
     uint32  HSIKERDIV   :3;
     uint32  HSION       :1;
     uint32  HSIKERON    :1;
@@ -738,16 +738,16 @@ typedef struct sRCC_ICSCR_Bits
 
 typedef struct sRCC_CFGR_Bits
 {
-        uint32  SW          :3;
-        uint32  SWS         :3;
-        uint32              :2;
-        uint32  HPRE        :4;
-        uint32  PPRE        :3;
-        uint32  		    :1;
-        uint32  MCO2SEL     :4;
-        uint32  MCO2PRE     :4;
-        uint32  MCOSEL      :4;
-        uint32  MCOPRE      :4;
+    uint32  SW          :3;
+    uint32  SWS         :3;
+    uint32              :2;
+    uint32  HPRE        :4;
+    uint32  PPRE        :3;
+    uint32  		    :1;
+    uint32  MCO2SEL     :4;
+    uint32  MCO2PRE     :4;
+    uint32  MCOSEL      :4;
+    uint32  MCOPRE      :4;
 } dtRCC_CFGR_Bits;
 
 typedef struct sRCC_CRRCR_Bits

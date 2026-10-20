@@ -12,6 +12,7 @@
 #include "RegDefs/STM32C0_I2C_regdef.h"
 #include "RegDefs/STM32C0_TIM14_regdef.h"
 #include "RegDefs/STM32C0_SPI_redef.h"
+#include "RegDefs/STM32C0_SYSCFG.h"
 
 #if defined(STM32C0)
 
@@ -43,6 +44,9 @@
 
 #define SPI1 ((volatile dtSPI *const) SPI1_BASE)
 #define SPI2 ((volatile dtSPI *const) SPI2_BASE)
+
+#define SYSCFG_BASE (0x4001000UL)
+#define SYSCFG ((volatile dtSYSCFG *const) SYSCFG_BASE)
 
 #endif
 
