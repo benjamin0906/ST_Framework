@@ -598,6 +598,7 @@ typedef struct
     void* TxBuffPointer;
     void* RxBuffPointer;
     uint16 Length;
+    uint16 RxLength;
     uint32 Indexer;
     dtGPIOs ChipSelectPin;
     uint8 CsFrame;
@@ -638,94 +639,131 @@ void SPI_Init(dtSpiConf Config)
 
     SpiData[Config.Instance].CsFrame = Config.CsFrameLength;
 
-    if(Config.CsFrameLength != 0)
-    {
-        if(Config.CsFrameLength == 1)
-        {
-            Cr2Temp.B.NSSP = 1;
-        }
-        else
-        {
-            Cr2Temp.B.NSSP = 0;
-            SpiData[Config.Instance].ChipSelectPin = Config.ChipSelectPin;
-            GPIO_Set(SpiData[Config.Instance].ChipSelectPin, Set);
-        }
-    }
+    Cr2Temp.B.NSSP = 0;
+
+    SpiData[Config.Instance].ChipSelectPin = Config.ChipSelectPin;
+    GPIO_Set(SpiData[Config.Instance].ChipSelectPin, Set);
 
     Instance->CR2 = Cr2Temp;
     Instance->CR1 = Cr1Temp;
 }
 
+void WriteData(dtSPI *Instance, dtSpiData *spiData)
+{
+    if(Instance->CR2.B.DS <= 7)
+    {
+        uint8 data = 0;
+        if(spiData->TxBuffPointer != 0)
+        {
+            data = *((uint8*)spiData->TxBuffPointer);
+            spiData->TxBuffPointer = ((uint8*)spiData->TxBuffPointer) + 1;
+        }
+        Instance->DR.U8 = data;
+    }
+    else
+    {
+        uint16 data = 0;
+        if(spiData->TxBuffPointer != 0)
+        {
+            data = *((uint16*)spiData->TxBuffPointer);
+            spiData->TxBuffPointer = ((uint16*)spiData->TxBuffPointer) + 1;
+        }
+        Instance->DR.U16 = data;
+    }
+    spiData->Length--;
+}
+
+void EnableTxIsr(dtSPI *instance)
+{
+    dtSPI_CR2 tCR2 = instance->CR2;
+    tCR2.B.TXEIE = 1;
+    instance->CR2 = tCR2;
+}
+
+void DisableTxIsr(dtSPI *instance)
+{
+    dtSPI_CR2 tCR2 = instance->CR2;
+    tCR2.B.TXEIE = 0;
+    instance->CR2 = tCR2;
+}
+
+void SPI_Send(uint8 Instance, void *TxBuff, void *RxBuff, uint16 Length)
+{
+    dtSPI *instances[] = {SPI1, SPI2};
+    if(Length > 0)
+    {
+        SpiData[Instance].Status = SpiInProgress;
+        SpiData[Instance].TxBuffPointer = TxBuff;
+        SpiData[Instance].RxBuffPointer = RxBuff;
+        SpiData[Instance].Length = Length;
+        SpiData[Instance].Indexer = 0;
+        GPIO_Set(SpiData[Instance].ChipSelectPin, Clear);
+
+        //WriteData(instances[Instance], &SpiData[Instance]);
+        EnableTxIsr(instances[Instance]);
+    }
+}
+
+dtSpStatus SPI_GetStatus(uint8 Instance)
+{
+    return SpiData[Instance].Status;
+}
+
 void SPI_IqrHandler(dtSPI *const instance, dtSpiData *const spiData)
 {
-    uint16 tData = instance->DR;
-
-    if(spiData->Length != 0)
+    dtSPI_SR tSR = instance->SR;
+    if(tSR.B.RXNE != 0)
     {
         if(spiData->RxBuffPointer != 0)
         {
             if(instance->CR2.B.DS <= 7)
             {
-                *((uint8*)spiData->RxBuffPointer) = (uint8)tData;
-                (uint16*)spiData->RxBuffPointer++;
+                *((uint8*)spiData->RxBuffPointer) = instance->DR.U8;
+                spiData->RxBuffPointer = ((uint8*)spiData->RxBuffPointer) + 1;
             }
             else
             {
-                *((uint16*)spiData->RxBuffPointer) = (uint16)tData;
-                (uint16*)spiData->RxBuffPointer++;
+                *((uint16*)spiData->RxBuffPointer) = instance->DR.U16;
+                spiData->RxBuffPointer = ((uint16*)spiData->RxBuffPointer) + 1;
             }
-        }
-        if(spiData->TxBuffPointer != 0)
-        {
-            if(instance->CR2.B.DS <= 7)
-            {
-                instance->DR = *((uint8*)spiData->TxBuffPointer);
-                (uint8*)spiData->TxBuffPointer++;
-            }
-            else
-            {
-                instance->DR = *((uint16*)spiData->TxBuffPointer);
-                (uint16*)spiData->TxBuffPointer++;
-            }
+            spiData->RxLength++;
         }
         else
         {
-            instance->DR = 0;
+            if(instance->CR2.B.DS <= 7)
+            {
+                uint8 data = instance->DR.U8;
+            }
+            else
+            {
+                uint16 data = instance->DR.U16;
+            }
         }
-        spiData->Length--;
     }
+    if(tSR.B.TXE != 0)
+    {
+        if(spiData->Length != 0)
+        {
+
+            WriteData(instance, spiData);
+        }
+        else
+        {
+            DisableTxIsr(instance);
+        }
+    }
+    tSR = instance->SR;
+    if(tSR.B.BSY == 0)
+    {
+        GPIO_Set(spiData->ChipSelectPin, Set);
+        spiData->Status = SpiIdle;
+    }
+
 }
 
 void SPI1_IRQHandler(void)
 {
-    dtSPI_I2S *Instance = GetSpiInstance(1);
-    uint8 temp = Instance->DR.DR8;
-    if(DataInstance->Offset == 0)
-    {
-        if((DataInstance->RxBuffPointer != 0) && (DataInstance->RxLength != 0))
-        {
-            *DataInstance->RxBuffPointer = temp;
-            DataInstance->RxBuffPointer++;
-            DataInstance->RxLength--;
-        }
-    }
-    else DataInstance->Offset--;
-
-    if((DataInstance->TxBuffPointer != 0) && (DataInstance->TxLength != 0))
-    {
-        Instance->DR.DR8 = *DataInstance->TxBuffPointer;
-        DataInstance->TxBuffPointer++;
-        DataInstance->TxLength--;
-    }
-    else if((DataInstance->Offset == 0) && DataInstance->RxLength == 0)
-    {
-        GPIO_Set(GetDataOfInstance(1)->ChipSelectPin, Set);
-        GetDataOfInstance(1)->Status = SpiIdle;
-    }
-    else
-    {
-        Instance->DR.DR8 = 0;
-    }
+    SPI_IqrHandler(SPI1, &SpiData[0]);
 }
 
 #else

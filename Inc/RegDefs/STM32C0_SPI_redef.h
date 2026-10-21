@@ -78,6 +78,12 @@ typedef struct sSPI_I2SPR_Bits
     uint16          :6;
 } dtSPI_I2SPR_Bits;
 
+typedef union uSPI_I2S_Dr
+{
+    uint16 U16;
+    uint8 U8;
+} dtSPI_DR;
+
 REGDEF_16(SPI, CR1)
 REGDEF_16(SPI, CR2)
 REGDEF_16(SPI, SR)
@@ -92,7 +98,7 @@ typedef struct sSPI
     uint16 :16;
     dtSPI_SR SR;
     uint16 :16;
-    uint16 DR;
+    dtSPI_DR DR;
     uint16 :16;
     uint16 CRCPOLY;
     uint16 :16;

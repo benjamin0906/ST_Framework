@@ -58,6 +58,7 @@ extern void ISPI_Init(dtSpiConf Config);
 extern void ISPI_Send(uint8 Instance, uint8 *TxBuff, uint16 TxLength);
 extern Std_ReturnType ISPI_GetData(uint8 Instance, uint8 *RxBuff, uint16 RxLength);
 extern void SPI_Init(dtSpiConf Config);
-extern dtSpStatus ISPI_GetStatus(uint8 Instance);
+extern dtSpStatus SPI_GetStatus(uint8 Instance);
+extern void SPI_Send(uint8 Instance, void *TxBuff, void *RxBuff, uint16 Length);
 
 #endif /* ST_FRAMEWORK_SRC_SPI_SPI_H_ */
