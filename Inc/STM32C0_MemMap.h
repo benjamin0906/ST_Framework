@@ -45,7 +45,7 @@
 #define SPI1 ((volatile dtSPI *const) SPI1_BASE)
 #define SPI2 ((volatile dtSPI *const) SPI2_BASE)
 
-#define SYSCFG_BASE (0x4001000UL)
+#define SYSCFG_BASE (0x40010000UL)
 #define SYSCFG ((volatile dtSYSCFG *const) SYSCFG_BASE)
 
 #endif
