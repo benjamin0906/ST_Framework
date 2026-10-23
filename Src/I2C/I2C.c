@@ -628,6 +628,7 @@ static uint8 DataLen[2];
 static dtI2cSessionResult Result[2];
 static uint8 SecondStart[2];
 dtI2cSessionType Session[2];
+static int8 sessionId;
 
 #define SET_WRITE_TRANSFER_REQ(Instance)    \
 {\
@@ -763,8 +764,8 @@ int8 I2C_Start(dtI2CInstance Instance, dtI2cSessionType SessionType, const uint8
     int8 ret = -1;
     if(Result[Instance] == Ready)
     {
+        ret = ++sessionId;
         volatile dtI2C_C0 *instance = &I2C_C0->I2C1 + Instance;
-        ret = 0;
         /* Copy the necessary infos into the own variables of the module */
         RegisterAdd = RegisterAddress;
         RegLen = RegisterLength;
@@ -779,6 +780,10 @@ int8 I2C_Start(dtI2CInstance Instance, dtI2cSessionType SessionType, const uint8
         /* Initiate the communication session */
         dtI2C_C0_CR2 tCr2 = {.U = 0};
         tCr2.B.RD_WRN = 0;
+        if((SessionType == I2C_Read) && (RegisterAddress == 0 || RegisterLength == 0))
+        {
+            tCr2.B.RD_WRN = 1;
+        }
         tCr2.B.AUTOEND = 0;
         tCr2.B.HEAD10R = 1;
         //SET_WRITE_TRANSFER_REQ(Instance);
@@ -793,6 +798,11 @@ int8 I2C_Start(dtI2CInstance Instance, dtI2cSessionType SessionType, const uint8
         //SET_SLAVE_ADDRESS(Instance,SlaveAdd);
         tCr2.B.SADD = SlaveAdd<<1;
         tCr2.B.NBYTES = RegLen;
+        if((SessionType == I2C_Read) && (RegisterAddress == 0 || RegisterLength == 0))
+        {
+            tCr2.B.NBYTES = DataLength;
+        }
+
         tCr2.B.START = 1;
         //SET_TRANSFER_SIZE(Instance, RegLen);
         //GENERATE_START(Instance);
@@ -801,12 +811,19 @@ int8 I2C_Start(dtI2CInstance Instance, dtI2cSessionType SessionType, const uint8
     return ret;
 }
 
-dtI2cSessionResult I2C_Result(dtI2CInstance Instance)
+dtI2cSessionResult I2C_Result(dtI2CInstance Instance, int8 session_id)
 {
     dtI2cSessionResult ret = Result[Instance];
-    if(ret != Busy)
+    if((ret == Done))
     {
-        Result[Instance] = Ready;
+        if(session_id == sessionId)
+        {
+            Result[Instance] = Ready;
+        }
+        else
+        {
+            ret = Busy;
+        }
     }
     return ret;
 }
