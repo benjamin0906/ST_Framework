@@ -414,7 +414,7 @@ __asm(  ".globl memcpy_reverse_8bit             \n"
         "bx lr                                  \n"
 
 );
-#elif defined(STM32U0) || defined(STM32L4)
+#elif defined(STM32U0) || defined(STM32L4) || defined(STM32C0)
 __asm(  ".global memcpy_reverse                             \n"
         ".p2align 2                                         \n"
         ".type memcpy_reverse, %function                    \n"
