@@ -709,7 +709,7 @@ dtSpStatus SPI_GetStatus(uint8 Instance)
     return SpiData[Instance].Status;
 }
 
-void SPI_IqrHandler(dtSPI *const instance, dtSpiData *const spiData)
+void IqrHandler(dtSPI *const instance, dtSpiData *const spiData)
 {
     dtSPI_SR tSR = instance->SR;
     if(tSR.B.RXNE != 0)
@@ -732,11 +732,11 @@ void SPI_IqrHandler(dtSPI *const instance, dtSpiData *const spiData)
         {
             if(instance->CR2.B.DS <= 7)
             {
-                uint8 data = instance->DR.U8;
+                volatile uint8 data = instance->DR.U8;
             }
             else
             {
-                uint16 data = instance->DR.U16;
+                volatile uint16 data = instance->DR.U16;
             }
         }
     }
@@ -763,7 +763,8 @@ void SPI_IqrHandler(dtSPI *const instance, dtSpiData *const spiData)
 
 void SPI1_IRQHandler(void)
 {
-    SPI_IqrHandler(SPI1, &SpiData[0]);
+    IqrHandler(SPI1, &SpiData[0]);
+    NVIC_ClearIRQ(IRQ_SPI1);
 }
 
 #else

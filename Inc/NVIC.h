@@ -524,6 +524,7 @@ typedef enum eIRQs
 extern void NVIC_EnableIRQ(dtIRQs IRQ);
 extern void NVIC_SetPriority(dtIRQs IRQ, uint8 IrqLevel);
 extern void NVIC_DisableIRQ(dtIRQs IRQ);
+extern void NVIC_ClearIRQ(dtIRQs IRQ);
 
 #endif
 

@@ -58,5 +58,6 @@ void TIM14_IRQHandler(void)
     dtTIM14_C0_SR tSr = TIM14->SR;
     tSr.B.UIF = 0;
     TIM14->SR = tSr;
+    NVIC_ClearIRQ(IRQ_TIM14);
 }
 

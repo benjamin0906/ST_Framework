@@ -814,7 +814,7 @@ int8 I2C_Start(dtI2CInstance Instance, dtI2cSessionType SessionType, const uint8
 dtI2cSessionResult I2C_Result(dtI2CInstance Instance, int8 session_id)
 {
     dtI2cSessionResult ret = Result[Instance];
-    if((ret == Done))
+    if((ret == Done) || (ret == Error))
     {
         if(session_id == sessionId)
         {

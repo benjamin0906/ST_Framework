@@ -28,6 +28,13 @@ void NVIC_DisableIRQ(dtIRQs IRQ)
     ICER->ICER[IserIndex] |= 1<<IserBit;
 }
 
+void NVIC_ClearIRQ(dtIRQs IRQ)
+{
+    uint8 IserIndex = IRQ >> 5;
+    uint32 IserBit = IRQ - (IserIndex << 5);
+    ICPR->ICPR[IserIndex] |= 1<<IserBit;
+}
+
 void NVIC_SetPriority(dtIRQs IRQ, uint8 Priority)
 {
     if(IRQ < 0)
